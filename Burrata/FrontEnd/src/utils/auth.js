@@ -13,4 +13,13 @@ async function logIn(form) {
       }
 }
 
-export default logIn
+function getToken () {
+    return localStorage.getItem("token")
+  }
+  
+function isAuth () {
+    return !!getToken()
+  }
+  
+
+export default { getToken, isAuth, logIn }

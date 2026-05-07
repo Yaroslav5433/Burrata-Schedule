@@ -14,7 +14,7 @@
     border-radius: clamp(4px, 0.5vw, 7px);
     color: var(--white-color);
     width: clamp(120px, 15vw, 300px);
-    height: clamp(18px, 1.5vw, 80px);
+    height: clamp(18px, 1.8vw, 80px);
     font-size: 12px;
     padding-left: 5px;
 }
