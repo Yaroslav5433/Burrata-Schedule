@@ -1,0 +1,11 @@
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-dark-color);
+    min-height: 50px;
+}
+
+.logo {
+    width: 7em;
+}

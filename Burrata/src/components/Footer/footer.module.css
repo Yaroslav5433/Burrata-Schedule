@@ -1,0 +1,12 @@
+.footer {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    background-color: var(--light-dark-color);
+    min-height: 50px;
+}
+
+.rights {
+    font-size: 10px;
+    padding-left: 20px;
+}

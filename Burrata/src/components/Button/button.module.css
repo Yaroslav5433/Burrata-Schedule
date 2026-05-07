@@ -1,0 +1,15 @@
+.button {
+    background-color: var(--white-gray-color);
+    color: var(--white-color);
+    width: 6vw;
+    height: 2.5vw;
+    border-color: transparent;
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+.button:hover {
+    background-color: var(--white-color);
+    transition-duration: var(--transition-duration);
+    color: var(--white-gray-color)
+}

@@ -1,5 +1,20 @@
 body {
+    display: flex;
+    flex-direction: column;
     background-color: var(--gray-color);
     font-family: "FACEBOLF", sans-serif;
     color: var(--white-color);
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

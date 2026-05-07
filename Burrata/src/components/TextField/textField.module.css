@@ -1,0 +1,30 @@
+.fieldContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.fieldLabel {
+    font-size: 12px;
+    cursor: text;
+}
+
+.fieldInput {
+    border: 2px solid var(--white-gray-color);
+    border-radius: 7px;
+    color: var(--white-color);
+    width: 15vw;
+    height: 2vw;
+    font-size: 12px;
+    padding-left: 5px;
+}
+
+.fieldInput:focus {
+    background-color: var(--white-gray-color);
+    transition-duration: var(--transition-duration);
+}
+
+.fieldInputOnBlur {
+    background-color: var(--white-gray-color);
+    border-color: var(--white-color);
+}

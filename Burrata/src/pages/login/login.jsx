@@ -1,13 +1,19 @@
+import Header from '../../components/Header/Header.jsx'
+import Footer from '../../components/Footer/Footer.jsx'
+import LoginContainer from '../../components/LoginContainer/LoginContainer.jsx';
+import logIn from '../../utils/auth.js';
+
 function Login() {
-    return (
-        <header className="header">
-            <img src="Logo.png"
-            alt="Burrata-Shedule-logo"
-            class="header-logo-image"
-            loading="lazy" 
-            />
-        </header>
-    )
+
+   return (
+    <div className = "app">
+        <Header />
+            <main>
+                <LoginContainer logIn={logIn}/>
+            </main>
+        <Footer />
+    </div>
+   );
 }
 
-export default Login
+export default Login;
