@@ -5,16 +5,16 @@
 }
 
 .fieldLabel {
-    font-size: 12px;
+    font-size: clamp(8px, 1.5vw, 12px);
     cursor: text;
 }
 
 .fieldInput {
     border: 2px solid var(--white-gray-color);
-    border-radius: 7px;
+    border-radius: clamp(4px, 0.5vw, 7px);
     color: var(--white-color);
-    width: 15vw;
-    height: 2vw;
+    width: clamp(120px, 15vw, 300px);
+    height: clamp(18px, 1.5vw, 80px);
     font-size: 12px;
     padding-left: 5px;
 }

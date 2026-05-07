@@ -1,8 +1,8 @@
 .button {
     background-color: var(--white-gray-color);
     color: var(--white-color);
-    width: 6vw;
-    height: 2.5vw;
+    width: clamp(60px, 6vw, 100px);
+    height: clamp(40px, 2.5vw, 800px);
     border-color: transparent;
     border-radius: 7px;
     font-size: 12px;
