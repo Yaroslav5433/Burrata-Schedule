@@ -8,16 +8,17 @@ async function logIn(form) {
     
         localStorage.setItem('token', data.token)
     
+        return data
       } catch (error) {
         console.log('ERROR:', error.message)
       }
 }
 
-function getToken () {
+const getToken = () => {
     return localStorage.getItem("token")
   }
   
-function isAuth () {
+const isAuth = () => {
     return !!getToken()
   }
   
