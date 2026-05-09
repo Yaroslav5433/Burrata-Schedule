@@ -28,3 +28,7 @@
     background-color: var(--white-gray-color);
     border-color: var(--white-color);
 }
+
+.fieldInputOnError  {
+    border: 2px solid var(--dark-red-color);
+}

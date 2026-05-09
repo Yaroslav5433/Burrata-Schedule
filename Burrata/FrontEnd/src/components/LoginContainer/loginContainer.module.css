@@ -15,6 +15,11 @@
     font-size: clamp(15px, 2vw, 35px)
 }
 
+.errorMessage {
+    font-size: clamp(8px, 1.5vw, 12px);
+    color: var(--dark-red-color);
+}
+
 @media (max-width: 1000px) {
     .container {
         padding: 40px;

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom"
 import Login from "./pages/login/login"
-import { ProtectedRoute, AuthorizationRoute } from "./routes/protectedRoute.jsx";
+import { ProtectedRoute, AuthorizedRoute } from "./routes/protectedRoute.jsx";
 import Home from "./pages/home/home"
 
 function App() {
@@ -8,9 +8,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<AuthorizationRoute>
+        <Route path="/login" element={<AuthorizedRoute>
           <Login />
-        </AuthorizationRoute>} />
+        </AuthorizedRoute>} />
         <Route path="/" element={
         <ProtectedRoute>
           <Home />

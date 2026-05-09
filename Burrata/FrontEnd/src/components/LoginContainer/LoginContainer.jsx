@@ -5,7 +5,8 @@ import { useState } from 'react'
 
 function LoginContainer(props) {
     const {
-        logIn
+        logIn,
+        errorOnAuth
     } = props
 
     const [form, setForm] = useState({
@@ -22,9 +23,9 @@ function LoginContainer(props) {
         }))
     }
 
-    const onSubmit = (event) => {
+    async function onSubmit(event) {
         event.preventDefault()
-        logIn(form)
+        const res = await logIn(form)
     }
 
     return (
@@ -34,16 +35,21 @@ function LoginContainer(props) {
             name='login'
             label='Login'
             value={form.login}
-            onChange={handleChange}/>
+            onChange={handleChange}
+            errorOnAuth={errorOnAuth}/>
             <TextField 
             label='Password'
             type='password'
             name='password'
             value={form.password}
-            onChange={handleChange}/>
+            onChange={handleChange}
+            errorOnAuth={errorOnAuth}/>
             <Button 
             type='submit'
             buttonText='Sign In'/>
+            {errorOnAuth && (
+                <p className={styles.errorMessage}>Incorrect Login or Password</p>
+            )}
         </form>
     )
 }

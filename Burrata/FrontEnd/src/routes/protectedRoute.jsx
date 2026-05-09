@@ -9,7 +9,7 @@ export function ProtectedRoute({ children }) {
     return children
   }
 
-export function AuthorizationRoute({ children }) {
+export function AuthorizedRoute({ children }) {
   if (auth.isAuth()) {
     return <Navigate to="/" replace />
   }
