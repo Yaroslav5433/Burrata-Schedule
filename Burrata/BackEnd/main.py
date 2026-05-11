@@ -1,37 +1,26 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from authx import AuthX, AuthXConfig
+from contextlib import asynccontextmanager
+from routes import login_router
+from loguru import logger
+from config.config import get_config
 
-config = AuthXConfig()
-config.JWT_SECRET_KEY = "SECRET_KEY"
-config.JWT_ACCESS_COOKIE_NAME = "MY_ACCESS_TOKEN"
-config.JWT_TOKEN_LOCATION = ['cookies']
+global_config = get_config()
 
-security = AuthX(config=config)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Starting application")
 
-app = FastAPI()
-
-class User(BaseModel):
-    login: str
-    password: str
-
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins = global_config.CORS_ORIGINS,
+    allow_credentials = global_config.CORS_CREDENTIALS,
+    allow_methods = global_config.CORS_METHODS,
+    allow_headers = global_config.CORS_HEADERS,
 )
 
-
-@app.post("/login")
-async def initialize(user: User):
-    if user.login == '123' and user.password == '123':
-        token = security.create_access_token
-        return {"access_token": token}
-    raise HTTPException(status_code=401, detail='Incorrect username or password')
-
+app.include_router(login_router)
 
     
