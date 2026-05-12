@@ -28,7 +28,7 @@ class GlobalConfig(BaseSettings):
     JWT_ACCESS_COOKIE_NAME: str
     JWT_TOKEN_LOCATION: List[str]
 
-    @property
+    @property   
     def DB_URL_asyncpg(self):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 

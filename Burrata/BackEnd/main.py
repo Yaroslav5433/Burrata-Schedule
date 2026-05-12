@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from routes import login_router
+from BackEnd.routes.auth import login_router
+from BackEnd.routes.health import health_router
 from loguru import logger
 from config.config import get_config
 
@@ -22,5 +23,4 @@ app.add_middleware(
 )
 
 app.include_router(login_router)
-
-    
+app.include_router(health_router)
