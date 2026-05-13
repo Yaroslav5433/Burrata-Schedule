@@ -3,7 +3,7 @@ from typing import final, Optional, List
 from pathlib import Path
 from functools import lru_cache
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parents[1]
 
 @final 
 class GlobalConfig(BaseSettings):
