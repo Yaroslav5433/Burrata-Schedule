@@ -9,7 +9,7 @@ from database.database import get_db
 from database.models import Admin
 
 global_config = get_config()
-login_router = APIRouter
+login_router = APIRouter()
 
 jwt_config = AuthXConfig()
 jwt_config.JWT_SECRET_KEY = global_config.JWT_SECRET_KEY
@@ -18,10 +18,10 @@ jwt_config.JWT_TOKEN_LOCATION = global_config.JWT_TOKEN_LOCATION
 
 security = AuthX(config=jwt_config)
 
-@login_router.post("/login", response_model=1)
+@login_router.post("/login")
 async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Admin).filter(Admin.username == login_data.username))
-    admin = result.scalar_one_or_none
+    result = await db.execute(select(Admin).filter(Admin.login == login_data.login))
+    admin = result.scalar_one_or_none()
 
     if not admin or not admin.verify_password(login_data.password):
         raise HTTPException(
