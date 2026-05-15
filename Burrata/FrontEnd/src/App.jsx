@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom"
-import Login from "./pages/login/login"
 import { ProtectedRoute, AuthorizedRoute } from "./routes/protectedRoute.jsx";
 import Home from "./pages/home/home"
+import Login from "./pages/login/login"
+import Request from "./pages/form/request.jsx";
+
 
 function App() {
 
@@ -16,6 +18,7 @@ function App() {
           <Home />
         </ProtectedRoute>}
         />
+        <Route path="/request" element={<Request/>}></Route>
       </Routes>
     </BrowserRouter>
   );
