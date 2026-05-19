@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from authx import AuthXConfig, AuthX
 from loguru import logger
-from schemas.auth import LoginRequest
+from schemas.schemas import LoginRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from config.config import get_config

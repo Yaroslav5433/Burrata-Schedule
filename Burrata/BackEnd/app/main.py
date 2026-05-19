@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from routes.auth import login_router
 from routes.health import health_router
+from routes.verification import verification_router
 from loguru import logger
 from config.config import get_config
 from database.database import init_db, async_engine
@@ -35,3 +36,4 @@ app.add_middleware(
 
 app.include_router(login_router)
 app.include_router(health_router)
+app.include_router(verification_router)

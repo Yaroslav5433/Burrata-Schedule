@@ -1,4 +1,4 @@
-import logInRequest from "../api/requests"
+import { logInRequest } from "../api/requests"
 
 async function logIn(form) {
     try {

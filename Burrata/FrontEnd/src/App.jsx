@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom"
-import { ProtectedRoute, AuthorizedRoute } from "./routes/protectedRoute.jsx";
+import { ProtectedRoute, AuthorizedRoute } from "./routes/routes.jsx";
 import Home from "./pages/home/home"
 import Login from "./pages/login/login"
 import Request from "./pages/form/request.jsx";

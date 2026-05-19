@@ -2,6 +2,8 @@ import TextField from '../TextField/TextField.jsx'
 import Button from '../Button/Button.jsx'
 import styles from './requestContainer.module.css'
 import { useState } from 'react'
+import Animation from '../Animation/Animation.jsx'
+import ClaimsTable from '../ClaimsTable/ClaimsTable.jsx'
 
 function RequestContainer(props) {
     const {
@@ -10,7 +12,8 @@ function RequestContainer(props) {
         errorOnAuth,
         errorOnReq,
         successOnReq,
-        loginPage
+        loginPage,
+        username
     } = props
 
     const [form, setForm] = useState({
@@ -33,7 +36,7 @@ function RequestContainer(props) {
         if (loginPage) {
             await logIn(form)
         }
-        request(form)
+        request(form.ID)
     }
 
     if (loginPage) {
@@ -62,9 +65,24 @@ function RequestContainer(props) {
             </form>
         )
     }
+
+    if (successOnReq) {
+        return (
+            <Animation>
+                <form className={styles.container} onSubmit={onSubmit}>
+                    <h1>Hello, {username.user}</h1>
+                    <p>Please, choose a claims:</p>
+                    <ClaimsTable/>
+                    <Button
+                    type='submit'
+                    buttonText='Sent a claim'/>
+                </form>
+            </Animation>
+        )
+    }
     
     return (
-        <form className={styles.container} onSubmit={onSubmit}>
+            <form className={styles.container} onSubmit={onSubmit}>
                 <h1 className={styles.loginTitle}>Sent a claim</h1>
                 <TextField 
                 name='ID'
@@ -78,10 +96,6 @@ function RequestContainer(props) {
                 {errorOnReq && (
                     <p className={styles.errorMessage}>Incorrect ID</p>
                 )}
-                {successOnReq && (
-                    <p>Code that should appear on success request</p>
-                )}
-                {console.log({successOnReq})}
             </form>
     )
 }

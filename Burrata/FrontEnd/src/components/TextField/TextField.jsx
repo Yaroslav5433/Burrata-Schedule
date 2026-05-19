@@ -9,7 +9,8 @@ function TextField( props ) {
         value,
         onChange,
         name,
-        errorOnAuth
+        errorOnAuth,
+        errorOnReq,
     } = props
 
     const [blurred, setBlurred] = useState(false)
@@ -28,7 +29,7 @@ function TextField( props ) {
             className={`
                 ${styles.fieldInput}
                 ${blurred && (value.length > 0) ? styles.fieldInputOnBlur : ''}
-                ${errorOnAuth ? styles.fieldInputOnError: ''}`}
+                ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}`}
 
             onBlur={() => setBlurred(true)}
             onChange={onChange}/>
