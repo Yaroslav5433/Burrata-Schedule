@@ -1,6 +1,6 @@
 import Header from '../../components/Header/Header.jsx'
 import Footer from '../../components/Footer/Footer.jsx'
-import LoginContainer from '../../components/LoginContainer/LoginContainer.jsx';
+import RequestContainer from '../../components/RequestContainer/RequestContainer.jsx';
 import auth from '../../utils/auth.js';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -13,20 +13,22 @@ function Login() {
 
     async function handleLogin(form) {
         let res = await auth.logIn(form)
-        setErrorOnAuth(!res)
-        console.log("Error setted")
         if (res) {
             navigate("/", {replace: true}) 
+            return
         }
+        setErrorOnAuth(!res)
+        console.log("Login Error setted")
     }
 
    return (
     <div className = "app">
         <Header />
             <main>
-                <LoginContainer 
+                <RequestContainer 
                 logIn={handleLogin}
-                errorOnAuth={errorOnAuth}/>
+                errorOnAuth={errorOnAuth}
+                loginPage={true}/>
             </main>
         <Footer />
     </div>

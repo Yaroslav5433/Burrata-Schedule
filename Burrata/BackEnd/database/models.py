@@ -1,6 +1,5 @@
 from sqlalchemy import Column, DateTime, Integer, String, func
 from database.database import Base
-from loguru import logger
 import bcrypt
 
 class Admin(Base):
