@@ -21,6 +21,10 @@
     color: var(--dark-red-color);
 }
 
+.successMessage {
+    color: var(--green-color);
+}
+
 @media (max-width: 1000px) {
     .container {
         padding: 40px;

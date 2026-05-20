@@ -31,6 +31,10 @@ class GlobalConfig(BaseSettings):
     @property   
     def DB_URL_asyncpg(self):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    
+    @property   
+    def DB_URL_syncpg(self):
+        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     model_config = SettingsConfigDict(
         env_file = BASE_DIR / "dev.env"

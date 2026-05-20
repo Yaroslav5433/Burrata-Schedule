@@ -9,12 +9,19 @@ function RequestContainer(props) {
     const {
         logIn,
         request,
+        sendAClaim,
         errorOnAuth,
         errorOnReq,
         successOnReq,
         loginPage,
-        username
+        username,
+        claimDates,
+        userHasClaims,
+        setUserHasClaims,
+        userSavedClaims
     } = props
+
+    const [claimValues, setClaimValues] = useState(Array(7).fill(undefined));
 
     const [form, setForm] = useState({
         login: '',
@@ -35,6 +42,10 @@ function RequestContainer(props) {
         event.preventDefault()
         if (loginPage) {
             await logIn(form)
+        }
+        if (successOnReq) {
+            await sendAClaim(claimValues, claimDates)
+            setUserHasClaims(true)
         }
         request(form.ID)
     }
@@ -70,12 +81,24 @@ function RequestContainer(props) {
         return (
             <Animation>
                 <form className={styles.container} onSubmit={onSubmit}>
-                    <h1>Hello, {username.user}</h1>
-                    <p>Please, choose a claims:</p>
-                    <ClaimsTable/>
-                    <Button
-                    type='submit'
-                    buttonText='Sent a claim'/>
+                    <h1>{username}</h1>
+                    {!userHasClaims && (
+                        <p>Please, choose a claims:</p>
+                    )}
+                    <ClaimsTable
+                    claimValues={claimValues}
+                    setClaimValues={setClaimValues}
+                    claimDates={claimDates}
+                    userHasClaims={userHasClaims}
+                    userSavedClaims={userSavedClaims}/>
+                    {!userHasClaims && (
+                        <Button
+                        type='submit'
+                        buttonText='Sent a claim'/>
+                    )}
+                    {userHasClaims && (
+                        <p className={styles.successMessage}>You have been sent your claims!</p>
+                    )}
                 </form>
             </Animation>
         )

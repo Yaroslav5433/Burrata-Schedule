@@ -1,36 +1,64 @@
 import styles from './claimsTable.module.css'
 import { useState } from 'react';
 
-function ClaimsTable() {
-    let dates = ["01.01", "02.01", "03.01", "04.01", "05.01", "06.01", "07.01"]  
-    const [values, setValues] = useState(Array(7).fill(""));
-  
+function ClaimsTable(props) {
+    const {
+      claimValues,
+      setClaimValues,
+      claimDates,
+      userHasClaims,
+      userSavedClaims
+    } = props
+
+    const [hasANumber, setHasANumber] = useState(false) 
+    const [hasTwoX, setHasTwoX] = useState(false)
+
     const handleChange = (index, value) => {
-      const copy = [...values];
+      const copy = [...claimValues];
       copy[index] = value;
-      setValues(copy);
+      setClaimValues(copy);
+      if (["1", "2"].some(v => copy.includes(v))) {
+        setHasANumber(true)
+      } else {
+        setHasANumber(false)
+      }
+      if (copy.filter(v => v === "X").length > 1) {
+        setHasTwoX(true)
+      } else {
+        setHasTwoX(false)
+      }
     };
-  
+
+    {console.log(userSavedClaims[21.05])}
+
     return (
       <table className={styles.table}>
         <tbody className={styles.tableBody}>
           <tr className={styles.dates}>
-            {dates.map((date, i) => (
+            {claimDates.map((date, i) => (
               <td key={i}>{date}</td>
             ))}
           </tr>
   
           <tr className={styles.claims}>
-            {dates.map((_, i) => (
-              <td key={i}>
-                <select
-                  value={values[i]}
-                  onChange={(e) => handleChange(i, e.target.value)}
-                >
-                  <option value="X">X</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                </select>
+            {claimDates.map((date, i) => (
+              <td key={date}>
+                {!userHasClaims ? (
+                  <select
+                    value={claimValues[i]}
+                    onChange={(e) => handleChange(i, e.target.value)}
+                  >
+                    <option></option>
+                    <option value="X"
+                    disabled={hasTwoX}>X</option>
+                    <option value="1"
+                    disabled={hasANumber}
+                    >1</option>
+                    <option value="2"
+                    disabled={hasANumber}
+                    >2</option>
+                  </select>
+                ) : (userSavedClaims?.[date] ?? '')}
               </td>
             ))}
           </tr>

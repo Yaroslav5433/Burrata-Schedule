@@ -1,4 +1,5 @@
-from sqlalchemy import Column, DateTime, Integer, String, func
+import enum
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func, Enum
 from database.database import Base
 import bcrypt
 
@@ -20,5 +21,20 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     unique_id_number = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+class Shifts(enum.Enum):
+    FIRST = "1"
+    SECOND = "2"
+    X = "X"
+    LONG_TWELFE = "D12"
+    LONG_TEN = "D10"
+
+
+class ClaimsSchedule(Base):
+    __tablename__ = 'claimsschedule'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username"), nullable=False)
+    date = Column(DateTime, nullable=False)
+    shift = Column(Enum(Shifts, name="choice"), nullable=False)
+    

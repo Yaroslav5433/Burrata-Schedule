@@ -32,3 +32,21 @@ export async function VerificationRequest(unique_id_number) {
     return res.json()
 }
 
+export async function ClaimingRequest(values, userName) {
+  const res = await fetch('http://localhost:8000/claims', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    values: values,
+    username: userName
+  }) 
+})
+
+  if (!res.ok) {
+    throw new Error('sending a claims failed')
+}
+
+  return res.json()
+}
