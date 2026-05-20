@@ -15,7 +15,7 @@ function ClaimsTable(props) {
 
     const handleChange = (index, value) => {
       const copy = [...claimValues];
-      copy[index] = value;
+      copy[index] = value === "" ? undefined : value;
       setClaimValues(copy);
       if (["1", "2"].some(v => copy.includes(v))) {
         setHasANumber(true)
@@ -27,9 +27,9 @@ function ClaimsTable(props) {
       } else {
         setHasTwoX(false)
       }
+      {console.log(copy)}
     };
 
-    {console.log(userSavedClaims[21.05])}
 
     return (
       <table className={styles.table}>
@@ -48,7 +48,7 @@ function ClaimsTable(props) {
                     value={claimValues[i]}
                     onChange={(e) => handleChange(i, e.target.value)}
                   >
-                    <option></option>
+                    <option value={undefined}>{undefined}</option>
                     <option value="X"
                     disabled={hasTwoX}>X</option>
                     <option value="1"
