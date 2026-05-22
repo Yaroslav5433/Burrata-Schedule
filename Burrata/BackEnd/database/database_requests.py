@@ -24,6 +24,7 @@ async def get_users_saved_claims(verified_user, this_week_days, db: AsyncSession
     
     return user_saved_claims_rows
 
+
 async def insert_claims_in_database(username, claims_sql_type, db: AsyncSession):
     success_on_insert = await db.execute(insert(ClaimsSchedule).values([
         {"date": date, "shift": Shifts(shift), "username": username}
