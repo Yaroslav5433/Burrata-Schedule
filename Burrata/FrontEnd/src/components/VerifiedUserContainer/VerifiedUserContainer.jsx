@@ -10,7 +10,9 @@ function VerifiedUserContainer() {
         userName,
         userHasClaims,
         setUserHasClaims,
-        sendAClaim
+        sendAClaim,
+        claimValues,
+        claimDates
     } = useContext(Context)
 
     async function onSubmit(event) {

@@ -10,7 +10,6 @@ verification_router = APIRouter()
 
 @verification_router.post('/request')
 async def verification(verification_data: Verification, db: AsyncSession = Depends(get_db)):
-
     verified_user = await db_req.get_user_by_id(verification_data.unique_id_number, db)
 
     if verified_user:
