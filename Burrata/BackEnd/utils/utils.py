@@ -1,4 +1,5 @@
 from datetime import datetime, date, timedelta
+from zoneinfo import ZoneInfo
 
 def transform_date_to_sql(values):
     current_year = datetime.now().year
@@ -54,3 +55,20 @@ def transfrom_row_sql_to_dict(row_sql):
     }
 
     return result
+
+
+def get_seconds_to_next_monday():
+    now = datetime.now(ZoneInfo("Europe/Sofia"))
+
+    print(now)
+    days_ahead_to_monday = (7 - now.weekday())
+
+    target_date = (now + timedelta(days=days_ahead_to_monday)).replace(
+        hour=0,
+        minute=0,
+        second=0
+    )
+
+    seconds = int((target_date - now).total_seconds())
+
+    return seconds
