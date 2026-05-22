@@ -8,9 +8,7 @@ from routes.claims import claims_router
 from loguru import logger
 from config.config import get_config
 from database.database import init_db, async_engine
-# from redis.redis import create_redis
-# from redis.redis import redis as redis_module
-
+from redis_.redis_settings import create_redis
 
 global_config = get_config()
 
@@ -19,8 +17,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting application")
     try:
         await init_db()
-        # redis_module.redis_client = create_redis(global_config.REDIS_URL)
-        # app.state.redis = redis_module.redis_client
+        app.state.redis = create_redis(global_config.REDIS_URL)
         logger.info("Application started successfully")
         yield
     except Exception as e:
@@ -28,7 +25,7 @@ async def lifespan(app: FastAPI):
         raise
     finally:
         logger.info("Shutting down application")
-        # await app.state.redis.aclose()
+        await app.state.redis.aclose()
         await async_engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
