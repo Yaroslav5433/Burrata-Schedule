@@ -4,5 +4,5 @@ class LoginRequest(BaseModel):
     login: str
     password: str
 
-class VerificationRequest(BaseModel):
+class Verification(BaseModel):
     unique_id_number: str

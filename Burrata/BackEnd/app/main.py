@@ -4,9 +4,11 @@ from contextlib import asynccontextmanager
 from routes.auth import login_router
 from routes.health import health_router
 from routes.verification import verification_router
+from routes.claims import claims_router
 from loguru import logger
 from config.config import get_config
 from database.database import init_db, async_engine
+from redis_.redis_settings import create_redis
 
 global_config = get_config()
 
@@ -15,6 +17,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting application")
     try:
         await init_db()
+        app.state.redis = create_redis(global_config.REDIS_URL)
         logger.info("Application started successfully")
         yield
     except Exception as e:
@@ -22,6 +25,7 @@ async def lifespan(app: FastAPI):
         raise
     finally:
         logger.info("Shutting down application")
+        await app.state.redis.aclose()
         await async_engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
@@ -37,3 +41,4 @@ app.add_middleware(
 app.include_router(login_router)
 app.include_router(health_router)
 app.include_router(verification_router)
+app.include_router(claims_router)
