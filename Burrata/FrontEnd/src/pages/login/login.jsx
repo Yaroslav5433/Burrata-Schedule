@@ -4,6 +4,8 @@ import RequestContainer from '../../components/RequestContainer/RequestContainer
 import auth from '../../utils/auth.js';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Context } from '../../components/Context.js';
+
 
 function Login() {
 
@@ -12,26 +14,30 @@ function Login() {
     const [errorOnAuth, setErrorOnAuth] = useState(false);
 
     async function handleLogin(form) {
-        let res = await auth.logIn(form)
-        if (res) {
+        const token = await auth.logIn(form)
+        if (token) {
             navigate("/", {replace: true}) 
             return
         }
-        setErrorOnAuth(!res)
+        setErrorOnAuth(!token)
         console.log("Login Error setted")
     }
 
    return (
-    <div className = "app">
+    <Context.Provider
+    value={{
+        errorOnAuth,
+        handleLogin
+    }}>
+        <div className = "app">
         <Header />
             <main>
                 <RequestContainer 
-                logIn={handleLogin}
-                errorOnAuth={errorOnAuth}
                 loginPage={true}/>
             </main>
         <Footer />
     </div>
+    </Context.Provider>
    );
 }
 

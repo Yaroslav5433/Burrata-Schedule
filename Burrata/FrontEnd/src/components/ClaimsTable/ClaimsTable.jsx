@@ -1,14 +1,16 @@
+import { Context } from '../Context.js';
 import styles from './claimsTable.module.css'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
-function ClaimsTable(props) {
+function ClaimsTable() {
+
     const {
-      claimValues,
-      setClaimValues,
-      claimDates,
       userHasClaims,
-      userSavedClaims
-    } = props
+      claimDates,
+      userSavedClaims,
+      claimValues,
+      setClaimValues
+    } = useContext(Context)
 
     const [hasANumber, setHasANumber] = useState(false) 
     const [hasTwoX, setHasTwoX] = useState(false)

@@ -1,5 +1,6 @@
+import { Context } from '../Context.js'
 import styles from './textField.module.css'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 function TextField( props ) {
     const {
@@ -9,9 +10,12 @@ function TextField( props ) {
         value,
         onChange,
         name,
-        errorOnAuth,
-        errorOnReq,
     } = props
+
+    const {
+        errorOnAuth,
+        errorOnReq
+    } = useContext(Context)
 
     const [blurred, setBlurred] = useState(false)
 

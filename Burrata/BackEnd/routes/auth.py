@@ -3,10 +3,9 @@ from authx import AuthXConfig, AuthX
 from loguru import logger
 from schemas.schemas import LoginRequest
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from config.config import get_config
 from database.database import get_db
-from database.models import Admin
+from database import database_requests as db_req
 
 global_config = get_config()
 login_router = APIRouter()
@@ -20,10 +19,9 @@ security = AuthX(config=jwt_config)
 
 @login_router.post("/login")
 async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Admin).filter(Admin.login == login_data.login))
-    admin = result.scalar_one_or_none()
+    verified_admin = await db_req.get_admin_for_login(login_data.login, db) 
 
-    if not admin or not admin.verify_password(login_data.password):
+    if not verified_admin or not verified_admin.verify_password(login_data.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

@@ -4,32 +4,35 @@ import RequestContainer from '../../components/RequestContainer/RequestContainer
 import { verification } from '../../utils/verification.js';
 import { claiming } from '../../utils/claiming.js';
 import { useState } from 'react';
+import { Context } from '../../components/Context.js';
 
 function Request() {
 
     const [errorOnReq, setErrorOnReq] = useState(false);
-    const [successOnReq, setSuccessOnReq] = useState(false);
+    const [claimsPage, setclaimsPage] = useState(false);
+    const [verificationPage, setVerificationPage] = useState(true);
     const [userName, setUserName] = useState('');
     const [claimDates, setClaimDates] = useState(Array[undefined]);
     const [userHasClaims, setUserHasClaims] = useState(false);
     const [userSavedClaims, setUserSavedClaims] = useState('');
+    const [claimValues, setClaimValues] = useState(Array(7).fill(undefined));
 
     async function handleRequest(unique_user_id) {
         const userAndClaimsInfo = await verification(unique_user_id)
         if (!userAndClaimsInfo) {
-            setErrorOnReq(!userAndClaimsInfo)
-            setSuccessOnReq(!!userAndClaimsInfo)
+            setErrorOnReq(true)
+            setclaimsPage(false)
             return
         }
-        
+        setVerificationPage(!userAndClaimsInfo)
         const { user, user_saved_claims, dates } = userAndClaimsInfo
         
         if (Object.keys(user_saved_claims).length > 0) {
             setUserHasClaims(true)
             setUserSavedClaims(user_saved_claims)
         }
-        setErrorOnReq(!user)    
-        setSuccessOnReq(!!user)
+        setErrorOnReq(false)    
+        setclaimsPage(true)
         setUserName(user)
         setClaimDates(dates);
     }
@@ -48,23 +51,30 @@ function Request() {
 
 
     return (
-        <div className = "app">
+        <Context.Provider
+        value={{
+            claimDates,
+            userHasClaims,
+            userSavedClaims,
+            errorOnReq,
+            claimValues,
+            setClaimValues,
+            userName,
+            setUserHasClaims,
+            handleRequest,
+            sendAClaim
+        }}>
+            <div className = "app">
             <Header />
                 <main>
                     <RequestContainer 
-                    errorOnReq={errorOnReq}
-                    successOnReq={successOnReq}
-                    request={handleRequest}
-                    sendAClaim={sendAClaim}
-                    claimDates={claimDates}
-                    username={userName}
-                    userHasClaims={userHasClaims}
-                    setUserHasClaims={setUserHasClaims}
-                    userSavedClaims={userSavedClaims}
+                    claimsPage={claimsPage}
+                    verificationPage={verificationPage}
                     />
                 </main>
             <Footer />
         </div>
+        </Context.Provider>
     );
  }
  

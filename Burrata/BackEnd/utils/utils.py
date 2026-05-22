@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 
-def dateToSql(values):
+def transform_date_to_sql(values):
     current_year = datetime.now().year
 
     newValues = {}
@@ -16,7 +16,8 @@ def dateToSql(values):
 
     return newValues
 
-def sqlToNormal(values):
+
+def transform_date_and_shift_from_sql_to_str(values):
     result = {}
     for d, enum_value in values.items():
         if isinstance(d, date):
@@ -29,9 +30,11 @@ def sqlToNormal(values):
             enum_str = str(enum_value)
 
         result[date_str] = enum_str
+
     return result
 
-def currentWeekDates(nosql = False):
+
+def get_current_week_days(nosql = False):
     today = date.today()
     start_of_week = today - timedelta(days=today.weekday())
     this_week = [start_of_week + timedelta(days=i) for i in range(7)]
@@ -40,6 +43,14 @@ def currentWeekDates(nosql = False):
         (start_of_week + timedelta(days=i)).strftime("%d.%m")
         for i in range(7)
         ]
+
     return this_week
 
 
+def transfrom_row_sql_to_dict(row_sql):
+    result = { 
+        row["date"]: row["shift"]
+        for row in row_sql.mappings() 
+    }
+
+    return result
