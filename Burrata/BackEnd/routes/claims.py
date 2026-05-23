@@ -15,15 +15,17 @@ async def claimshandler(data: dict, request: Request, db: AsyncSession = Depends
     claims, username = data["values"], data["username"]
     claims_sql_type = transform_date_to_sql(claims)
 
+    if request.app.state.redis_is_connected:
+        try:
+            await redis_req.insert_claims_in_redis(
+                username,
+                claims, 
+                redis_client=request.app.state.redis)
+        except:
+            logger.info('Claims havent been inserted in redis')
+            request.app.state.redis_is_connected = False
+    
     success_on_req = await db_req.insert_claims_in_database(username, claims_sql_type, db)
-
-    try:
-        await redis_req.insert_claims_in_redis(
-            username,
-            claims, 
-            redis_client=request.app.state.redis)
-    except:
-        logger.info('Claims havent been inserted in redis')
 
     if not success_on_req: 
         raise HTTPException(

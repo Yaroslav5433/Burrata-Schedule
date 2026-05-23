@@ -12,13 +12,13 @@ function VerifiedUserContainer() {
         setUserHasClaims,
         sendAClaim,
         claimValues,
-        claimDates
+        claimDates,
     } = useContext(Context)
 
     async function onSubmit(event) {
         event.preventDefault()
-            await sendAClaim(claimValues, claimDates)
-            setUserHasClaims(true)
+        await sendAClaim(claimValues, claimDates)
+        setUserHasClaims(true)
     }
 
     return (

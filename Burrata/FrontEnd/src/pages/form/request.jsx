@@ -12,9 +12,9 @@ function Request() {
     const [claimsPage, setclaimsPage] = useState(false);
     const [verificationPage, setVerificationPage] = useState(true);
     const [userName, setUserName] = useState('');
-    const [claimDates, setClaimDates] = useState(Array[undefined]);
+    const [claimDates, setClaimDates] = useState(Array(7).fill(undefined));
     const [userHasClaims, setUserHasClaims] = useState(false);
-    const [userSavedClaims, setUserSavedClaims] = useState('');
+    const [userSavedClaims, setUserSavedClaims] = useState([]);
     const [claimValues, setClaimValues] = useState(Array(7).fill(undefined));
 
     async function handleRequest(unique_user_id) {
@@ -41,7 +41,7 @@ function Request() {
         const claimValuesAsObject = Object.fromEntries(
             [...dates].map((char, i) => [char, values[i]])
         );
-
+        setUserSavedClaims(claimValuesAsObject)
         let res = await claiming(claimValuesAsObject, userName)
         if (!res) {
             console.log("Error", error)
@@ -62,7 +62,8 @@ function Request() {
             userName,
             setUserHasClaims,
             handleRequest,
-            sendAClaim
+            sendAClaim,
+            setUserSavedClaims
         }}>
             <div className = "app">
             <Header />

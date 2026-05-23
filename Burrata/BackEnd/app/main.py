@@ -12,12 +12,19 @@ from redis_.redis_settings import create_redis
 
 global_config = get_config()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting application")
     try:
         await init_db()
-        app.state.redis = create_redis(global_config.REDIS_URL)
+        app.state.redis_is_connected = False
+        try:
+            app.state.redis = create_redis(global_config.REDIS_URL)
+            app.state.redis_is_connected = await app.state.redis.ping()
+            logger.info("Redis has been connected")
+        except:
+            logger.info("Redis has not been connected")
         logger.info("Application started successfully")
         yield
     except Exception as e:
