@@ -5,6 +5,7 @@ from routes.auth import login_router
 from routes.health import health_router
 from routes.verification import verification_router
 from routes.claims import claims_router
+from routes.getusers import getuser_router
 from loguru import logger
 from config.config import get_config
 from database.database import init_db, async_engine
@@ -49,3 +50,4 @@ app.include_router(login_router)
 app.include_router(health_router)
 app.include_router(verification_router)
 app.include_router(claims_router)
+app.include_router(getuser_router)

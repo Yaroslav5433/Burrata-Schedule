@@ -34,3 +34,8 @@ async def insert_claims_in_database(username, claims_sql_type, db: AsyncSession)
     await db.commit()
 
     return success_on_insert
+
+async def get_all_users(db: AsyncSession):
+    all_users = await db.execute(select(Users.username))
+
+    return all_users.scalars().all()
