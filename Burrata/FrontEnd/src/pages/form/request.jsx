@@ -67,7 +67,7 @@ function Request() {
         }}>
             <div className = "app">
             <Header />
-                <main>
+                <main className='requestContainer'>
                     <RequestContainer 
                     claimsPage={claimsPage}
                     verificationPage={verificationPage}

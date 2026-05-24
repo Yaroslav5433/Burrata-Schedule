@@ -1,0 +1,10 @@
+.table {
+    border: 3px solid var(--white-gray-color);
+    background-color: var(--light-gray-color);
+    font-size: 13px;
+}
+
+td:has(> select:first-child):hover {
+    background-color: var(--green-color);
+    transition-duration: var(--transition-duration);
+}

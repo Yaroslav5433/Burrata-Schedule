@@ -50,3 +50,14 @@ export async function ClaimingRequest(values, userName) {
 
   return res.json()
 }
+
+
+export async function get_all_users_request() {
+  const res = await fetch('http://localhost:8000/getusersanddates', {
+  method: "GET",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+})
+  return res.json()
+}

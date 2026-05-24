@@ -31,7 +31,7 @@ function Login() {
     }}>
         <div className = "app">
         <Header />
-            <main>
+            <main className='requestContainer'>
                 <RequestContainer 
                 loginPage={true}/>
             </main>

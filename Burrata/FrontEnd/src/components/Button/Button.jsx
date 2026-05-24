@@ -3,11 +3,13 @@ import { memo } from 'react'
 
 function Button(props) {
     const {
-        buttonText
+        buttonText,
+        buttonStyle,
+        isCurrent
     } = props
 
     return (
-        <button className={styles.button}>
+        <button className={`${styles.button} ${buttonStyle} ${isCurrent}`}>
             {buttonText}
         </button>
     )

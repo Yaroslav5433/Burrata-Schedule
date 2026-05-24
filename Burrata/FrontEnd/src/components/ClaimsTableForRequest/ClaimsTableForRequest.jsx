@@ -1,8 +1,8 @@
 import { Context } from '../Context.js';
-import styles from './claimsTable.module.css'
+import styles from './claimsTableForRequest.module.css'
 import { useContext, useState } from 'react';
 
-function ClaimsTable() {
+function ClaimsTableForRequest() {
 
     const {
       userHasClaims,
@@ -35,14 +35,14 @@ function ClaimsTable() {
 
     return (
       <table className={styles.table}>
-        <tbody className={styles.tableBody}>
-          <tr className={styles.dates}>
+        <tbody>
+          <tr>
             {claimDates.map((date, i) => (
               <td key={i}>{date}</td>
             ))}
           </tr>
   
-          <tr className={styles.claims}>
+          <tr>
             {claimDates.map((date, i) => (
               <td key={date}>
                 {!userHasClaims ? (
@@ -68,4 +68,4 @@ function ClaimsTable() {
       </table>
     );
   }
-export default ClaimsTable
+export default ClaimsTableForRequest

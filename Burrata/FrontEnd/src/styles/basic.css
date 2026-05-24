@@ -12,7 +12,7 @@ body {
     min-height: 100vh;
   }
 
-main {
+.requestContainer {
     flex: 1;
     display: flex;
     justify-content: center;
