@@ -6,13 +6,22 @@ import { useContext, useState } from 'react'
 function ScheduleTable() {
     const {
         allUsers,
-        thisWeekDates
+        thisWeekDates,
+        shiftValues,
+        setShiftValues
    } = useContext(Context)
 
-   const [totalFirst, setTotalFirst] = useState({})
-   const [totalSecond, setTotalSecond] = useState({})
-   const [totalLongTen, setTotalLongTen] = useState({})
-   const [totalLongTwelfe, setTotalLongTwelfe] = useState({})
+   const handleChange = (userIndex, dateIndex, value) => {
+    const copy = [...shiftValues];
+    copy[userIndex][dateIndex] = value;
+    setShiftValues(copy)
+    };
+
+    const countShift = (dateIndex, shiftType) => {
+        return shiftValues.filter(
+            user => user[dateIndex] === shiftType
+        ).length;
+    };
 
   return (
     <table className={styles.table}>
@@ -24,13 +33,15 @@ function ScheduleTable() {
             ))}
           </tr>
     
-          {allUsers.map((user, i) => (
-            <tr key={i}>
+          {allUsers.map((user, userIndex) => (
+            <tr key={userIndex}>
                 <td>{user}</td>
                 
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}>
-                    <select>
+                {thisWeekDates.map((date, dateIndex) => (
+                <td key={date}>
+                    <select 
+                    value={shiftValues[userIndex]?.[dateIndex]}
+                    onChange={(e) => handleChange(userIndex, dateIndex, e.target.value)}>
                     <option value={undefined}>{undefined}</option>
                     <option value="X">X</option>
                     <option value="1">1</option>
@@ -52,30 +63,39 @@ function ScheduleTable() {
 
             <tr>
                 <td>Total 1</td>
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
+                {thisWeekDates.map((_, i) => (
+                    <td key={i}>
+                        {countShift(i, "1")}
+                    </td>
                 ))}
             </tr>
 
             <tr>
                 <td>Total 2</td>
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
+                {thisWeekDates.map((_, i) => (
+                    <td key={i}>
+                        {countShift(i, "2")}
+                    </td>
                 ))}
             </tr>
 
             <tr>
                 <td>Total D10</td>
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
+                {thisWeekDates.map((_, i) => (
+                    <td key={i}>
+                        {countShift(i, "D10")}
+                    </td>
                 ))}
             </tr>
 
             <tr>
                 <td>Total D12</td>
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
+                {thisWeekDates.map((_, i) => (
+                    <td key={i}>
+                        {countShift(i, "D12")}
+                    </td>
                 ))}
+
             </tr>
         </tbody>
       </table>

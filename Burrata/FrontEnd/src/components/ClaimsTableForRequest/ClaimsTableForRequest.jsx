@@ -17,18 +17,11 @@ function ClaimsTableForRequest() {
 
     const handleChange = (index, value) => {
       const copy = [...claimValues];
-      copy[index] = value === "" ? undefined : value;
+      copy[index] = value;
       setClaimValues(copy);
-      if (["1", "2"].some(v => copy.includes(v))) {
-        setHasANumber(true)
-      } else {
-        setHasANumber(false)
-      }
-      if (copy.filter(v => v === "X").length > 1) {
-        setHasTwoX(true)
-      } else {
-        setHasTwoX(false)
-      }
+      
+      setHasANumber(["1", "2"].some(v => copy.includes(v)));
+      setHasTwoX(copy.filter(v => v === "X").length > 1);
       {console.log(copy)}
     };
 

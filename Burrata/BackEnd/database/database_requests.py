@@ -35,7 +35,14 @@ async def insert_claims_in_database(username, claims_sql_type, db: AsyncSession)
 
     return success_on_insert
 
+
 async def get_all_users(db: AsyncSession):
     all_users = await db.execute(select(Users.username))
 
     return all_users.scalars().all()
+
+
+async def get_all_users_claims(db: AsyncSession):
+    all_users_claims = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift))
+
+    return all_users_claims.all()

@@ -61,3 +61,13 @@ export async function get_all_users_request() {
 })
   return res.json()
 }
+
+export async function get_all_claims_request() {
+  const res = await fetch('http://localhost:8000/getallclaims', {
+  method: "GET",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+})
+  return res.json()
+}

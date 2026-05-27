@@ -72,3 +72,6 @@ def get_seconds_to_next_monday():
     seconds = int((target_date - now).total_seconds())
 
     return seconds
+
+def sql_datetime_to_str(sql_date):
+    return sql_date.strftime("%d.%m")
