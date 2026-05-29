@@ -4,15 +4,16 @@ from database.database import get_db
 from database import database_requests as db_req
 from utils.utils import transform_date_to_sql
 from redis_ import redis_requests as redis_req
+from schemas.schemas import One_user_claims
 from loguru import logger
 
 
 claims_router = APIRouter()
 
-@claims_router.post('/claims')
-async def claimshandler(data: dict, request: Request, db: AsyncSession = Depends(get_db)):
+@claims_router.post('/claims', status_code=status.HTTP_201_CREATED)
+async def claimshandler(user_claims_to_save: One_user_claims, request: Request, db: AsyncSession = Depends(get_db)):
 
-    claims, username = data["values"], data["username"]
+    claims, username = user_claims_to_save["values"], user_claims_to_save["username"]
     claims_sql_type = transform_date_to_sql(claims)
 
     if request.app.state.redis_is_connected:
@@ -34,4 +35,3 @@ async def claimshandler(data: dict, request: Request, db: AsyncSession = Depends
         )
     
     logger.info('CLAIMS HAS BEEN SAVED')
-    return status.HTTP_201_CREATED

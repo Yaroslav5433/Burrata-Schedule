@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from authx import AuthXConfig, AuthX
 from loguru import logger
-from schemas.schemas import LoginRequest
+from schemas.schemas import Login_data, Token
 from sqlalchemy.ext.asyncio import AsyncSession
 from config.config import get_config
 from database.database import get_db
@@ -17,8 +17,8 @@ jwt_config.JWT_TOKEN_LOCATION = global_config.JWT_TOKEN_LOCATION
 
 security = AuthX(config=jwt_config)
 
-@login_router.post("/login")
-async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
+@login_router.post("/login", response_model=Token)
+async def login(login_data: Login_data, db: AsyncSession = Depends(get_db)):
     verified_admin = await db_req.get_admin_for_login(login_data.login, db) 
 
     if not verified_admin or not verified_admin.verify_password(login_data.password):
@@ -29,4 +29,5 @@ async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
     
     token = security.create_access_token
     logger.info('TOKEN HAS BEEN CREATED')
+
     return {"access_token": token}
