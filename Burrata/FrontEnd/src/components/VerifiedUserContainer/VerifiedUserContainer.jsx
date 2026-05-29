@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import ClaimsTable from '../ClaimsTable/ClaimsTable'
+import ClaimsTableForRequest from '../ClaimsTableForRequest/ClaimsTableForRequest.jsx'
 import Button from '../Button/Button'
 import { Context } from '../Context.js'
 import Animation from '../Animation/Animation.jsx'
@@ -12,13 +12,13 @@ function VerifiedUserContainer() {
         setUserHasClaims,
         sendAClaim,
         claimValues,
-        claimDates
+        claimDates,
     } = useContext(Context)
 
     async function onSubmit(event) {
         event.preventDefault()
-            await sendAClaim(claimValues, claimDates)
-            setUserHasClaims(true)
+        await sendAClaim(claimValues, claimDates)
+        setUserHasClaims(true)
     }
 
     return (
@@ -28,7 +28,7 @@ function VerifiedUserContainer() {
                 {!userHasClaims && (
                     <p>Please, choose a claims:</p>
                 )}
-                <ClaimsTable/>
+                <ClaimsTableForRequest/>
                 {!userHasClaims && (
                     <Button
                     type='submit'

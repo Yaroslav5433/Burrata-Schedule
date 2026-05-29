@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 
-def transform_date_to_sql(values):
+def transform_date_to_sql(values: dict):
     current_year = datetime.now().year
 
     newValues = {}
@@ -18,43 +18,14 @@ def transform_date_to_sql(values):
     return newValues
 
 
-def transform_date_and_shift_from_sql_to_str(values):
-    result = {}
-    for d, enum_value in values.items():
-        if isinstance(d, date):
-            date_str = d.strftime("%d.%m")
-        else:
-            date_str = str(d)
-        if hasattr(enum_value, "value"):
-                enum_str = str(enum_value.value)
-        else:
-            enum_str = str(enum_value)
-
-        result[date_str] = enum_str
-
-    return result
-
-
-def get_current_week_days(nosql = False):
+def get_next_week_dates(nosql: bool = False, steps: int = 0):
     today = date.today()
-    start_of_week = today - timedelta(days=today.weekday())
-    this_week = [start_of_week + timedelta(days=i) for i in range(7)]
+    start_of_next_week = today - timedelta(days = today.weekday()) + timedelta(days = 7 + steps)
+    week = [start_of_next_week + timedelta(days = i) for i in range(7)]
     if nosql:
-        this_week = [
-        (start_of_week + timedelta(days=i)).strftime("%d.%m")
-        for i in range(7)
-        ]
+        week = [date_item.strftime("%d.%m") for date_item in week]
 
-    return this_week
-
-
-def transfrom_row_sql_to_dict(row_sql):
-    result = { 
-        row["date"]: row["shift"]
-        for row in row_sql.mappings() 
-    }
-
-    return result
+    return week
 
 
 def get_seconds_to_next_monday():
@@ -72,3 +43,7 @@ def get_seconds_to_next_monday():
     seconds = int((target_date - now).total_seconds())
 
     return seconds
+
+
+def transform_datetime_item_to_str(datetime_item):
+    return datetime_item.strftime("%d.%m")

@@ -1,7 +1,7 @@
-import enum
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func, Enum
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from database.database import Base
 import bcrypt
+
 
 class Admin(Base):
     __tablename__ = 'admin'
@@ -14,6 +14,7 @@ class Admin(Base):
         return bcrypt.checkpw(
             password.encode("utf-8"),
             self.hashed_password.encode("utf-8"))
+    
 
 class Users(Base):
     __tablename__ = 'users'
@@ -22,13 +23,6 @@ class Users(Base):
     unique_id_number = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
 
-class Shifts(enum.Enum):
-    FIRST = "1"
-    SECOND = "2"
-    X = "X"
-    LONG_TWELFE = "D12"
-    LONG_TEN = "D10"
-
 
 class ClaimsSchedule(Base):
     __tablename__ = 'claimsschedule'
@@ -36,5 +30,5 @@ class ClaimsSchedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, ForeignKey("users.username"), nullable=False)
     date = Column(DateTime, nullable=False)
-    shift = Column(Enum(Shifts, name="choice"), nullable=False)
+    shift = Column(String, nullable=False)
     

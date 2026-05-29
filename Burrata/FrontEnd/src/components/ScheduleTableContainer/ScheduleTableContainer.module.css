@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 70%;
+}
+
+.top_button_line {
+    display: flex;
+}
+
+.bottom_button_line {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.table_button.table_button {
+    border-radius: 7px 7px 0 0;
+    background-color: var(--light-gray-color);
+}
+
+.table_button_is_current.table_button_is_current {
+    background-color: var(--white-gray-color);
+}

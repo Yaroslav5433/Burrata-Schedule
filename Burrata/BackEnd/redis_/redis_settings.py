@@ -1,12 +1,11 @@
 import redis.asyncio as redis
 from fastapi import Request
 
-redis_client = None
-
 def create_redis(url: str):
     return redis.from_url(
         url,
-        decode_responses=True
+        decode_responses=True,
+        socket_connect_timeout=1
     )
 
 def get_redis(request: Request):
