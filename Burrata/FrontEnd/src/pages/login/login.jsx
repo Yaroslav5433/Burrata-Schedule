@@ -1,7 +1,7 @@
 import Header from '../../components/Header/Header.jsx'
 import Footer from '../../components/Footer/Footer.jsx'
 import RequestContainer from '../../components/RequestContainer/RequestContainer.jsx';
-import auth from '../../utils/auth.js';
+import { login_admin_request_handler } from '../../utils/login_admin_handler.js';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Context } from '../../components/Context.js';
@@ -13,13 +13,13 @@ function Login() {
 
     const [errorOnAuth, setErrorOnAuth] = useState(false);
 
-    async function handleLogin(form) {
-        const token = await auth.logIn(form)
+    async function login_admin(form) {
+        const token = await login_admin_request_handler(form)
         if (token) {
             navigate("/", {replace: true}) 
             return
         }
-        setErrorOnAuth(!token)
+        setErrorOnAuth(true)
         console.log("Login Error setted")
     }
 
@@ -27,7 +27,7 @@ function Login() {
     <Context.Provider
     value={{
         errorOnAuth,
-        handleLogin
+        login_admin
     }}>
         <div className = "app">
         <Header />

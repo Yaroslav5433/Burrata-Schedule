@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Login_data(BaseModel):
     login: str
@@ -9,14 +9,13 @@ class Verification_data(BaseModel):
 
 class One_user_claims(BaseModel):
     username: str
-    claims: dict
+    claims: list[str]
 
 class Many_users_claims(BaseModel):
-    username: str
-    claims: list[dict]
+    root: dict[str, list[str]]
 
 class All_users(BaseModel):
-    users: list[str]
+    users: dict[str, list[str]]
 
 class Dates(BaseModel):
     dates: list[str]

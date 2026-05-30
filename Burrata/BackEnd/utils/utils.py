@@ -1,21 +1,23 @@
 from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 
-def transform_date_to_sql(values: dict):
-    current_year = datetime.now().year
 
-    newValues = {}
+def prepare_claims_for_sql_insert(claims: list[str], next_week_dates: list[str]):
+    result = {}
+    year = datetime.now().year
 
-    for key, value in values.items():
-        day_str, month_str = key.split(".")
-        day = int(day_str)
-        month = int(month_str)
+    for claim, date_str in zip(claims, next_week_dates):
+        if not claim:
+            continue
 
-        date_obj = datetime(current_year, month, day).date()
+        date_obj = datetime.strptime(
+            f"{date_str}.{year}",
+            "%d.%m.%Y"
+        )
 
-        newValues[date_obj] = value
+        result[date_obj] = claim
 
-    return newValues
+    return result
 
 
 def get_next_week_dates(nosql: bool = False, steps: int = 0):
@@ -47,3 +49,19 @@ def get_seconds_to_next_monday():
 
 def transform_datetime_item_to_str(datetime_item):
     return datetime_item.strftime("%d.%m")
+
+
+def interpret_claims_as_list(user_saved_claims: dict, next_week_dates: list[str]):
+    return [user_saved_claims.get(date, "") for date in next_week_dates]
+
+
+def interpret_claims_as_dict(user_saved_claims: list[dict], week_dates: list[str]):
+    users_saved_claims = {}
+
+    for user_dict in user_saved_claims:
+        for username, claims in user_dict.items():
+            users_saved_claims[username] = [
+                claims.get(date, "") for date in week_dates
+            ]
+
+    return users_saved_claims

@@ -7,14 +7,14 @@ function UserVerificationContainer() {
 
     const {
         errorOnReq,
-        handleRequest
+        verify_user
     } = useContext(Context)
     
     const [id, setId] = useState('')
 
     async function onSubmit(event) {
         event.preventDefault()
-        await handleRequest(id)
+        await verify_user(id)
     }
 
     return (

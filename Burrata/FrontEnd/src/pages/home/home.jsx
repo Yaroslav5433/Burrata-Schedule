@@ -3,8 +3,8 @@ import Footer from "../../components/Footer/Footer";
 import HomePageContainer from "../../components/HomePageContainer/HomePageContainer";
 import { useEffect, useState } from "react";
 import { Context } from "../../components/Context";
-import { get_all_users } from "../../utils/get_all_users";
-import { get_all_claims } from "../../utils/get_all_claims";
+import { get_all_users_request_handler } from "../../utils/get_all_users_handler";
+import { get_all_claims_request_handler } from "../../utils/get_all_claims_hander";
 
 function Home() {
 
@@ -21,7 +21,7 @@ function Home() {
                     Array(thisWeekDates.length).fill(undefined)
             )
 
-            const all_claims_response = await get_all_claims()
+            const all_claims_response = await get_all_claims_request_handler()
 
             all_claims_response.forEach(claim => {
                 const userIndex = allUsers.findIndex(u => u === claim.username);
@@ -42,7 +42,7 @@ function Home() {
 
     useEffect(() => {
         const get_users = async () => {
-            const users_and_dates = await get_all_users()
+            const users_and_dates = await get_all_users_request_handler()
             setAllUsers(users_and_dates.all_users)
             setthisWeekDates(users_and_dates.this_week_dates)
         }  

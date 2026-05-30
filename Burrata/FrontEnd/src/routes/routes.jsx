@@ -1,8 +1,8 @@
-import auth from '../utils/auth.js'
+import { is_admin_auth } from '../utils/login_admin_handler.js'
 import { Navigate } from 'react-router-dom'
 
 export function ProtectedRoute({ children }) {
-    if (!auth.isAuth()) {
+    if (!is_admin_auth()) {
       return <Navigate to="/login" replace />
     }
   
@@ -10,7 +10,7 @@ export function ProtectedRoute({ children }) {
   }
 
 export function AuthorizedRoute({ children }) {
-  if (auth.isAuth()) {
+  if (is_admin_auth()) {
     return <Navigate to="/" replace />
   }
 

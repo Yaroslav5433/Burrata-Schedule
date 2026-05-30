@@ -17,15 +17,15 @@ async def get_user_by_id(unique_id_number: str, db: AsyncSession):
     return verified_user.scalar_one_or_none()
 
 
-async def get_user_saved_claims(verified_user: str, this_week_days, db: AsyncSession):
-    user_saved_claims_rows = await db.execute(select(ClaimsSchedule.date, ClaimsSchedule.shift).where(
+async def get_user_saved_claims(verified_user: str, next_week_dates, db: AsyncSession):
+    user_saved_claims = await db.execute(select(ClaimsSchedule.date, ClaimsSchedule.shift).where(
             ClaimsSchedule.username == verified_user.username,
-            ClaimsSchedule.date.in_(this_week_days)
+            ClaimsSchedule.date.in_(next_week_dates)
         ))
     
     return {
     transform_datetime_item_to_str(date): shift
-    for date, shift in user_saved_claims_rows
+    for date, shift in user_saved_claims
     }
 
 
@@ -45,11 +45,16 @@ async def insert_claims_in_database(username: str, claims_sql_type, db: AsyncSes
 async def get_all_users(db: AsyncSession):
     all_users = await db.execute(select(Users.username))
 
-    return all_users.scalars().all()
+    return {
+        username: [""] * 7
+        for username in all_users.scalars()
+    }
 
 
-async def get_all_users_saved_claims(db: AsyncSession):
-    all_users_claims = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift))
+async def get_all_users_saved_claims(db: AsyncSession, week_dates):
+    all_users_claims = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift).where(
+        ClaimsSchedule.date.in_(week_dates)
+    ))
 
     return [
         {
