@@ -1,24 +1,26 @@
 import React from 'react'
 import styles from './ScheduleTable.module.css'
 import { Context } from '../Context.js'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 function ScheduleTable() {
     const {
-        allUsers,
-        thisWeekDates,
-        shiftValues,
-        setShiftValues
+        all_users_with_claims,
+        weekDates,
+        setAllUsers
    } = useContext(Context)
 
-   const handleChange = (userIndex, dateIndex, value) => {
-    const copy = [...shiftValues];
-    copy[userIndex][dateIndex] = value;
-    setShiftValues(copy)
+    const handleChange = (userIndex, dateIndex, value) => {
+        const copy = structuredClone(all_users_with_claims);
+        const userKey = Object.keys(copy)[userIndex]
+
+        copy[userKey][dateIndex] = value
+    
+        setAllUsers(copy)
     };
 
     const countShift = (dateIndex, shiftType) => {
-        return shiftValues.filter(
+        return Object.values(all_users_with_claims).filter(
             user => user[dateIndex] === shiftType
         ).length;
     };
@@ -28,19 +30,19 @@ function ScheduleTable() {
         <tbody>
           <tr>
             <td></td>
-            {thisWeekDates.map((date, i) => (
+            {weekDates.map((date, i) => (
                 <td key={i}>{date}</td>
             ))}
           </tr>
     
-          {allUsers.map((user, userIndex) => (
+          {Object.keys(all_users_with_claims).map((user, userIndex) => (
             <tr key={userIndex}>
                 <td>{user}</td>
                 
-                {thisWeekDates.map((date, dateIndex) => (
+                {weekDates.map((date, dateIndex) => (
                 <td key={date}>
                     <select 
-                    value={shiftValues[userIndex]?.[dateIndex]}
+                    value={Object.values(all_users_with_claims)[userIndex]?.[dateIndex]}
                     onChange={(e) => handleChange(userIndex, dateIndex, e.target.value)}>
                     <option value={undefined}>{undefined}</option>
                     <option value="X">X</option>
@@ -63,7 +65,7 @@ function ScheduleTable() {
 
             <tr>
                 <td>Total 1</td>
-                {thisWeekDates.map((_, i) => (
+                {weekDates.map((_, i) => (
                     <td key={i}>
                         {countShift(i, "1")}
                     </td>
@@ -72,7 +74,7 @@ function ScheduleTable() {
 
             <tr>
                 <td>Total 2</td>
-                {thisWeekDates.map((_, i) => (
+                {weekDates.map((_, i) => (
                     <td key={i}>
                         {countShift(i, "2")}
                     </td>
@@ -81,7 +83,7 @@ function ScheduleTable() {
 
             <tr>
                 <td>Total D10</td>
-                {thisWeekDates.map((_, i) => (
+                {weekDates.map((_, i) => (
                     <td key={i}>
                         {countShift(i, "D10")}
                     </td>
@@ -90,7 +92,7 @@ function ScheduleTable() {
 
             <tr>
                 <td>Total D12</td>
-                {thisWeekDates.map((_, i) => (
+                {weekDates.map((_, i) => (
                     <td key={i}>
                         {countShift(i, "D12")}
                     </td>

@@ -5,6 +5,7 @@ export async function verify_user_request_handler(unique_id_number) {
         const userData = await verify_user_request(unique_id_number)
 
         console.log('Verifying...')
+
         return userData
 
     } catch(error) {

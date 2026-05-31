@@ -1,6 +1,7 @@
 import { Context } from '../Context.js';
 import styles from './claimsTableForRequest.module.css'
 import { useContext, useState } from 'react';
+import isEqual from "lodash/isEqual"
 
 function ClaimsTableForRequest() {
 
@@ -37,7 +38,7 @@ function ClaimsTableForRequest() {
           <tr>
             {claimDates.map((date, i) => (
               <td key={date}>
-                {((userSavedClaims?.length ?? 0) === 0) ? (
+                {!(userSavedClaims.some(Boolean)) ? (
                   <select
                     value={claimValues[i]}
                     onChange={(e) => handleChange(i, e.target.value)}

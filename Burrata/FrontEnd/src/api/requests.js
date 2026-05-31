@@ -7,6 +7,10 @@ export async function login_admin_request(data) {
       body: JSON.stringify(data)
     })
 
+    if (!res.ok) {
+      throw new Error('Login failed')
+    }
+
     return await res.json()
   } 
 
@@ -20,21 +24,28 @@ export async function verify_user_request(unique_id_number) {
       'unique_id_number': unique_id_number
     })
   })
+
+  if (!res.ok) {
+    throw new Error('Veirfication failed')
+  }
   
     return res.json()
 }
 
-export async function save_user_claims_request(values, userName) {
+export async function save_user_claims_request(claims, userName) {
   const res = await fetch('http://localhost:8000/saveuserclaims', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    claims: claims,
-    username: userName
+    [userName]: claims
   }) 
 })
+
+  if (!res.ok) {
+    throw new Error('Saving a claims failed')
+  }
 
   return res.json()
 }
