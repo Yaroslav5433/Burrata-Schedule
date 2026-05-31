@@ -56,9 +56,14 @@ async def get_all_users_saved_claims(db: AsyncSession, week_dates):
         ClaimsSchedule.date.in_(week_dates)
     ))
 
-    return [
-        {
-            "username": username,
-            transform_datetime_item_to_str(date): shift
-        }
-        for username, date, shift in all_users_claims]
+    new_dict = {}
+
+    for username, date, shift in all_users_claims:
+        if username not in new_dict:
+            new_dict[username] = {}
+
+        new_dict[username][transform_datetime_item_to_str(date)] = shift
+
+    return new_dict
+
+

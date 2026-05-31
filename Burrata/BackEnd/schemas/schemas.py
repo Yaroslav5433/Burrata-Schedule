@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, RootModel
 
 class Login_data(BaseModel):
     login: str
@@ -7,15 +7,8 @@ class Login_data(BaseModel):
 class Verification_data(BaseModel):
     unique_id_number: str
 
-class One_user_claims(BaseModel):
-    username: str
-    claims: list[str]
-
-class Many_users_claims(BaseModel):
-    root: dict[str, list[str]]
-
-class All_users(BaseModel):
-    users: dict[str, list[str]]
+class Users(RootModel[dict[str, list[str]]]):
+    pass
 
 class Dates(BaseModel):
     dates: list[str]

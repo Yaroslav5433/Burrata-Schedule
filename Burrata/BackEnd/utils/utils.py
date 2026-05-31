@@ -2,7 +2,7 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 
 
-def prepare_claims_for_sql_insert(claims: list[str], next_week_dates: list[str]):
+def prepare_claims_for_sql_insert(claims: list[str], next_week_dates: list[datetime]):
     result = {}
     year = datetime.now().year
 
@@ -10,12 +10,7 @@ def prepare_claims_for_sql_insert(claims: list[str], next_week_dates: list[str])
         if not claim:
             continue
 
-        date_obj = datetime.strptime(
-            f"{date_str}.{year}",
-            "%d.%m.%Y"
-        )
-
-        result[date_obj] = claim
+        result[date_str] = claim
 
     return result
 

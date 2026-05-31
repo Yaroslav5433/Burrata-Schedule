@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
-from schemas.schemas import Verification_data, One_user_claims
+from schemas.schemas import Verification_data, Users
 from utils.utils import get_next_week_dates, interpret_claims_as_list
 from loguru import logger
 from redis_ import redis_requests as redis_req
@@ -12,7 +12,7 @@ t0 = time.time()
 
 verification_router = APIRouter()
 
-@verification_router.post('/verifyuser', response_model = One_user_claims)
+@verification_router.post('/verifyuser', response_model = Users)
 async def verification(verification_data: Verification_data, request: Request, db: AsyncSession = Depends(get_db)):
     verified_user = await db_req.get_user_by_id(verification_data.unique_id_number, db)
 
@@ -39,5 +39,4 @@ async def verification(verification_data: Verification_data, request: Request, d
     
     logger.info('USER HAS BEEN VERIFIED')
 
-    return {'username': verified_user.username, 
-            'user_saved_claims': claims_as_list}
+    return { verified_user.username: claims_as_list }
