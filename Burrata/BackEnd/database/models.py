@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from database.database import Base
 import bcrypt
 
@@ -31,4 +31,17 @@ class ClaimsSchedule(Base):
     username = Column(String, ForeignKey("users.username"), nullable=False)
     date = Column(DateTime, nullable=False)
     shift = Column(String, nullable=False)
+    
+    __table_args__ = (UniqueConstraint("date", "username", name="uq_date_username"),)
+    
+
+class Schedule(Base):
+    __tablename__ = 'schedule'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username"), nullable=False)
+    date = Column(DateTime, nullable=False)
+    shift = Column(String, nullable=False)
+
+    __table_args__ = (UniqueConstraint("date", "username", name="uq_date_username"),)
     
