@@ -39,7 +39,7 @@ function Home() {
             ...allUsers,
             ...usersWithClaims
         }
-    }, [allUsers, usersWithClaims])
+    }, [usersWithClaims])
     
 
     return (
@@ -49,7 +49,8 @@ function Home() {
             setAllUsers,
             all_users_with_claims,
             showClaims,
-            setShowClaims
+            setShowClaims,
+            allUsers
         }}>
             <div className = "app">
             <Header/>
