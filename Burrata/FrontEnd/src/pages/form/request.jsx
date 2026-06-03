@@ -1,68 +1,74 @@
 import Header from '../../components/Header/Header.jsx'
 import Footer from '../../components/Footer/Footer.jsx'
 import RequestContainer from '../../components/RequestContainer/RequestContainer.jsx';
-import { verification } from '../../utils/verification.js';
-import { claiming } from '../../utils/claiming.js';
+import { verify_user_request_handler } from '../../utils/verify_user_handler.js';
+import { save_user_claims_request_handler } from '../../utils/save_user_claims_handler.js'
+import { get_dates_request_handler } from '../../utils/get_dates_handler.js';
 import { useState } from 'react';
 import { Context } from '../../components/Context.js';
+
 
 function Request() {
 
     const [errorOnReq, setErrorOnReq] = useState(false);
+    const [errorOnClaimsSaving, setErrorOnClaimsSaving] = useState(false);
     const [claimsPage, setclaimsPage] = useState(false);
     const [verificationPage, setVerificationPage] = useState(true);
     const [userName, setUserName] = useState('');
-    const [claimDates, setClaimDates] = useState(Array(7).fill(undefined));
-    const [userHasClaims, setUserHasClaims] = useState(false);
+    const [claimDates, setClaimDates] = useState([]);
     const [userSavedClaims, setUserSavedClaims] = useState([]);
-    const [claimValues, setClaimValues] = useState(Array(7).fill(undefined));
+    const [claimValues, setClaimValues] = useState(Array(7).fill(""));
 
-    async function handleRequest(unique_user_id) {
-        const userAndClaimsInfo = await verification(unique_user_id)
+
+    async function verify_user(unique_user_id) {
+        const userAndClaimsInfo = await verify_user_request_handler(unique_user_id)
+        const nextWeekDates = await get_dates_request_handler()
+
         if (!userAndClaimsInfo) {
             setErrorOnReq(true)
-            setclaimsPage(false)
             return
         }
-        setVerificationPage(!userAndClaimsInfo)
-        const { user, user_saved_claims, dates } = userAndClaimsInfo
+
+        setVerificationPage(false)
+        setclaimsPage(true)
+        setErrorOnReq(false)
         
-        if (Object.keys(user_saved_claims).length > 0) {
-            setUserHasClaims(true)
+        const [ username , user_saved_claims ] = Object.entries(userAndClaimsInfo)[0];
+        
+        if ((userSavedClaims.length) === 0) {
             setUserSavedClaims(user_saved_claims)
         }
-        setErrorOnReq(false)    
-        setclaimsPage(true)
-        setUserName(user)
-        setClaimDates(dates);
+
+        setUserName(username)
+        setClaimDates(nextWeekDates["dates"]);
+
     }
 
-    async function sendAClaim(values, dates) {
-        const claimValuesAsObject = Object.fromEntries(
-            [...dates].map((char, i) => [char, values[i]])
-        );
-        setUserSavedClaims(claimValuesAsObject)
-        let res = await claiming(claimValuesAsObject, userName)
+
+    async function send_a_claim(values) {
+        const res = await save_user_claims_request_handler(values, userName)
+        console.log(res)
         if (!res) {
-            console.log("Error", error)
+            setErrorOnClaimsSaving(true)
             return
         }
+        setUserSavedClaims(claimValues)
+        setErrorOnClaimsSaving(false)
     }
 
 
     return (
         <Context.Provider
         value={{
+            errorOnClaimsSaving,
             claimDates,
-            userHasClaims,
             userSavedClaims,
             errorOnReq,
             claimValues,
             setClaimValues,
             userName,
-            setUserHasClaims,
-            handleRequest,
-            sendAClaim,
+            verify_user,
+            send_a_claim,
             setUserSavedClaims
         }}>
             <div className = "app">
@@ -77,6 +83,6 @@ function Request() {
         </div>
         </Context.Provider>
     );
- }
+}
  
 export default Request;

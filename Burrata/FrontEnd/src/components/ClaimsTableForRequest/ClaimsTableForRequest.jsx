@@ -1,11 +1,11 @@
 import { Context } from '../Context.js';
 import styles from './claimsTableForRequest.module.css'
 import { useContext, useState } from 'react';
+import isEqual from "lodash/isEqual"
 
 function ClaimsTableForRequest() {
 
     const {
-      userHasClaims,
       claimDates,
       userSavedClaims,
       claimValues,
@@ -17,7 +17,7 @@ function ClaimsTableForRequest() {
 
     const handleChange = (index, value) => {
       const copy = [...claimValues];
-      copy[index] = value;
+      copy[index] = value
       setClaimValues(copy);
       
       setHasANumber(["1", "2"].some(v => copy.includes(v)));
@@ -38,12 +38,12 @@ function ClaimsTableForRequest() {
           <tr>
             {claimDates.map((date, i) => (
               <td key={date}>
-                {!userHasClaims ? (
+                {!(userSavedClaims.some(Boolean)) ? (
                   <select
                     value={claimValues[i]}
                     onChange={(e) => handleChange(i, e.target.value)}
                   >
-                    <option value={undefined}>{undefined}</option>
+                    <option value=""></option>
                     <option value="X"
                     disabled={hasTwoX}>X</option>
                     <option value="1"
@@ -53,7 +53,7 @@ function ClaimsTableForRequest() {
                     disabled={hasANumber}
                     >2</option>
                   </select>
-                ) : (userSavedClaims?.[date] ?? '')}
+                ) : (userSavedClaims?.[i] ?? '')}
               </td>
             ))}
           </tr>

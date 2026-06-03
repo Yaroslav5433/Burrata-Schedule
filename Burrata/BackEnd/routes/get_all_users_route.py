@@ -3,11 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
 from loguru import logger
-from schemas.schemas import All_users
+from schemas.schemas import Users
 
 getuser_router = APIRouter()
 
-@getuser_router.get('/getusersanddates', response_model = All_users)
+@getuser_router.get('/getallusers', response_model = Users)
 async def get_users(db: AsyncSession = Depends(get_db)):
     all_users = await db_req.get_all_users(db)
 
@@ -19,4 +19,4 @@ async def get_users(db: AsyncSession = Depends(get_db)):
     
     logger.info('Users have been found')
     
-    return {'all_users': all_users}
+    return all_users

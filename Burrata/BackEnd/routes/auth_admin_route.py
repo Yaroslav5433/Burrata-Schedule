@@ -27,7 +27,7 @@ async def login(login_data: Login_data, db: AsyncSession = Depends(get_db)):
             detail="Incorrect email or password",
         )
     
-    token = security.create_access_token
+    token = security.create_access_token(uid = login_data.login)
     logger.info('TOKEN HAS BEEN CREATED')
 
     return {"access_token": token}

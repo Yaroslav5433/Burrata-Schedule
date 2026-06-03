@@ -1,21 +1,17 @@
 from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 
-def transform_date_to_sql(values: dict):
-    current_year = datetime.now().year
 
-    newValues = {}
+def prepare_shifts_for_sql_insert(shifts: list[str], next_week_dates: list[datetime]):
+    result = {}
 
-    for key, value in values.items():
-        day_str, month_str = key.split(".")
-        day = int(day_str)
-        month = int(month_str)
+    for shift, date_str in zip(shifts, next_week_dates):
+        if not shift:
+            continue
 
-        date_obj = datetime(current_year, month, day).date()
+        result[date_str] = shift
 
-        newValues[date_obj] = value
-
-    return newValues
+    return result
 
 
 def get_next_week_dates(nosql: bool = False, steps: int = 0):
@@ -47,3 +43,8 @@ def get_seconds_to_next_monday():
 
 def transform_datetime_item_to_str(datetime_item):
     return datetime_item.strftime("%d.%m")
+
+
+def interpret_claims_as_list(user_saved_claims: dict, next_week_dates: list[str]):
+    return [user_saved_claims.get(date, "") for date in next_week_dates]
+
