@@ -2,15 +2,14 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 
 
-def prepare_claims_for_sql_insert(claims: list[str], next_week_dates: list[datetime]):
+def prepare_shifts_for_sql_insert(shifts: list[str], next_week_dates: list[datetime]):
     result = {}
-    year = datetime.now().year
 
-    for claim, date_str in zip(claims, next_week_dates):
-        if not claim:
+    for shift, date_str in zip(shifts, next_week_dates):
+        if not shift:
             continue
 
-        result[date_str] = claim
+        result[date_str] = shift
 
     return result
 
@@ -49,14 +48,3 @@ def transform_datetime_item_to_str(datetime_item):
 def interpret_claims_as_list(user_saved_claims: dict, next_week_dates: list[str]):
     return [user_saved_claims.get(date, "") for date in next_week_dates]
 
-
-def interpret_claims_as_dict(user_saved_claims: list[dict], week_dates: list[str]):
-    users_saved_claims = {}
-
-    for user_dict in user_saved_claims:
-        for username, claims in user_dict.items():
-            users_saved_claims[username] = [
-                claims.get(date, "") for date in week_dates
-            ]
-
-    return users_saved_claims

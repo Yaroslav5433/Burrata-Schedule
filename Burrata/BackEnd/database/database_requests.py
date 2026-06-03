@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
-from database.models import Admin, Users, ClaimsSchedule
+from sqlalchemy.dialects.postgresql import insert as pginsert
+from database.models import Admin, Users, ClaimsSchedule, Schedule
 from utils.utils import transform_datetime_item_to_str
 
 
@@ -29,13 +30,20 @@ async def get_user_saved_claims(verified_user: str, next_week_dates, db: AsyncSe
     }
 
 
-async def insert_claims_in_database(username: str, claims_sql_type, db: AsyncSession):
-    success_on_insert = await db.execute(insert(ClaimsSchedule).values([
+async def insert_shifts_in_database(username: str, claims_sql_type, db: AsyncSession, claims: bool = False):
+    success_on_insert = pginsert(ClaimsSchedule if claims else Schedule).values([
         {"date": date,
          "shift": shift,
          "username": username}
         for date, shift in claims_sql_type.items()
-    ]))
+    ])
+
+    success_on_insert = success_on_insert.on_conflict_do_update(
+        constraint="uq_date_username",
+        set_={"shift": success_on_insert.excluded.shift}
+    )
+
+    await db.execute(success_on_insert)
 
     await db.commit()
 
@@ -51,14 +59,18 @@ async def get_all_users(db: AsyncSession):
     }
 
 
-async def get_all_users_saved_claims(db: AsyncSession, week_dates):
-    all_users_claims = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift).where(
-        ClaimsSchedule.date.in_(week_dates)
-    ))
+async def get_all_users_saved_shifts(db: AsyncSession, week_dates, claims: bool = False):
+    if claims:
+        res = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift).where(
+            ClaimsSchedule.date.in_(week_dates)
+        ))
+    else: res = await db.execute(select(Schedule.username, Schedule.date, Schedule.shift).where(
+            Schedule.date.in_(week_dates)
+        ))
 
     new_dict = {}
 
-    for username, date, shift in all_users_claims:
+    for username, date, shift in res:
         if username not in new_dict:
             new_dict[username] = {}
 
