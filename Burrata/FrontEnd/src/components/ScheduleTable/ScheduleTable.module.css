@@ -2,9 +2,21 @@
     border: 3px solid var(--white-gray-color);
     background-color: var(--light-gray-color);
     font-size: 13px;
+    width: 100%;
+    table-layout: fixed
 }
 
-td:has(> select:first-child):hover {
+.table td:first-child {
+    width: 25%;
+  }
+
+.table td:has(> select:first-child):hover {
     background-color: var(--green-color);
     transition-duration: var(--transition-duration);
 }
+
+.table select {
+    text-align: center;
+    text-align-last: center;
+  }
+
