@@ -10,7 +10,7 @@ getclaims_router = APIRouter()
 
 @getclaims_router.get('/getallclaims', response_model = Users)
 async def get_claims(db: AsyncSession = Depends(get_db)):
-    all_claims = await db_req.get_all_users_saved_claims(db, week_dates = get_next_week_dates())
+    all_claims = await db_req.get_all_users_saved_shifts(db, week_dates = get_next_week_dates(), claims = True)
 
     for username, user_saved_claims in all_claims.items():
         all_claims[username] = interpret_claims_as_list(user_saved_claims = user_saved_claims, next_week_dates = get_next_week_dates(nosql = True))
