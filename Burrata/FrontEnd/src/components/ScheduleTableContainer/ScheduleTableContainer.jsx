@@ -12,8 +12,23 @@ function ScheduleTableContainer() {
       setShowClaims
   } = useContext(Context)
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    const action = e.nativeEvent.submitter.value;
+  
+    if (action === "save table") {
+      console.log("Saving table...");
+    }
+
+    if (action === "save claims") {
+      console.log("Saving claims...");
+    }
+    
+  };
+
   return (
-    <form className={styles.container}>
+    <form className={styles.container} onSubmit={handleSubmit}>
         <div className={styles.top_button_line}>
             <span 
             className={styles.tablename_span}>
@@ -28,10 +43,22 @@ function ScheduleTableContainer() {
         <div className={styles.bottom_button_line}>
             <Button
             buttonStyle = {styles.bottom_button}
-            buttonText = 'Auto Fill Up'/>
+            buttonText = 'Auto Fill Up'
+            type='submit'
+            name='action'
+            value='fill up'/>
             <Button
             buttonStyle = {styles.bottom_button}
-            buttonText = 'Save Table'/>
+            buttonText = 'Save Table'
+            type='submit'
+            name='action'
+            value='save table'/>
+            <Button
+            buttonStyle = {styles.bottom_button}
+            buttonText = 'Save all claims'
+            type='submit'
+            name='action'
+            value='save claims'/>
         </div>
 
     </form>
