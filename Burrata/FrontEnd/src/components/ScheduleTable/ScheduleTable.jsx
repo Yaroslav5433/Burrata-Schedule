@@ -7,11 +7,15 @@ function ScheduleTable() {
     const {
         all_users_with_claims,
         weekDates,
-        setAllUsers
+        setAllUsers,
+        allUsers,
+        showClaims
    } = useContext(Context)
 
+   const all_users_to_show = showClaims ? all_users_with_claims : allUsers
+
     const handleChange = (userIndex, dateIndex, value) => {
-        const copy = structuredClone(all_users_with_claims);
+        const copy = structuredClone(all_users_to_show);
         const userKey = Object.keys(copy)[userIndex]
 
         copy[userKey][dateIndex] = value
@@ -20,10 +24,14 @@ function ScheduleTable() {
     };
 
     const countShift = (dateIndex, shiftType) => {
-        return Object.values(all_users_with_claims).filter(
+        return Object.values(all_users_to_show).filter(
             user => user[dateIndex] === shiftType
         ).length;
     };
+
+    console.log('claims users', all_users_to_show)
+    console.log('just users', allUsers)
+    console.log('users to show', all_users_to_show  )
 
   return (
     <table className={styles.table}>
@@ -35,14 +43,17 @@ function ScheduleTable() {
             ))}
           </tr>
     
-          {Object.keys(all_users_with_claims).map((user, userIndex) => (
+          {Object.keys(all_users_to_show).map((user, userIndex) => (
             <tr key={userIndex}>
-                <td>{user}</td>
+                <td className={styles.worker}>{user}</td>
                 
                 {weekDates.map((date, dateIndex) => (
-                <td key={date}>
+                <td key={date}
+                >
+                    { showClaims ? 
+                    <p> { Object.values(all_users_to_show)[userIndex]?.[dateIndex] } </p> : 
                     <select 
-                    value={Object.values(all_users_with_claims)[userIndex]?.[dateIndex]}
+                    value={Object.values(all_users_to_show)[userIndex]?.[dateIndex]}
                     onChange={(e) => handleChange(userIndex, dateIndex, e.target.value)}>
                     <option value={undefined}>{undefined}</option>
                     <option value="X">X</option>
@@ -50,7 +61,7 @@ function ScheduleTable() {
                     <option value="2">2</option>
                     <option value="D12">D12</option>
                     <option value="D10">D10</option>
-                  </select>
+                  </select>}
                 </td>
                 ))}
             </tr>
