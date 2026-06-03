@@ -11,7 +11,7 @@ export async function login_admin_request(data) {
       throw new Error('Login failed')
     }
 
-    return await res.json()
+    return res.json()
   } 
 
 export async function verify_user_request(unique_id_number) {
@@ -51,6 +51,23 @@ export async function save_user_claims_request(claims, userName) {
 }
 
 
+export async function save_users_claims_request(claims, userName) {
+  const res = await fetch('http://localhost:8000/saveallusersclaims', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(all_claims) 
+})
+
+  if (!res.ok) {
+    throw new Error('Saving all claims into schedule failed')
+  }
+
+  return res.json()
+}
+
+
 export async function get_all_users_request() {
   const res = await fetch('http://localhost:8000/getallusers', {
   method: "GET",
@@ -65,6 +82,18 @@ export async function get_all_users_request() {
 
 export async function get_all_claims_request() {
   const res = await fetch('http://localhost:8000/getallclaims', {
+  method: "GET",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+})
+
+  return res.json()
+}
+
+
+export async function get_schedule_request() {
+  const res = await fetch('http://localhost:8000/getschedule', {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
