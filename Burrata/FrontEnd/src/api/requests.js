@@ -51,7 +51,7 @@ export async function save_user_claims_request(claims, userName) {
 }
 
 
-export async function save_users_claims_request(claims, userName) {
+export async function save_users_claims_request(all_claims) {
   const res = await fetch('http://localhost:8000/saveallusersclaims', {
   method: 'POST',
   headers: {
@@ -112,6 +112,27 @@ export async function get_dates_request(steps) {
   },
   body: JSON.stringify(steps)
   })
+
+  if (!res.ok) {
+    throw new Error('Getting dates failed')
+  }
+
+  return res.json()
+}
+
+
+export async function save_schedule_table_request(schedule) {
+  const res = await fetch('http://localhost:8000/saveallusersclaims', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(schedule)
+  })
+
+  if (!res.ok) {
+    throw new Error('Saving schedule failed')
+  }
 
   return res.json()
 }

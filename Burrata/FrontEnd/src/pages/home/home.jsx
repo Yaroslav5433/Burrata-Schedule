@@ -6,13 +6,16 @@ import { Context } from "../../components/Context";
 import { get_all_users_request_handler } from "../../utils/get_all_users_handler";
 import { get_all_claims_request_handler } from "../../utils/get_all_claims_handler";
 import { get_dates_request_handler } from "../../utils/get_dates_handler";
+import { get_schedule_request_handler } from "../../utils/get_schedule_handler";
 
 function Home() {
 
     const [allUsers, setAllUsers] = useState({})
     const [usersWithClaims, setUsersWithClaims] = useState({})
     const [weekDates, setWeekDates] = useState([])
+    const [schedule, setSchedule] = useState([])
     const [showClaims, setShowClaims] = useState(true)
+    const [modalIsActive, setModalIsActive] = useState(true)
 
 
     useEffect(() => {
@@ -27,12 +30,12 @@ function Home() {
             const users_with_claims = await get_all_claims_request_handler()
             setUsersWithClaims(users_with_claims)
 
+            const all_shifts = await get_schedule_request_handler()
+            setSchedule(all_shifts)
         }  
 
         get_info()
     }, [])
-
-    console.log(showClaims)
 
     const all_users_with_claims = useMemo(() => {
         return {
@@ -40,17 +43,27 @@ function Home() {
             ...usersWithClaims
         }
     }, [usersWithClaims])
+
+    const all_users_shifts = useMemo(() => {
+        return {
+            ...allUsers,
+            ...schedule
+        }
+    }, [schedule])
     
 
     return (
         <Context.Provider
         value = {{
             weekDates,
-            setAllUsers,
+            setSchedule,
             all_users_with_claims,
+            all_users_shifts,
             showClaims,
             setShowClaims,
-            allUsers
+            usersWithClaims,
+            schedule,
+            modalIsActive
         }}>
             <div className = "app">
             <Header/>

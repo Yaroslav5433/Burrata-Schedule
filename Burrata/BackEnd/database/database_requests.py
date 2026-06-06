@@ -31,7 +31,10 @@ async def get_user_saved_claims(verified_user: str, next_week_dates, db: AsyncSe
 
 
 async def insert_shifts_in_database(username: str, claims_sql_type, db: AsyncSession, claims: bool = False):
-    success_on_insert = pginsert(ClaimsSchedule if claims else Schedule).values([
+
+    model = ClaimsSchedule if claims else Schedule
+
+    success_on_insert = pginsert(model).values([
         {"date": date,
          "shift": shift,
          "username": username}
@@ -39,15 +42,15 @@ async def insert_shifts_in_database(username: str, claims_sql_type, db: AsyncSes
     ])
 
     success_on_insert = success_on_insert.on_conflict_do_update(
-        constraint="uq_date_username",
+        index_elements=["date", "username"],
         set_={"shift": success_on_insert.excluded.shift}
     )
 
-    await db.execute(success_on_insert)
+    res = await db.execute(success_on_insert)
 
     await db.commit()
 
-    return success_on_insert
+    return res.rowcount > 0
 
 
 async def get_all_users(db: AsyncSession):

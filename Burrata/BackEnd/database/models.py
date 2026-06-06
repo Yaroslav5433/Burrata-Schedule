@@ -32,7 +32,7 @@ class ClaimsSchedule(Base):
     date = Column(DateTime, nullable=False)
     shift = Column(String, nullable=False)
     
-    __table_args__ = (UniqueConstraint("date", "username", name="uq_date_username"),)
+    __table_args__ = (UniqueConstraint("date", "username"),)
     
 
 class Schedule(Base):
@@ -41,7 +41,7 @@ class Schedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, ForeignKey("users.username"), nullable=False)
     date = Column(DateTime, nullable=False)
-    shift = Column(String, nullable=False)
+    shift = Column(String)
 
-    __table_args__ = (UniqueConstraint("date", "username", name="uq_date_username"),)
+    __table_args__ = (UniqueConstraint("date", "username"),)
     

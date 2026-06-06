@@ -8,7 +8,7 @@ from utils.utils import get_next_week_dates, interpret_claims_as_list
 
 getschedule_router = APIRouter()
 
-@getschedule_router.post('/getschedule', response_model = Users)
+@getschedule_router.get('/getschedule', response_model = Users)
 async def get_schedule(db: AsyncSession = Depends(get_db)):
     schedule = await db_req.get_all_users_saved_shifts(db, week_dates = get_next_week_dates())
 

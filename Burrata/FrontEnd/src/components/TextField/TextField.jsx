@@ -10,6 +10,9 @@ function TextField( props ) {
         value,
         onChange,
         name,
+        onKeyDown,
+        tableStyle,
+        onBlur
     } = props
 
     const {
@@ -18,6 +21,14 @@ function TextField( props ) {
     } = useContext(Context)
 
     const [blurred, setBlurred] = useState(false)
+
+    const handleBlur = (e) => {
+        setBlurred(true);
+
+        if (onBlur) {
+            onBlur(e)
+        }
+    } 
 
     return (
         <div className={styles.fieldContainer}>
@@ -30,12 +41,12 @@ function TextField( props ) {
             type={type}
             value={value}
             placeholder={placeholder}
+            onKeyDown={onKeyDown}
             className={`
-                ${styles.fieldInput}
-                ${blurred && (value.length > 0) ? styles.fieldInputOnBlur : ''}
+                ${styles.fieldInput} ${tableStyle}
+                ${blurred && (value?.length > 0) ? styles.fieldInputOnBlur : ''}
                 ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}`}
-
-            onBlur={() => setBlurred(true)}
+            onBlur={handleBlur}
             onChange={onChange}/>
         </div>
     )

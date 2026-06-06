@@ -4,27 +4,35 @@ import ScheduleTable from '../ScheduleTable/ScheduleTable'
 import Button from '../Button/Button'
 import Checkbox from '../Checkbox/Checkbox'
 import { Context } from '../Context'
+import { save_users_claims_request_handler } from '../../utils/save_users_claims_handler' 
+import { save_schedule_table_request_handler } from '../../utils/save_schedule_table_handler'
+import { useNotification } from "../ModalWindow/ModalWindow";
 
 function ScheduleTableContainer() {
 
   const {
       showClaims,
-      setShowClaims
+      setShowClaims,
+      usersWithClaims,
+      schedule
   } = useContext(Context)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
+  const { showNotification } = useNotification();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
     const action = e.nativeEvent.submitter.value;
   
     if (action === "save table") {
-      console.log("Saving table...");
+      await save_schedule_table_request_handler(schedule);
+      showNotification('Schedule has been saved')
     }
 
     if (action === "save claims") {
-      console.log("Saving claims...");
+      await save_users_claims_request_handler(usersWithClaims);
+      showNotification('Claims have been saved')
     }
-    
   };
 
   return (

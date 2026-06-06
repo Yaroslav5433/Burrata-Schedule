@@ -1,0 +1,28 @@
+.modal {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+  
+    padding: 16px 24px;
+  
+    background: var(--green-color);
+    color: var(--white-color);
+  
+    border-radius: 10px;
+  
+    box-shadow: 0 4px 10px rgba(0,0,0,.2);
+  
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
