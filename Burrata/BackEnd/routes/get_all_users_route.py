@@ -3,13 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
 from loguru import logger
-from schemas.schemas import Users
+from schemas.schemas import Users_with_info
 
 getuser_router = APIRouter()
 
-@getuser_router.get('/getallusers', response_model = Users)
-async def get_users(db: AsyncSession = Depends(get_db)):
-    all_users = await db_req.get_all_users(db)
+@getuser_router.get('/getallusers', response_model = Users_with_info)
+async def get_users(department: str, db: AsyncSession = Depends(get_db)):
+
+    all_users = await db_req.get_all_users(db, requested_department = department.lower())
 
     if not all_users:
         raise HTTPException(

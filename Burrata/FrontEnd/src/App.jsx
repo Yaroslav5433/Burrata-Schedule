@@ -1,26 +1,31 @@
-import { BrowserRouter, Routes, Route} from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom"
 import { ProtectedRoute, AuthorizedRoute } from "./routes/routes.jsx";
 import Home from "./pages/home/home"
 import Login from "./pages/login/login"
 import Request from "./pages/form/request.jsx";
-
+import { ModalWindow } from "./components/ModalWindow/ModalWindow.jsx";
 
 function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={
-        <AuthorizedRoute>
-          <Login />
-        </AuthorizedRoute>} />
-        <Route path="/" element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>}
-        />
-        <Route path="/request" element={<Request/>}></Route>
-      </Routes>
+      <ModalWindow>
+        <Routes>
+          <Route path="/login" element={
+          <AuthorizedRoute>
+            <Login />
+          </AuthorizedRoute>} />
+
+          <Route index element={<Navigate to="/admin/service" replace />} />
+
+          <Route path="/admin/:department" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>} />
+
+          <Route path="/request" element={<Request/>} />
+        </Routes>
+      </ModalWindow>
     </BrowserRouter>
   );
 

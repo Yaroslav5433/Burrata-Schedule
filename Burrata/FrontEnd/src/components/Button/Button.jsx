@@ -5,11 +5,18 @@ function Button(props) {
     const {
         buttonText,
         buttonStyle,
-        isCurrent
+        isCurrent,
+        type,
+        name, 
+        value
     } = props
 
     return (
-        <button className={`${styles.button} ${buttonStyle} ${isCurrent}`}>
+        <button 
+        className={`${styles.button} ${buttonStyle} ${isCurrent}`}
+        type = {type}
+        name = {name}
+        value = {value}>
             {buttonText}
         </button>
     )

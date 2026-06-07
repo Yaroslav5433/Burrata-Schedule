@@ -11,7 +11,7 @@ export function ProtectedRoute({ children }) {
 
 export function AuthorizedRoute({ children }) {
   if (is_admin_auth()) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/admin/:department" replace />
   }
 
   return children

@@ -31,7 +31,10 @@ async def get_user_saved_claims(verified_user: str, next_week_dates, db: AsyncSe
 
 
 async def insert_shifts_in_database(username: str, claims_sql_type, db: AsyncSession, claims: bool = False):
-    success_on_insert = pginsert(ClaimsSchedule if claims else Schedule).values([
+
+    model = ClaimsSchedule if claims else Schedule
+
+    success_on_insert = pginsert(model).values([
         {"date": date,
          "shift": shift,
          "username": username}
@@ -39,33 +42,46 @@ async def insert_shifts_in_database(username: str, claims_sql_type, db: AsyncSes
     ])
 
     success_on_insert = success_on_insert.on_conflict_do_update(
-        constraint="uq_date_username",
+        index_elements=["date", "username"],
         set_={"shift": success_on_insert.excluded.shift}
     )
 
-    await db.execute(success_on_insert)
+    res = await db.execute(success_on_insert)
 
     await db.commit()
 
-    return success_on_insert
+    return res.rowcount > 0
 
 
-async def get_all_users(db: AsyncSession):
-    all_users = await db.execute(select(Users.username))
+async def get_all_users(db: AsyncSession, requested_department):
+    all_users = await db.execute(select(Users.username, Users.unique_id_number, Users.position, Users.is_trainee).where(
+        Users.position == requested_department
+    ))
 
-    return {
-        username: [""] * 7
-        for username in all_users.scalars()
+    users = {
+        username: {
+            "shifts": [""] * 7,
+            "unique_id_number": unique_id_number,
+            "position": position,
+            "is_trainee": is_trainee,
+        }
+        for username, unique_id_number, position, is_trainee in all_users.all()
     }
 
+    return users
 
-async def get_all_users_saved_shifts(db: AsyncSession, week_dates, claims: bool = False):
+
+async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_position, claims: bool = False):
     if claims:
-        res = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift).where(
-            ClaimsSchedule.date.in_(week_dates)
+        res = await db.execute(select(ClaimsSchedule.username, ClaimsSchedule.date, ClaimsSchedule.shift).join(
+            Users, Users.username == ClaimsSchedule.username).where(
+            ClaimsSchedule.date.in_(week_dates),
+            Users.position == requested_position
         ))
-    else: res = await db.execute(select(Schedule.username, Schedule.date, Schedule.shift).where(
-            Schedule.date.in_(week_dates)
+    else: res = await db.execute(select(Schedule.username, Schedule.date, Schedule.shift).join(
+        Users, Users.username == Schedule.username).where(
+            Schedule.date.in_(week_dates),
+            Users.position == requested_position
         ))
 
     new_dict = {}
@@ -79,3 +95,15 @@ async def get_all_users_saved_shifts(db: AsyncSession, week_dates, claims: bool 
     return new_dict
 
 
+async def insert_users_in_database(username: str, position: str, is_trainee: bool, unique_id_number: str, db: AsyncSession):
+    success_on_insert = await db.execute(insert(Users).values({
+        'username': username,
+        'unique_id_number': unique_id_number,
+        'position': position,
+        'is_trainee': is_trainee,
+        }
+    ))
+
+    await db.commit()
+
+    return success_on_insert.rowcount > 0

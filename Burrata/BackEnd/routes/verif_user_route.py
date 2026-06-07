@@ -2,17 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
-from schemas.schemas import Verification_data, Users
+from schemas.schemas import Verification_data, Users_with_shifts
 from utils.utils import get_next_week_dates, interpret_claims_as_list
 from loguru import logger
 from redis_ import redis_requests as redis_req
-import time
-
-t0 = time.time()
 
 verification_router = APIRouter()
 
-@verification_router.post('/verifyuser', response_model = Users)
+@verification_router.post('/verifyuser', response_model = Users_with_shifts)
 async def verification(verification_data: Verification_data, request: Request, db: AsyncSession = Depends(get_db)):
     verified_user = await db_req.get_user_by_id(verification_data.unique_id_number, db)
 

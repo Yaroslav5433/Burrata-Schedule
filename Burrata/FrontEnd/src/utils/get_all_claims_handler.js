@@ -1,8 +1,8 @@
 import { get_all_claims_request } from "../api/requests"
 
-export async function get_all_claims_request_handler() {
+export async function get_all_claims_request_handler(department) {
     try {
-        const all_claims = await get_all_claims_request()
+        const all_claims = await get_all_claims_request(department)
 
         console.log('getting claims...')
         
