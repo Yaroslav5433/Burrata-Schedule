@@ -68,8 +68,8 @@ export async function save_users_claims_request(all_claims) {
 }
 
 
-export async function get_all_users_request() {
-  const res = await fetch('http://localhost:8000/getallusers', {
+export async function get_all_users_request(department) {
+  const res = await fetch(`http://localhost:8000/getallusers?department=${department}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -80,8 +80,8 @@ export async function get_all_users_request() {
 }
 
 
-export async function get_all_claims_request() {
-  const res = await fetch('http://localhost:8000/getallclaims', {
+export async function get_all_claims_request(department) {
+  const res = await fetch(`http://localhost:8000/getallclaims?department=${department}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -92,8 +92,8 @@ export async function get_all_claims_request() {
 }
 
 
-export async function get_schedule_request() {
-  const res = await fetch('http://localhost:8000/getschedule', {
+export async function get_schedule_request(department) {
+  const res = await fetch(`http://localhost:8000/getschedule?department=${department}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -132,6 +132,28 @@ export async function save_schedule_table_request(schedule) {
 
   if (!res.ok) {
     throw new Error('Saving schedule failed')
+  }
+
+  return res.json()
+}
+
+
+export async function save_new_worker_request(userTextName, department, unique_id_number, is_trainee) {
+  const res = await fetch('http://localhost:8000/savenewworker', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify( {
+    'username': userTextName,
+    'position': department,
+    'unique_id_number': unique_id_number,
+    'is_trainee': is_trainee,
+  })
+  })
+
+  if (!res.ok) {
+    throw new Error('Saving user failed')
   }
 
   return res.json()

@@ -1,20 +1,33 @@
 import React from 'react'
 import styles from './DepartmentsElements.module.css'
+import { NavLink } from "react-router-dom";
 
 function DepartmentsElements() {
+
+  const departments = [
+    { label: "Bar", value: "bar" },
+    { label: "Service", value: "service" },
+    { label: "Hostess", value: "hostess" }
+  ];
+
   return (
     <ul className={styles.container}>
-        <li className={styles.container_item}>
-            <a href="" className={styles.container_item_link}>Bar</a>
+      {departments.map(dep => (
+        <li key={dep.value} className={styles.container_item}>
+          <NavLink
+            to={`/admin/${dep.value}`}
+            className={({ isActive }) =>
+              `${styles.container_item_link} ${
+                isActive ? styles.container_item_link_is_current : ""
+              }`
+            }
+          >
+            {dep.label}
+          </NavLink>
         </li>
-        <li className={styles.container_item}>
-            <a href="" className={`${styles.container_item_link} ${styles.container_item_link_is_current}`}>Service</a>
-        </li>
-        <li className={styles.container_item}>
-            <a href="" className={styles.container_item_link}>Hostess</a>
-        </li>
+      ))}
     </ul>
-  )
+  );
 }
 
 export default DepartmentsElements

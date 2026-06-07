@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint
 from database.database import Base
 import bcrypt
 
@@ -22,6 +22,8 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     unique_id_number = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
+    position = Column(String, nullable=False)
+    is_trainee = Column(Boolean, nullable=False, default=False)
 
 
 class ClaimsSchedule(Base):

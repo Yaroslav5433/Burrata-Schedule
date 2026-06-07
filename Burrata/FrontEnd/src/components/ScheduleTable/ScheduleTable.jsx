@@ -3,6 +3,8 @@ import styles from './ScheduleTable.module.css'
 import { Context } from '../Context.js'
 import { useContext, useState, useRef } from 'react'
 import TextField from '../TextField/TextField.jsx'
+import { save_new_worker_request_handler } from '../../utils/save_new_worker_handler.js'
+import { generateEightDigitNumber } from '../../utils/utils.js'
 
 function ScheduleTable() {
     const {
@@ -11,15 +13,15 @@ function ScheduleTable() {
         setSchedule,
         all_users_shifts,
         showClaims,
-        schedule
+        department,
+        setAllUsers,
+        allUsers
    } = useContext(Context)
 
    const [addUser, setAddUser] = useState(false)
    const [addTrainee, setAddTrainee] = useState(false)
    const [userTextName, setUserTextName] = useState('')
    const [traineeTextName, setTraineeTextName] = useState('')
-
-   const inputRef = useRef();
 
    const all_users_to_show = showClaims ? all_users_with_claims : all_users_shifts
 
@@ -32,8 +34,20 @@ function ScheduleTable() {
         setSchedule(copy)
     };
 
-    const handleRequest = async () => {
+    const handleRequest = async (is_trainee) => {
+        const unique_id_number = generateEightDigitNumber()
+        await save_new_worker_request_handler(userTextName, department, unique_id_number, is_trainee)
+        const copy = structuredClone(allUsers)
 
+        setAllUsers({
+            ...copy,
+            [userTextName]: {
+              shifts: Array(7).fill(''),
+              unique_id_number: unique_id_number,
+              position: department,
+              is_trainee: is_trainee
+            }
+          });
     }
 
     const handleClick = async (icon) => {
@@ -47,14 +61,11 @@ function ScheduleTable() {
 
     const countShift = (dateIndex, shiftType) => {
         return Object.values(all_users_to_show).filter(
-            user => user[dateIndex] === shiftType
+            user => user?.[dateIndex] === shiftType
         ).length;
     };
 
-    console.log('claims users', all_users_to_show)
-    console.log('just users', all_users_shifts)
-    console.log('users to show', all_users_to_show)
-    console.log('schedule', schedule)
+    console.log(all_users_to_show)
 
   return (
     <table className={styles.table}>
@@ -67,7 +78,7 @@ function ScheduleTable() {
           </tr>
     
           {Object.keys(all_users_to_show).map((user, userIndex) => (
-            <tr key={userIndex}>
+            <tr key={user}>
                 <td>
                     <div className={styles.workerContainer}>
                         <button onClick={handleClick} className={styles.workerContainerButton}>
@@ -118,7 +129,7 @@ function ScheduleTable() {
                             onChange = {(e) => setUserTextName(e.target.value)}
                             onKeyDown = {(e) => {
                                 if (e.key === "Enter") {
-                                    handleRequest()
+                                    handleRequest(false)
                                 }
                             }}/>
                     </div>
@@ -200,7 +211,7 @@ function ScheduleTable() {
                             onChange = {(e) => setTraineeTextName(e.target.value)}
                             onKeyDown = {(e) => {
                                 if (e.key === "Enter") {
-                                    handleRequest()
+                                    handleRequest(true)
                                 }
                             }}/>
                     </div>
