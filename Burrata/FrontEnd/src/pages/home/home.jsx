@@ -52,11 +52,27 @@ function Home() {
         get_info()
     }, [department])
 
+    console.log('schedule', schedule)
+
     const allUsersShifts = useMemo(() => {
         const result = {};
 
         for (const [username, user] of Object.entries(allUsers ?? {})) {
-            result[username] = user.shifts;
+            if (!user.is_trainee) {
+                result[username] = user.shifts;
+            }
+        }
+
+        return result;
+    }, [allUsers])
+
+    const allTraineesShifts = useMemo(() => {
+        const result = {};
+
+        for (const [username, user] of Object.entries(allUsers ?? {})) {
+            if (user.is_trainee) {
+                result[username] = user.shifts;
+            }
         }
 
         return result;
@@ -66,14 +82,41 @@ function Home() {
     const all_users_with_claims = useMemo(() => {
         return {
             ...allUsersShifts,
-            ...usersWithClaims
+            ...Object.fromEntries(
+                Object.entries(usersWithClaims)
+                .filter(([username]) => username in allUsersShifts)
+            )
         }
     }, [usersWithClaims, allUsersShifts])
 
     const all_users_shifts = useMemo(() => {
         return {
             ...allUsersShifts,
-            ...schedule
+            ...Object.fromEntries(
+                Object.entries(schedule)
+                .filter(([username]) => username in allUsersShifts)
+            )
+        }
+    }, [schedule, allUsersShifts])
+
+
+    const all_trainees_with_claims = useMemo(() => {
+        return {
+            ...allTraineesShifts,
+            ...Object.fromEntries(
+                Object.entries(usersWithClaims)
+                .filter(([username]) => username in allTraineesShifts)
+            )
+        }
+    }, [usersWithClaims, allUsersShifts])
+
+    const all_trainess_shifts = useMemo(() => {
+        return {
+            ...allTraineesShifts,
+            ...Object.fromEntries(
+                Object.entries(schedule)
+                .filter(([username]) => username in allTraineesShifts)
+            )
         }
     }, [schedule, allUsersShifts])
     
@@ -92,7 +135,10 @@ function Home() {
             schedule,
             department,
             allUsers,
-            setAllUsers
+            setAllUsers,
+            allTraineesShifts,
+            all_trainees_with_claims,
+            all_trainess_shifts
         }}>
             <div className = "app">
             <Header/>
