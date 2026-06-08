@@ -1,8 +1,8 @@
 import { Context } from '../Context.js'
 import styles from './textField.module.css'
-import { useContext, useState } from 'react'
+import { useContext, useState, forwardRef } from 'react'
 
-function TextField( props ) {
+const TextField = forwardRef((props, ref) => {
     const {
         label,
         placeholder='',
@@ -42,6 +42,7 @@ function TextField( props ) {
             value={value}
             placeholder={placeholder}
             onKeyDown={onKeyDown}
+            ref={ref}
             className={`
                 ${styles.fieldInput} ${tableStyle}
                 ${blurred && (value?.length > 0) ? styles.fieldInputOnBlur : ''}
@@ -50,6 +51,6 @@ function TextField( props ) {
             onChange={onChange}/>
         </div>
     )
-}
+})
 
 export default TextField 
