@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { useEffect, useContext, useState, useRef } from 'react'
 import styles from './ScheduleTable.module.css'
 import { Context } from '../Context.js'
-import { useContext, useState, useRef } from 'react'
 import TextField from '../TextField/TextField.jsx'
 import { save_new_worker_request_handler } from '../../utils/save_new_worker_handler.js'
 import { generateEightDigitNumber } from '../../utils/utils.js'
@@ -15,7 +14,9 @@ function ScheduleTable() {
         showClaims,
         department,
         setAllUsers,
-        allUsers
+        allUsers,
+        all_trainees_with_claims,
+        all_trainess_shifts
    } = useContext(Context)
 
    const [addUser, setAddUser] = useState(false)
@@ -23,10 +24,28 @@ function ScheduleTable() {
    const [userTextName, setUserTextName] = useState('')
    const [traineeTextName, setTraineeTextName] = useState('')
 
+   const inputRef = useRef(null);
+
+   useEffect(() => {
+    if (addUser || addTrainee) {
+        inputRef.current?.focus();
+    }
+   }, [addUser, addTrainee])
+
+   console.log('inout Ref',inputRef)
+
    const all_users_to_show = showClaims ? all_users_with_claims : all_users_shifts
+   const all_trainees_to_show = showClaims ? all_trainees_with_claims : all_trainess_shifts
 
     const handleChange = (userIndex, dateIndex, value) => {
-        const copy = structuredClone(all_users_to_show);
+        const merged_to_show = () => {
+            return {
+                ...all_users_to_show,
+                ...all_trainees_to_show
+            }
+        }
+
+        const copy = structuredClone(merged_to_show());
         const userKey = Object.keys(copy)[userIndex]
 
         copy[userKey][dateIndex] = value
@@ -35,19 +54,23 @@ function ScheduleTable() {
     };
 
     const handleRequest = async (is_trainee) => {
-        const unique_id_number = generateEightDigitNumber()
-        await save_new_worker_request_handler(userTextName, department, unique_id_number, is_trainee)
+        inputRef.current?.blur();
+
+        const username = is_trainee ? traineeTextName : userTextName
         const copy = structuredClone(allUsers)
+        const unique_id_number = generateEightDigitNumber()
 
         setAllUsers({
             ...copy,
-            [userTextName]: {
+            [username]: {
               shifts: Array(7).fill(''),
               unique_id_number: unique_id_number,
               position: department,
               is_trainee: is_trainee
             }
           });
+
+        await save_new_worker_request_handler(username, department, unique_id_number, is_trainee)
     }
 
     const handleClick = async (icon) => {
@@ -65,7 +88,6 @@ function ScheduleTable() {
         ).length;
     };
 
-    console.log(all_users_to_show)
 
   return (
     <table className={styles.table}>
@@ -122,6 +144,7 @@ function ScheduleTable() {
                         <TextField 
                             value = {userTextName} 
                             tableStyle = {styles.userText}
+                            ref = {inputRef}
                             onBlur = {() => {
                                 setAddUser(false)
                                 setUserTextName('')
@@ -129,6 +152,7 @@ function ScheduleTable() {
                             onChange = {(e) => setUserTextName(e.target.value)}
                             onKeyDown = {(e) => {
                                 if (e.key === "Enter") {
+                                    e.preventDefault();
                                     handleRequest(false)
                                 }
                             }}/>
@@ -197,6 +221,44 @@ function ScheduleTable() {
                 ))}
             </tr>
 
+            {Object.keys(all_trainees_to_show).map((user, userIndex) => (
+            <tr key={user}>
+                <td>
+                    <div className={styles.workerContainer}>
+                        <button onClick={handleClick} className={styles.workerContainerButton}>
+                            <svg className = {styles.icon} viewBox="0 0 50 50"> 
+                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 25 11 A 3 3 0 0 0 22 14 A 3 3 0 0 0 25 17 A 3 3 0 0 0 28 14 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 22 23 L 23 23 L 23 36 L 22 36 L 21 36 L 21 38 L 22 38 L 23 38 L 27 38 L 28 38 L 29 38 L 29 36 L 28 36 L 27 36 L 27 21 L 26 21 L 22 21 L 21 21 z"/>
+                            </svg>
+                        </button>
+                        {user}
+                        <button onClick={handleClick} className={styles.workerContainerButton}>
+                            <svg className = {styles.icon} viewBox="0 0 50 50"> 
+                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 13 24 L 37 24 L 37 26 L 13 26 Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+                
+                {weekDates.map((date, dateIndex) => (
+                <td key={date}
+                >
+                    { showClaims ? 
+                    <p> { Object.values(all_trainees_to_show)[userIndex]?.[dateIndex] } </p> : 
+                    <select 
+                    value={Object.values(all_trainees_to_show)[userIndex]?.[dateIndex]}
+                    onChange={(e) => handleChange((userIndex + Object.keys(all_users_to_show).length), dateIndex, e.target.value)}>
+                    <option value={undefined}>{undefined}</option>
+                    <option value="X">X</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="D12">D12</option>
+                    <option value="D10">D10</option>
+                  </select>}
+                </td>
+                ))}
+            </tr>
+            ))}
+
             <tr>
                 {addTrainee ?
                 <td>
@@ -204,6 +266,7 @@ function ScheduleTable() {
                         <TextField 
                             value = {traineeTextName} 
                             tableStyle = {styles.userText}
+                            ref = {inputRef}
                             onBlur = {() => {
                                 setAddTrainee(false)
                                 setTraineeTextName('')
@@ -211,6 +274,7 @@ function ScheduleTable() {
                             onChange = {(e) => setTraineeTextName(e.target.value)}
                             onKeyDown = {(e) => {
                                 if (e.key === "Enter") {
+                                    e.preventDefault();
                                     handleRequest(true)
                                 }
                             }}/>
