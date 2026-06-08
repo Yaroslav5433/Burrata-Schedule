@@ -22,11 +22,12 @@
   }
 
 .workerContainer {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding-inline: 15px;
+    padding-right: 15px;
 }
 
 .workerContainerButton {
@@ -79,3 +80,31 @@
   width: 100%;
 }
 
+.workerPopUpMessage { 
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 100%;
+  background-color: var(--white-gray-color);
+  width: 150px;
+  height: 30px;
+  border-radius: 5px 0 0 5px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.infoIcon:hover .workerPopUpMessage {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.infoIcon {
+  padding-left: 15px;
+}
+
+.icon:hover {
+  fill: var(--white-gray-color);
+  transition-duration: var(--transition-duration);
+}
