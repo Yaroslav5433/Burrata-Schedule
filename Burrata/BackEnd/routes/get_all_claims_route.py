@@ -9,11 +9,17 @@ from schemas.schemas import Users_with_shifts
 getclaims_router = APIRouter()
 
 @getclaims_router.get('/getallclaims', response_model = Users_with_shifts)
-async def get_claims(department: str, db: AsyncSession = Depends(get_db)):
-    all_claims = await db_req.get_all_users_saved_shifts(db, requested_position = department, week_dates = get_next_week_dates(), claims = True)
+async def get_claims(department: str, dateStep: int, db: AsyncSession = Depends(get_db)):
+    all_claims = await db_req.get_all_users_saved_shifts(
+        db, 
+        requested_position = department, 
+        week_dates = get_next_week_dates(steps = dateStep), 
+        claims = True)
 
     for username, user_saved_claims in all_claims.items():
-        all_claims[username] = interpret_claims_as_list(user_saved_claims = user_saved_claims, next_week_dates = get_next_week_dates(nosql = True))
+        all_claims[username] = interpret_claims_as_list(
+            user_saved_claims = user_saved_claims, 
+            next_week_dates = get_next_week_dates(nosql = True, steps = dateStep))
 
     print(all_claims)
     logger.info('Sending a claims...')

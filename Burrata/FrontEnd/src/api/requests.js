@@ -73,44 +73,44 @@ export async function get_all_users_request(department) {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
-  },
+  }
 })
 
   return res.json()
 }
 
 
-export async function get_all_claims_request(department) {
-  const res = await fetch(`http://localhost:8000/getallclaims?department=${department}`, {
+export async function get_all_claims_request(department, dateStep) {
+  const res = await fetch(`http://localhost:8000/getallclaims?department=${department}&dateStep=${dateStep}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
-  },
+  }
 })
 
   return res.json()
 }
 
 
-export async function get_schedule_request(department) {
-  const res = await fetch(`http://localhost:8000/getschedule?department=${department}`, {
+export async function get_schedule_request(department, dateStep) {
+  const res = await fetch(`http://localhost:8000/getschedule?department=${department}&dateStep=${dateStep}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
-  },
+  }
 })
 
   return res.json()
 }
 
 
-export async function get_dates_request(steps) {
+export async function get_dates_request(dateStep) {
   const res = await fetch('http://localhost:8000/getdates', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify(steps)
+  body: JSON.stringify(dateStep)
   })
 
   if (!res.ok) {
@@ -154,6 +154,22 @@ export async function save_new_worker_request(userTextName, department, unique_i
 
   if (!res.ok) {
     throw new Error('Saving user failed')
+  }
+
+  return res.json()
+}
+
+
+export async function delete_user_request(username) {
+  const res = await fetch(`http://localhost:8000/deleteuser?username=${username}`, {
+  method: "DELETE",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+})
+
+  if (!res.ok) {
+    throw new Error('Deleting user failed')
   }
 
   return res.json()

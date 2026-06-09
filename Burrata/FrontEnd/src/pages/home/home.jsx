@@ -16,10 +16,9 @@ function Home() {
     const [weekDates, setWeekDates] = useState([])
     const [schedule, setSchedule] = useState([])
     const [showClaims, setShowClaims] = useState(true)
+    const [dateStep, setDateStep] = useState(0)
 
     const { department } = useParams()
-
-    console.log("department:", department);
 
     useEffect(() => {
         const get_info = async () => {
@@ -30,7 +29,7 @@ function Home() {
 
             if (!department) return;
 
-            const dates = await get_dates_request_handler()
+            const dates = await get_dates_request_handler(dateStep)
             setWeekDates(dates["dates"])
 
             const all_users = await get_all_users_request_handler(department)
@@ -38,21 +37,20 @@ function Home() {
                 setAllUsers(all_users)
             }
 
-            const users_with_claims = await get_all_claims_request_handler(department)
+            const users_with_claims = await get_all_claims_request_handler(department, dateStep)
             if (!("detail" in users_with_claims)) {
                 setUsersWithClaims(users_with_claims)
             }
 
-            const all_shifts = await get_schedule_request_handler(department)
+            const all_shifts = await get_schedule_request_handler(department, dateStep)
             if (!("detail" in all_shifts)) {
                 setSchedule(all_shifts)
             }
         }  
 
         get_info()
-    }, [department])
+    }, [department, dateStep])
 
-    console.log('schedule', schedule)
 
     const allUsersShifts = useMemo(() => {
         const result = {};
@@ -120,7 +118,6 @@ function Home() {
         }
     }, [schedule, allUsersShifts])
     
-    console.log('all usersssss', allUsers)
 
     return (
         <Context.Provider
@@ -138,7 +135,9 @@ function Home() {
             setAllUsers,
             allTraineesShifts,
             all_trainees_with_claims,
-            all_trainess_shifts
+            all_trainess_shifts,
+            dateStep,
+            setDateStep
         }}>
             <div className = "app">
             <Header/>
