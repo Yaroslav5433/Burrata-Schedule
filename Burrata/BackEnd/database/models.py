@@ -44,7 +44,7 @@ class ClaimsSchedule(Base):
     __tablename__ = 'claimsschedule'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, ForeignKey("users.username"), nullable=False)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
     date = Column(DateTime, nullable=False)
     shift = Column(String, nullable=False)
     
@@ -55,7 +55,7 @@ class Schedule(Base):
     __tablename__ = 'schedule'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, ForeignKey("users.username"), nullable=False)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
     date = Column(DateTime, nullable=False)
     shift = Column(String)
 
