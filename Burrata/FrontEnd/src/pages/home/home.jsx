@@ -140,7 +140,8 @@ function Home() {
             setDateStep
         }}>
             <div className = "app">
-            <Header/>
+            <Header
+            isAdmin = {true}/>
                     <HomePageContainer/>
             <Footer/>
         </div>

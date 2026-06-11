@@ -3,6 +3,7 @@
     flex-direction: column;
     justify-content: center;
     width: 70%;
+    position: relative;
 }
 
 .top_button_line  {

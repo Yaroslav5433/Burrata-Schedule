@@ -16,9 +16,9 @@ function App() {
             <Login />
           </AuthorizedRoute>} />
 
-          <Route index element={<Navigate to="/admin/service" replace />} />
+          <Route index element={<Navigate to="/admin/schedule/service" replace />} />
 
-          <Route path="/admin/:department" element={
+          <Route path="/admin/schedule/:department" element={
           <ProtectedRoute>
             <Home />
           </ProtectedRoute>} />

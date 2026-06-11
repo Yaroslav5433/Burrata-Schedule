@@ -51,8 +51,8 @@ export async function save_user_claims_request(claims, userName) {
 }
 
 
-export async function save_users_claims_request(all_claims) {
-  const res = await fetch('http://localhost:8000/saveallusersclaims', {
+export async function save_users_claims_request(all_claims, dateStep) {
+  const res = await fetch(`http://localhost:8000/saveallusersclaims?dateStep=${dateStep}`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -121,8 +121,8 @@ export async function get_dates_request(dateStep) {
 }
 
 
-export async function save_schedule_table_request(schedule) {
-  const res = await fetch('http://localhost:8000/saveallusersclaims', {
+export async function save_schedule_table_request(schedule, dateStep) {
+  const res = await fetch(`http://localhost:8000/saveallusersclaims?dateStep=${dateStep}`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'

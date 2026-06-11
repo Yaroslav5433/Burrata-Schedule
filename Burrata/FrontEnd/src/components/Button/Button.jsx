@@ -8,7 +8,8 @@ function Button(props) {
         isCurrent,
         type,
         name, 
-        value
+        value,
+        onClick
     } = props
 
     return (
@@ -16,7 +17,8 @@ function Button(props) {
         className={`${styles.button} ${buttonStyle} ${isCurrent}`}
         type = {type}
         name = {name}
-        value = {value}>
+        value = {value}
+        onClick={onClick}>
             {buttonText}
         </button>
     )

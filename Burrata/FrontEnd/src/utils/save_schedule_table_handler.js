@@ -1,8 +1,8 @@
 import { save_schedule_table_request } from "../api/requests"
 
-export async function save_schedule_table_request_handler(schedule) {
+export async function save_schedule_table_request_handler(schedule, dateStep) {
     try {
-        const res = await save_schedule_table_request(schedule)
+        const res = await save_schedule_table_request(schedule, dateStep)
 
         console.log('Saving a schedule...')
 

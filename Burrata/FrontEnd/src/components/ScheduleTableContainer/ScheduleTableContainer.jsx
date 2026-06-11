@@ -27,19 +27,21 @@ function ScheduleTableContainer() {
     const action = e.nativeEvent.submitter.value;
   
     if (action === "save table") {
-      await save_schedule_table_request_handler(schedule);
+      await save_schedule_table_request_handler(schedule, dateStep);
       showNotification('Schedule has been saved')
     }
 
     if (action === "save claims") {
-      await save_users_claims_request_handler(usersWithClaims);
+      await save_users_claims_request_handler(usersWithClaims, dateStep);
       showNotification('Claims have been saved')
     }
   };
 
   const handleClick = (step) => {
-    setDateStep(dateStep => dateStep + step)
+    setDateStep(prev => prev + step)
   }
+
+  console.log(schedule)
 
   return (
     <div className={styles.tableFullContainer}>

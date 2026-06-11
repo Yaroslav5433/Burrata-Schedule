@@ -15,7 +15,7 @@ function DepartmentsElements() {
       {departments.map(dep => (
         <li key={dep.value} className={styles.container_item}>
           <NavLink
-            to={`/admin/${dep.value}`}
+            to={`/admin/schedule/${dep.value}`}
             className={({ isActive }) =>
               `${styles.container_item_link} ${
                 isActive ? styles.container_item_link_is_current : ""

@@ -6,6 +6,7 @@ function HomeMainSection() {
   return (
     <main className={styles.mainContainer}>
         <ScheduleTableContainer/>
+          <h1>Messages</h1>
     </main>
   )
 }

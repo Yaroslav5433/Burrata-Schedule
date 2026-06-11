@@ -1,5 +1,8 @@
 .navigation {
-    flex-basis: 120px;
+    flex-basis: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(--light-dark-color);
     flex-shrink: 0;
 }

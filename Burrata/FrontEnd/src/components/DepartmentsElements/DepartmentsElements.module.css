@@ -3,7 +3,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    row-gap: 2px;
+    row-gap: 50px;
+    width: 100%;
 }
 
 .container_item {
@@ -23,6 +24,7 @@
     text-decoration: none;
     color: var(--white-color);
     border-radius: 7px;
+    font-size: 12px;
 }
 
 .container_item_link:hover {
