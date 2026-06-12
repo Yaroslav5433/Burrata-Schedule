@@ -1,5 +1,6 @@
 import styles from './header.module.css'
 import { NavLink } from 'react-router-dom';
+import { memo } from 'react';
 
 function Header (props) {
     const {
@@ -56,4 +57,4 @@ function Header (props) {
     )
 }
 
-export default Header
+export default memo(Header)

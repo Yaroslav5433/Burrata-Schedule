@@ -1,6 +1,7 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import HomePageContainer from "../../components/HomePageContainer/HomePageContainer";
+import DepartmentsNavBar from '../../components/DepartmentsNavBar/DepartmentsNavBar.jsx'
+import ScheduleTableContainer from '../../components/ScheduleTableContainer/ScheduleTableContainer'
 import { useEffect, useState, useMemo } from "react";
 import { Context } from "../../components/Context";
 import { get_all_users_request_handler } from "../../utils/get_all_users_handler";
@@ -8,6 +9,7 @@ import { get_all_claims_request_handler } from "../../utils/get_all_claims_handl
 import { get_dates_request_handler } from "../../utils/get_dates_handler";
 import { get_schedule_request_handler } from "../../utils/get_schedule_handler";
 import { useParams } from "react-router-dom";
+import styles from './home.module.css'
 
 function Home() {
 
@@ -117,35 +119,41 @@ function Home() {
             )
         }
     }, [schedule, allUsersShifts])
-    
+
+    const all_workers_to_show = showClaims ? all_users_with_claims : all_users_shifts
+    const all_trainees_to_show = showClaims ? all_trainees_with_claims : all_trainess_shifts
 
     return (
-        <Context.Provider
-        value = {{
-            weekDates,
-            setSchedule,
-            all_users_with_claims,
-            all_users_shifts,
-            showClaims,
-            setShowClaims,
-            usersWithClaims,
-            schedule,
-            department,
-            allUsers,
-            setAllUsers,
-            allTraineesShifts,
-            all_trainees_with_claims,
-            all_trainess_shifts,
-            dateStep,
-            setDateStep
-        }}>
-            <div className = "app">
+        <div className = "app">
             <Header
             isAdmin = {true}/>
-                    <HomePageContainer/>
+                    <div className={styles.schedule_page_container}>
+                        <DepartmentsNavBar/>
+                        <Context.Provider
+                        value = {{
+                            weekDates,
+                            setSchedule,
+                            department,
+                            allUsers,
+                            setAllUsers,
+                            all_workers_to_show,
+                            all_trainees_to_show,
+                            showClaims
+                        }}>
+                            <main className={styles.schedule_page_main_section_container}>
+                                <ScheduleTableContainer
+                                setShowClaims = {setShowClaims}
+                                usersWithClaims = {usersWithClaims}
+                                schedule = {schedule}
+                                dateStep = {dateStep}
+                                setDateStep = {setDateStep}
+                                />
+                                <h1>Messages</h1>
+                            </main>
+                        </Context.Provider>
+                    </div>
             <Footer/>
         </div>
-        </Context.Provider>
     );
  }
  

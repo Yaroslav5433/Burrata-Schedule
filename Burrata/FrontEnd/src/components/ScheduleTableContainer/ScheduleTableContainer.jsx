@@ -3,21 +3,21 @@ import styles from './ScheduleTableContainer.module.css'
 import ScheduleTable from '../ScheduleTable/ScheduleTable'
 import Button from '../Button/Button'
 import Checkbox from '../Checkbox/Checkbox'
-import { Context } from '../Context'
+import SvgButtonIcon from '../Svgs/SvgButtonIcon'
 import { save_users_claims_request_handler } from '../../utils/save_users_claims_handler' 
 import { save_schedule_table_request_handler } from '../../utils/save_schedule_table_handler'
 import { useNotification } from "../ModalWindow/ModalWindow";
 
-function ScheduleTableContainer() {
+function ScheduleTableContainer(props) {
 
   const {
-      showClaims,
-      setShowClaims,
-      usersWithClaims,
-      schedule,
-      dateStep,
-      setDateStep
-  } = useContext(Context)
+    showClaims,
+    setShowClaims,
+    usersWithClaims,
+    schedule,
+    dateStep,
+    setDateStep
+  } = props
 
   const { showNotification } = useNotification();
 
@@ -45,16 +45,12 @@ function ScheduleTableContainer() {
 
   return (
     <div className={styles.tableFullContainer}>
-      <button onClick={() => handleClick(-7)} className={styles.workerContainerButton}>
-        <svg className = {styles.icon} viewBox="0 0 24 24" fill="none">
-          <path d="M15 18L9 12L15 6 M23 18L17 12L23 6"/>
-        </svg>
-      </button>
-      <button onClick={() => handleClick(-1)} className={styles.workerContainerButton}>
-        <svg className = {styles.icon} viewBox="0 0 24 24" fill="none">
-          <path d="M15 18L9 12L15 6"/>
-        </svg>
-      </button>
+      <SvgButtonIcon
+      path = "M15 18L9 12L15 6 M23 18L17 12L23 6"
+      onClick = {() => handleClick(-7)}/>
+      <SvgButtonIcon
+      path = "M15 18L9 12L15 6"
+      onClick = {() => handleClick(-1)}/>
       <form className={styles.container} onSubmit={handleSubmit}>
           <div className={styles.top_button_line}>
               <span 
@@ -88,16 +84,12 @@ function ScheduleTableContainer() {
               value='save claims'/>
           </div>
       </form>
-      <button onClick={() => handleClick(1)} className={styles.workerContainerButton}>
-        <svg className = {styles.icon} viewBox="0 0 24 24" fill="none">
-          <path d="M9 18L15 12L9 6"/>
-        </svg>
-      </button>
-      <button onClick={() => handleClick(7)} className={styles.workerContainerButton}>
-        <svg className = {styles.icon} viewBox="0 0 24 24" fill="none">
-          <path d="M9 18L15 12L9 6 M17 18L23 12L17 6"/>
-        </svg>
-      </button>
+      <SvgButtonIcon
+      path = "M9 18L15 12L9 6"
+      onClick = {() => handleClick(+1)}/>
+      <SvgButtonIcon
+      path = "M9 18L15 12L9 6 M17 18L23 12L17 6"
+      onClick = {() => handleClick(+7)}/>
     </div>
   )
 }

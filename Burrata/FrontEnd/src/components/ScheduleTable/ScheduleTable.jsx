@@ -1,23 +1,25 @@
 import React, { useEffect, useContext, useState, useRef } from 'react'
 import styles from './ScheduleTable.module.css'
 import { Context } from '../Context.js'
-import TextField from '../TextField/TextField.jsx'
+import EmptyRowInTable from '../EmptyRowInTable/EmptyRowInTable.jsx'
+import ValuesInTable from '../ValuesInTable/ValuesInTable.jsx'
+import AddUserInTable from '../AddUserInTable/AddUserInTable.jsx'
+import CountValuesInTable from '../CountValuesInTable/CountValuesInTable.jsx'
 import { save_new_worker_request_handler } from '../../utils/save_new_worker_handler.js'
 import { generateEightDigitNumber } from '../../utils/utils.js'
 import { delete_user_request_handler } from '../../utils/delete_user_handler.js'
 
 function ScheduleTable() {
+
     const {
-        all_users_with_claims,
         weekDates,
         setSchedule,
-        all_users_shifts,
-        showClaims,
         department,
         setAllUsers,
         allUsers,
-        all_trainees_with_claims,
-        all_trainess_shifts
+        all_trainees_to_show,
+        all_workers_to_show,
+        showClaims
    } = useContext(Context)
 
    const [addUser, setAddUser] = useState(false)
@@ -34,13 +36,14 @@ function ScheduleTable() {
    }, [addUser, addTrainee])
 
 
-   const all_users_to_show = showClaims ? all_users_with_claims : all_users_shifts
-   const all_trainees_to_show = showClaims ? all_trainees_with_claims : all_trainess_shifts
+    const handleChange = (userIndex, dateIndex, value, is_trainees) => {
+        if (is_trainees) {
+            userIndex += Object.keys(all_workers_to_show).length
+        }
 
-    const handleChange = (userIndex, dateIndex, value) => {
         const merged_to_show = () => {
             return {
-                ...all_users_to_show,
+                ...all_workers_to_show,
                 ...all_trainees_to_show
             }
         }
@@ -88,7 +91,7 @@ function ScheduleTable() {
     }
 
     const countShift = (dateIndex, shiftType) => {
-        return Object.values(all_users_to_show).filter(
+        return Object.values(all_workers_to_show).filter(
             user => user?.[dateIndex] === shiftType
         ).length;
     };
@@ -97,211 +100,59 @@ function ScheduleTable() {
   return (
     <table className={styles.table}>
         <tbody>
-          <tr>
-            <td></td>
-            {weekDates.map((date, i) => (
-                <td key={i}>{date}</td>
-            ))}
-          </tr>
-    
-          {Object.keys(all_users_to_show).map((user, userIndex) => (
-            <tr key={user}>
-                <td>
-                    <div className={styles.workerContainer}>
-                        <div className={`${styles.workerContainerButton} ${styles.infoIcon}`}>
-                            <div className={styles.workerPopUpMessage}>
-                                <p>id:  {allUsers[user].unique_id_number}</p>
-                            </div>
-                            <svg className = {styles.icon} viewBox="0 0 50 50"> 
-                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 25 11 A 3 3 0 0 0 22 14 A 3 3 0 0 0 25 17 A 3 3 0 0 0 28 14 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 22 23 L 23 23 L 23 36 L 22 36 L 21 36 L 21 38 L 22 38 L 23 38 L 27 38 L 28 38 L 29 38 L 29 36 L 28 36 L 27 36 L 27 21 L 26 21 L 22 21 L 21 21 z"/>
-                            </svg>  
-                        </div>
-                        {user}
-                        <button onClick={() => handleClick("minus", user)} className={styles.workerContainerButton}>
-                            <svg className = {styles.icon} viewBox="0 0 50 50"> 
-                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 13 24 L 37 24 L 37 26 L 13 26 Z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </td>
-                
-                {weekDates.map((date, dateIndex) => (
-                <td key={date}
-                >
-                    { showClaims ? 
-                    <p> { Object.values(all_users_to_show)[userIndex]?.[dateIndex] } </p> : 
-                    <select 
-                    value={Object.values(all_users_to_show)[userIndex]?.[dateIndex]}
-                    onChange={(e) => handleChange(userIndex, dateIndex, e.target.value)}>
-                    <option value={undefined}>{undefined}</option>
-                    <option value="X">X</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="D12">D12</option>
-                    <option value="D10">D10</option>
-                  </select>}
-                </td>
-                ))}
-            </tr>
-            ))}
-
-            <tr>
-                {addUser ?
-                <td>
-                    <div className={styles.userTextContainer}>
-                        <TextField 
-                            value = {userTextName} 
-                            tableStyle = {styles.userText}
-                            ref = {inputRef}
-                            onBlur = {() => {
-                                setAddUser(false)
-                                setUserTextName('')
-                            }}
-                            onChange = {(e) => setUserTextName(e.target.value)}
-                            onKeyDown = {(e) => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    handleRequest(false)
-                                }
-                            }}/>
-                    </div>
-                </td> :
-                <td className={styles.iconWrapper}>
-                    <button onClick={() => handleClick("plus")} className={styles.plusButton}>
-                       <svg className = {styles.icon} viewBox="0 0 50 50"> 
-                            <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z"/>
-                        </svg>
-                    </button>
-                </td> }
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
-                ))}
-            </tr>
-
             <tr>
                 <td></td>
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
-                ))}
+                {weekDates.map((date, i) => (
+                    <td key={i}>{date}</td>
+                ))} 
             </tr>
 
-            <tr>
-                <td>Total 1</td>
-                {weekDates.map((_, i) => (
-                    <td key={i}>
-                        {countShift(i, "1")}
-                    </td>
-                ))}
-            </tr>
+            <ValuesInTable
+            all_users_to_show = {all_workers_to_show}
+            handleClick = {handleClick}
+            showClaims = {showClaims}
+            handleChange = {handleChange}
+            is_trainees = {false}>
+            </ValuesInTable>
 
-            <tr>
-                <td>Total 2</td>
-                {weekDates.map((_, i) => (
-                    <td key={i}>
-                        {countShift(i, "2")}
-                    </td>
-                ))}
-            </tr>
 
-            <tr>
-                <td>Total D10</td>
-                {weekDates.map((_, i) => (
-                    <td key={i}>
-                        {countShift(i, "D10")}
-                    </td>
-                ))}
-            </tr>
+            <AddUserInTable
+            addUser = {addUser}
+            setAddUser = {setAddUser}
+            setUserTextName = {setUserTextName}
+            handleRequest = {handleRequest}
+            userTextName = {userTextName}
+            inputRef = {inputRef}
+            handleClick = {handleClick}
+            icon_name = 'plus'
+            is_trainee = {false}/>
 
-            <tr>
-                <td>Total D12</td>
-                {weekDates.map((_, i) => (
-                    <td key={i}>
-                        {countShift(i, "D12")}
-                    </td>
-                ))}
+            <EmptyRowInTable/>
 
-            </tr>
+            <CountValuesInTable
+            weekDates = {weekDates}
+            countShift = {countShift}/>
 
-            <tr>
-                <td></td>
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
-                ))}
-            </tr>
+            <EmptyRowInTable/>
 
-            {Object.keys(all_trainees_to_show).map((user, userIndex) => (
-            <tr key={user}>
-                <td>
-                    <div className={styles.workerContainer}>
-                        <div className={`${styles.workerContainerButton} ${styles.infoIcon}`}>
-                            <div className={styles.workerPopUpMessage}>
-                                <p>id:  {allUsers[user].unique_id_number}</p>
-                            </div>
-                            <svg className = {styles.icon} viewBox="0 0 50 50"> 
-                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 25 11 A 3 3 0 0 0 22 14 A 3 3 0 0 0 25 17 A 3 3 0 0 0 28 14 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 22 23 L 23 23 L 23 36 L 22 36 L 21 36 L 21 38 L 22 38 L 23 38 L 27 38 L 28 38 L 29 38 L 29 36 L 28 36 L 27 36 L 27 21 L 26 21 L 22 21 L 21 21 z"/>
-                            </svg>  
-                        </div>
-                        {user}
-                        <button onClick={() => handleClick} className={styles.workerContainerButton}>
-                            <svg className = {styles.icon} viewBox="0 0 50 50"> 
-                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 13 24 L 37 24 L 37 26 L 13 26 Z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </td>
-                
-                {weekDates.map((date, dateIndex) => (
-                <td key={date}
-                >
-                    { showClaims ? 
-                    <p> { Object.values(all_trainees_to_show)[userIndex]?.[dateIndex] } </p> : 
-                    <select 
-                    value={Object.values(all_trainees_to_show)[userIndex]?.[dateIndex]}
-                    onChange={(e) => handleChange((userIndex + Object.keys(all_users_to_show).length), dateIndex, e.target.value)}>
-                    <option value={undefined}>{undefined}</option>
-                    <option value="X">X</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="D12">D12</option>
-                    <option value="D10">D10</option>
-                  </select>}
-                </td>
-                ))}
-            </tr>
-            ))}
+            <ValuesInTable
+            all_users_to_show = {all_trainees_to_show}
+            handleClick = {handleClick}
+            showClaims = {showClaims}
+            handleChange = {handleChange}
+            is_trainees = {true}>
+            </ValuesInTable>
 
-            <tr>
-                {addTrainee ?
-                <td>
-                    <div className={styles.userTextContainer}>
-                        <TextField 
-                            value = {traineeTextName} 
-                            tableStyle = {styles.userText}
-                            ref = {inputRef}
-                            onBlur = {() => {
-                                setAddTrainee(false)
-                                setTraineeTextName('')
-                            }}
-                            onChange = {(e) => setTraineeTextName(e.target.value)}
-                            onKeyDown = {(e) => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    handleRequest(true)
-                                }
-                            }}/>
-                    </div>
-                </td> :
-                <td className={styles.iconWrapper}>
-                    <button onClick={() => handleClick("plus_trainee")} className={styles.plusButton}>
-                       <svg className = {styles.icon} viewBox="0 0 50 50"> 
-                            <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z"/>
-                        </svg>
-                    </button>
-                </td> }
-                {Array(7).fill(undefined).map((_, j) => (
-                <td key={j}></td>
-                ))}
-            </tr>
+            <AddUserInTable
+            addUser = {addTrainee}
+            setAddUser = {setAddTrainee}
+            setUserTextName = {setTraineeTextName}
+            handleRequest = {handleRequest}
+            userTextName = {traineeTextName}
+            inputRef = {inputRef}
+            handleClick = {handleClick}
+            icon_name = 'plus_trainee'
+            is_trainee = {true}/>
 
         </tbody>
       </table>

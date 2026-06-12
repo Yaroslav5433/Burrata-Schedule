@@ -1,0 +1,21 @@
+.userText.userText {
+    width: 100%;
+  }
+
+.plusButton {
+    width: 100%;
+    height: 100%;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+.plusButton:hover {
+    background: var(--gray-color);
+    transition-duration: var(--transition-duration);
+  }

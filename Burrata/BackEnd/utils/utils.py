@@ -7,9 +7,6 @@ def prepare_shifts_for_sql_insert(shifts: list[str], next_week_dates: list[datet
     result = {}
 
     for shift, date_str in zip(shifts, next_week_dates):
-        if not shift:
-            continue
-
         result[date_str] = shift
 
     return result
