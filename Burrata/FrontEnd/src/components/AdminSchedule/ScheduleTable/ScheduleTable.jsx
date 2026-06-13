@@ -1,13 +1,12 @@
 import React, { useEffect, useContext, useState, useRef } from 'react'
 import styles from './ScheduleTable.module.css'
-import { Context } from '../Context.js'
-import EmptyRowInTable from '../EmptyRowInTable/EmptyRowInTable.jsx'
-import ValuesInTable from '../ValuesInTable/ValuesInTable.jsx'
-import AddUserInTable from '../AddUserInTable/AddUserInTable.jsx'
-import CountValuesInTable from '../CountValuesInTable/CountValuesInTable.jsx'
-import { save_new_worker_request_handler } from '../../utils/save_new_worker_handler.js'
-import { generateEightDigitNumber } from '../../utils/utils.js'
-import { delete_user_request_handler } from '../../utils/delete_user_handler.js'
+import { Context } from '@/components/Context.js'
+import EmptyRowInTable from '@/components/AdminSchedule/TableElements/EmptyRowInTable/EmptyRowInTable.jsx'
+import ValuesInTable from '@/components/AdminSchedule/TableElements/ValuesInTable/ValuesInTable.jsx'
+import AddUserInTable from '@/components/AdminSchedule/TableElements/AddUserInTable/AddUserInTable.jsx'
+import CountValuesInTable from '@/components/AdminSchedule/TableElements/CountValuesInTable/CountValuesInTable.jsx'
+import { generateEightDigitNumber } from '@/utils/utils.js'
+import { useDeleteUser, useSaveUser } from '@/hooks/usersMutations'
 
 function ScheduleTable() {
 
@@ -26,6 +25,9 @@ function ScheduleTable() {
    const [addTrainee, setAddTrainee] = useState(false)
    const [userTextName, setUserTextName] = useState('')
    const [traineeTextName, setTraineeTextName] = useState('')
+
+   const saveUser = useSaveUser(department)
+   const deleteUser = useDeleteUser(department)
 
    const inputRef = useRef(null);
 
@@ -60,20 +62,13 @@ function ScheduleTable() {
         inputRef.current?.blur();
 
         const username = is_trainee ? traineeTextName : userTextName
-        const copy = structuredClone(allUsers)
         const unique_id_number = generateEightDigitNumber()
 
-        await save_new_worker_request_handler(username, department, unique_id_number, is_trainee)
-
-        setAllUsers({
-            ...copy,
-            [username]: {
-              shifts: Array(7).fill(''),
-              unique_id_number: unique_id_number,
-              position: department,
-              is_trainee: is_trainee
-            }
-          });
+        saveUser.mutate({
+            username,
+            unique_id_number,
+            is_trainee
+        })
     }
 
     const handleClick = async (icon, current_username) => {
@@ -84,9 +79,9 @@ function ScheduleTable() {
             setAddTrainee(true)
         }
         if (icon === "minus") {
-            await delete_user_request_handler(current_username)
-            const { [current_username]: removed, ...rest } = allUsers
-            setAllUsers(rest)
+            deleteUser.mutate({
+                current_username
+            })
         }
     }
 

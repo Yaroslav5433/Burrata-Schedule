@@ -1,17 +1,21 @@
-import React, {useContext} from 'react'
+import React, { useContext } from 'react'
 import styles from './ScheduleTableContainer.module.css'
-import ScheduleTable from '../ScheduleTable/ScheduleTable'
-import Button from '../Button/Button'
-import Checkbox from '../Checkbox/Checkbox'
-import SvgButtonIcon from '../Svgs/SvgButtonIcon'
-import { save_users_claims_request_handler } from '../../utils/save_users_claims_handler' 
-import { save_schedule_table_request_handler } from '../../utils/save_schedule_table_handler'
-import { useNotification } from "../ModalWindow/ModalWindow";
+import ScheduleTable from '@/components/AdminSchedule/ScheduleTable/ScheduleTable'
+import Button from '@/components/Button/Button'
+import Checkbox from '@/components/Checkbox/Checkbox'
+import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
+import { useNotification } from "@/components/ModalWindow/ModalWindow";
+import { useSaveClaimsIntoSchedule } from '@/hooks/scheduleMutations'
+import { Context } from '@/components/Context'
 
 function ScheduleTableContainer(props) {
 
   const {
     showClaims,
+    department
+  } = useContext(Context)
+
+  const {
     setShowClaims,
     usersWithClaims,
     schedule,
@@ -20,6 +24,7 @@ function ScheduleTableContainer(props) {
   } = props
 
   const { showNotification } = useNotification();
+  const saveClaimsIntoSchedule = useSaveClaimsIntoSchedule(dateStep, department);
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,12 +32,16 @@ function ScheduleTableContainer(props) {
     const action = e.nativeEvent.submitter.value;
   
     if (action === "save table") {
-      await save_schedule_table_request_handler(schedule, dateStep);
+      saveClaimsIntoSchedule.mutate({
+        schedule
+      })
       showNotification('Schedule has been saved')
     }
 
     if (action === "save claims") {
-      await save_users_claims_request_handler(usersWithClaims, dateStep);
+      saveClaimsIntoSchedule.mutate({
+        usersWithClaims
+      })
       showNotification('Claims have been saved')
     }
   };

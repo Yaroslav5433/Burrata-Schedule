@@ -1,4 +1,4 @@
-import { delete_user_request } from "../api/requests"
+import { delete_user_request } from "@/api/requests"
 
 export async function delete_user_request_handler(username) {
     try {

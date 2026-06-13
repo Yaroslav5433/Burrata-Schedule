@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react'
-import { Context } from '../Context.js'
-import TextField from '../TextField/TextField.jsx'
-import Button from '../Button/Button.jsx'
+import { Context } from '@/components/Context.js'
+import TextField from '@/components/TextField/TextField.jsx'
+import Button from '@/components/Button/Button.jsx'
+import centralstyle from '@/components/CentralContainer/CentralContainer.module.css'
 
 function AdminAuthorizationContainer() {
 
@@ -30,7 +31,7 @@ function AdminAuthorizationContainer() {
     }
 
     return (
-        <form className="container" onSubmit={onSubmit}>
+        <form className={centralstyle.central_container} onSubmit={onSubmit}>
             <h1>Authorization</h1>
             <TextField 
             name='login'

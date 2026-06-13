@@ -1,4 +1,4 @@
-import { get_all_claims_request } from "../api/requests"
+import { get_all_claims_request } from "@/api/requests"
 
 export async function get_all_claims_request_handler(department, dateStep) {
     try {

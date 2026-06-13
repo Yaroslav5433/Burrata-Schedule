@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import styles from './ValuesInTable.module.css'
-import SvgIcon from '../Svgs/SvgIcon'
-import { Context } from '../Context'
+import SvgIcon from '@/components/Svgs/SvgIcon'
+import { Context } from '@/components/Context'
 
 function ValuesInTable(props) {
 

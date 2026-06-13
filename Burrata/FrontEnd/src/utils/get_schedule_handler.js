@@ -1,4 +1,4 @@
-import { get_schedule_request } from "../api/requests"
+import { get_schedule_request } from "@/api/requests"
 
 export async function get_schedule_request_handler(department, dateStep) {
     try {

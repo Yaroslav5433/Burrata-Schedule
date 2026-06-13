@@ -1,5 +1,4 @@
 import React, { useContext, useState, createContext } from 'react'
-import { Context } from '../Context'
 import styles from './ModalWindow.module.css'
 
 const NotificationContext = createContext();

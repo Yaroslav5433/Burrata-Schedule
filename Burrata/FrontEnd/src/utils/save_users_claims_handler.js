@@ -1,4 +1,4 @@
-import { save_users_claims_request } from "../api/requests"
+import { save_users_claims_request } from "@/api/requests"
 
 export async function save_users_claims_request_handler(values, dateStep) {
     try {

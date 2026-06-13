@@ -1,4 +1,4 @@
-import { get_dates_request } from "../api/requests"
+import { get_dates_request } from "@/api/requests"
 
 export async function get_dates_request_handler(dateStep) {
     try {

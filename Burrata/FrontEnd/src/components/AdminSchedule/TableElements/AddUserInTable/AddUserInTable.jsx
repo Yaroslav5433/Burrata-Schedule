@@ -1,7 +1,7 @@
 import React from 'react'
-import TextField from '../TextField/TextField'
+import TextField from '@/components/TextField/TextField'
 import styles from './AddUserInTable.module.css'
-import SvgIcon from '../Svgs/SvgIcon'
+import SvgIcon from '@/components/Svgs/SvgIcon'
 
 function AddUserInTable(props) {
 

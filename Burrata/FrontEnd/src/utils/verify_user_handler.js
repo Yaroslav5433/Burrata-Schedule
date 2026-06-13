@@ -1,4 +1,4 @@
-import { verify_user_request } from "../api/requests";
+import { verify_user_request } from "@/api/requests";
 
 export async function verify_user_request_handler(unique_id_number) {
     try {

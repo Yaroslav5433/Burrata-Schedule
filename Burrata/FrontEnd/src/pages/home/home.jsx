@@ -1,130 +1,106 @@
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
-import DepartmentsNavBar from '../../components/DepartmentsNavBar/DepartmentsNavBar.jsx'
-import ScheduleTableContainer from '../../components/ScheduleTableContainer/ScheduleTableContainer'
-import { useEffect, useState, useMemo } from "react";
-import { Context } from "../../components/Context";
-import { get_all_users_request_handler } from "../../utils/get_all_users_handler";
-import { get_all_claims_request_handler } from "../../utils/get_all_claims_handler";
-import { get_dates_request_handler } from "../../utils/get_dates_handler";
-import { get_schedule_request_handler } from "../../utils/get_schedule_handler";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx'
+import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer'
+import { useState } from "react";
+import { Context } from "@/components/Context";
+import { get_all_users_request_handler } from "@/utils/get_all_users_handler";
+import { get_all_claims_request_handler } from "@/utils/get_all_claims_handler";
+import { get_dates_request_handler } from "@/utils/get_dates_handler";
+import { get_schedule_request_handler } from "@/utils/get_schedule_handler";
 import { useParams } from "react-router-dom";
 import styles from './home.module.css'
+import pagestyles from '@/pages/pages.module.css'
+import { useQuery } from "@tanstack/react-query";
 
 function Home() {
 
-    const [allUsers, setAllUsers] = useState({})
-    const [usersWithClaims, setUsersWithClaims] = useState({})
-    const [weekDates, setWeekDates] = useState([])
-    const [schedule, setSchedule] = useState([])
     const [showClaims, setShowClaims] = useState(true)
     const [dateStep, setDateStep] = useState(0)
 
     const { department } = useParams()
 
-    useEffect(() => {
-        const get_info = async () => {
+    const datesQuery = useQuery({
+        queryKey: ["dates", dateStep],
+        queryFn: () => get_dates_request_handler(dateStep),
+        placeholderData: (prev) => prev,
+    });
 
-            setAllUsers({})
-            setUsersWithClaims({})
-            setSchedule([])
+    const usersQuery = useQuery({
+        queryKey: ["users", department],
+        queryFn: () => get_all_users_request_handler(department),
+        placeholderData: (prev) => prev,
+        enabled: !!department,
+    });
 
-            if (!department) return;
+    const claimsQuery = useQuery({
+        queryKey: ["claims", department, dateStep],
+        queryFn: () => get_all_claims_request_handler(department, dateStep),
+        placeholderData: (prev) => prev,
+        enabled: !!department,
+    });
 
-            const dates = await get_dates_request_handler(dateStep)
-            setWeekDates(dates["dates"])
+    const scheduleQuery = useQuery({
+        queryKey: ["schedule", department, dateStep],
+        queryFn: () => get_schedule_request_handler(department, dateStep),
+        placeholderData: (prev) => prev,
+        enabled: !!department,
+    });
 
-            const all_users = await get_all_users_request_handler(department)
-            if (!("detail" in all_users)) {
-                setAllUsers(all_users)
-            }
-
-            const users_with_claims = await get_all_claims_request_handler(department, dateStep)
-            if (!("detail" in users_with_claims)) {
-                setUsersWithClaims(users_with_claims)
-            }
-
-            const all_shifts = await get_schedule_request_handler(department, dateStep)
-            if (!("detail" in all_shifts)) {
-                setSchedule(all_shifts)
-            }
-        }  
-
-        get_info()
-    }, [department, dateStep])
-
-
-    const allUsersShifts = useMemo(() => {
-        const result = {};
-
-        for (const [username, user] of Object.entries(allUsers ?? {})) {
-            if (!user.is_trainee) {
-                result[username] = user.shifts;
-            }
-        }
-
-        return result;
-    }, [allUsers])
-
-    const allTraineesShifts = useMemo(() => {
-        const result = {};
-
-        for (const [username, user] of Object.entries(allUsers ?? {})) {
-            if (user.is_trainee) {
-                result[username] = user.shifts;
-            }
-        }
-
-        return result;
-    }, [allUsers])
+    const allUsers = usersQuery.data ?? {};
+    const usersWithClaims = claimsQuery.data ?? {};
+    const schedule = scheduleQuery.data ?? {};
+    const weekDates = datesQuery.data?.dates ?? [];
 
 
-    const all_users_with_claims = useMemo(() => {
-        return {
-            ...allUsersShifts,
-            ...Object.fromEntries(
-                Object.entries(usersWithClaims)
-                .filter(([username]) => username in allUsersShifts)
-            )
-        }
-    }, [usersWithClaims, allUsersShifts])
+    const workers = Object.fromEntries(
+        Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
+      );
 
-    const all_users_shifts = useMemo(() => {
-        return {
-            ...allUsersShifts,
-            ...Object.fromEntries(
-                Object.entries(schedule)
-                .filter(([username]) => username in allUsersShifts)
-            )
-        }
-    }, [schedule, allUsersShifts])
+    const trainees = Object.fromEntries(
+        Object.entries(allUsers).filter(([_, u]) => u.is_trainee)
+      );
 
 
-    const all_trainees_with_claims = useMemo(() => {
-        return {
-            ...allTraineesShifts,
-            ...Object.fromEntries(
-                Object.entries(usersWithClaims)
-                .filter(([username]) => username in allTraineesShifts)
-            )
-        }
-    }, [usersWithClaims, allUsersShifts])
+    const workersWithClaims = {
+    ...workers,
+    ...Object.fromEntries(
+        Object.entries(usersWithClaims).filter(([u]) => u in workers)
+    ),
+    };
 
-    const all_trainess_shifts = useMemo(() => {
-        return {
-            ...allTraineesShifts,
-            ...Object.fromEntries(
-                Object.entries(schedule)
-                .filter(([username]) => username in allTraineesShifts)
-            )
-        }
-    }, [schedule, allUsersShifts])
+    const workersWithSchedule = {
+    ...workers,
+    ...Object.fromEntries(
+        Object.entries(schedule).filter(([u]) => u in workers)
+    ),
+    };
 
-    const all_workers_to_show = showClaims ? all_users_with_claims : all_users_shifts
-    const all_trainees_to_show = showClaims ? all_trainees_with_claims : all_trainess_shifts
+    const traineesWithClaims = {
+    ...trainees,
+    ...Object.fromEntries(
+        Object.entries(usersWithClaims).filter(([u]) => u in trainees)
+    ),
+    };
+
+    const traineesWithSchedule = {
+    ...trainees,
+    ...Object.fromEntries(
+        Object.entries(schedule).filter(([u]) => u in trainees)
+    ),
+    };
+
+    const all_workers_to_show = showClaims
+    ? workersWithClaims
+    : workersWithSchedule;
+
+  const all_trainees_to_show = showClaims
+    ? traineesWithClaims
+    : traineesWithSchedule;
+
 
     return (
-        <div className = "app">
+        <div className = {pagestyles.app}>
             <Header
             isAdmin = {true}/>
                     <div className={styles.schedule_page_container}>
@@ -132,10 +108,8 @@ function Home() {
                         <Context.Provider
                         value = {{
                             weekDates,
-                            setSchedule,
                             department,
                             allUsers,
-                            setAllUsers,
                             all_workers_to_show,
                             all_trainees_to_show,
                             showClaims

@@ -1,18 +1,22 @@
 import React, { useContext } from 'react'
-import ClaimsTableForRequest from '../ClaimsTableForRequest/ClaimsTableForRequest.jsx'
-import Button from '../Button/Button'
-import { Context } from '../Context.js'
-import Animation from '../Animation/Animation.jsx'
+import ClaimsTableForRequest from '@/components/CentralContainer/VerifiedUser/ClaimsTableForRequest/ClaimsTableForRequest.jsx'
+import Button from '@/components/Button/Button.jsx'
+import { Context } from '@/components/Context.js'
+import Animation from '@/components/Animation/Animation.jsx'
+import centralstyle from '@/components/CentralContainer/CentralContainer.module.css'
 
-function VerifiedUserContainer() {
+function VerifiedUserContainer(props) {
+
+    const {
+        claimValues,
+        userSavedClaims,
+    } = useContext(Context)
 
     const {
         userName,
         send_a_claim,
-        claimValues,
-        userSavedClaims,
-        errorOnClaimsSaving
-    } = useContext(Context)
+        errorOnClaimsSaving,
+    } = props
 
     async function onSubmit(event) {
         event.preventDefault()
@@ -21,7 +25,7 @@ function VerifiedUserContainer() {
 
     return (
         <Animation>
-            <form className="container" onSubmit={onSubmit}>
+            <form className={centralstyle.central_container} onSubmit={onSubmit}>
                 <h1>{userName}</h1>
                 {!(userSavedClaims.some(Boolean)) && (
                     <p>Please, choose a claims:</p>

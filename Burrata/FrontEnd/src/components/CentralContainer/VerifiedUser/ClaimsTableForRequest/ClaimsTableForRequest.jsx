@@ -1,7 +1,6 @@
-import { Context } from '../Context.js';
+import { Context } from '@/components/Context.js';
 import styles from './claimsTableForRequest.module.css'
 import { useContext, useState } from 'react';
-import isEqual from "lodash/isEqual"
 
 function ClaimsTableForRequest() {
 

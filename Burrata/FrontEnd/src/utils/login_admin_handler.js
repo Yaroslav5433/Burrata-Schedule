@@ -1,4 +1,4 @@
-import { login_admin_request } from "../api/requests"
+import { login_admin_request } from "@/api/requests"
 
 export async function login_admin_request_handler(form) {
     try {

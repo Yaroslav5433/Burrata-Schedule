@@ -1,4 +1,4 @@
-import { save_new_worker_request } from "../api/requests"
+import { save_new_worker_request } from "@/api/requests"
 
 export async function save_new_worker_request_handler(userTextName, department, unique_id_number, is_trainee) {
     try {

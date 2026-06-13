@@ -1,10 +1,11 @@
-import Header from '../../components/Header/Header.jsx'
-import Footer from '../../components/Footer/Footer.jsx'
-import RequestContainer from '../../components/RequestContainer/RequestContainer.jsx';
-import { login_admin_request_handler } from '../../utils/login_admin_handler.js';
+import Header from '@/components/Header/Header.jsx'
+import Footer from '@/components/Footer/Footer.jsx'
+import AdminAuthorizationContainer from '@/components/CentralContainer/AdminAuthorizationContainer/AdminAuthorizationContainer.jsx'
+import { login_admin_request_handler } from '@/utils/login_admin_handler.js';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Context } from '../../components/Context.js';
+import { Context } from '@/components/Context.js';
+import pagestyles from '@/pages/pages.module.css'
 
 
 function Login() {
@@ -29,11 +30,10 @@ function Login() {
         errorOnAuth,
         login_admin
     }}>
-        <div className = "app">
+        <div className = {pagestyles.app}>
         <Header />
-            <main className='requestContainer'>
-                <RequestContainer 
-                loginPage={true}/>
+            <main className={pagestyles.requestContainer}>
+                <AdminAuthorizationContainer/>
             </main>
         <Footer />
     </div>

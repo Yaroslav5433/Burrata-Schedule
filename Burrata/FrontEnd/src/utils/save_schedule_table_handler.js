@@ -1,4 +1,4 @@
-import { save_schedule_table_request } from "../api/requests"
+import { save_schedule_table_request } from "@/api/requests"
 
 export async function save_schedule_table_request_handler(schedule, dateStep) {
     try {
