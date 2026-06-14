@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert, delete
+from sqlalchemy import select, insert, delete, and_
 from sqlalchemy.dialects.postgresql import insert as pginsert
 from database.models import Admin, Users, ClaimsSchedule, Schedule
 from utils.utils import transform_datetime_item_to_str
@@ -68,7 +68,9 @@ async def get_all_users(db: AsyncSession, requested_department):
         for username, unique_id_number, position, is_trainee in all_users.all()
     }
 
-    return users
+    sorted_users = dict(sorted(users.items()))
+
+    return sorted_users
 
 
 async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_position, claims: bool = False):
@@ -78,9 +80,8 @@ async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_pos
             ClaimsSchedule.date.in_(week_dates),
             Users.position == requested_position
         ))
-    else: res = await db.execute(select(Schedule.username, Schedule.date, Schedule.shift).join(
-        Users, Users.username == Schedule.username).where(
-            Schedule.date.in_(week_dates),
+    else: res = await db.execute(select(Users.username, Schedule.date, Schedule.shift).select_from(Users).outerjoin(
+        Schedule, and_(Users.username == Schedule.username, Schedule.date.in_(week_dates))).where(
             Users.position == requested_position
         ))
 
@@ -90,7 +91,8 @@ async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_pos
         if username not in new_dict:
             new_dict[username] = {}
 
-        new_dict[username][transform_datetime_item_to_str(date)] = shift
+        if date is not None:
+            new_dict[username][transform_datetime_item_to_str(date)] = shift
 
     return new_dict
 
