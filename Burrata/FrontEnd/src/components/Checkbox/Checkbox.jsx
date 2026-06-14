@@ -8,6 +8,8 @@ function Checkbox(props) {
     onChange
   } = props
 
+  console.log('checked', checked)
+
   return (
     <div className={styles.checkboxWrapper}>
       <label htmlFor="cbk1-65">

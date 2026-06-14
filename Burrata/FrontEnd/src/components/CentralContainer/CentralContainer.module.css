@@ -1,0 +1,13 @@
+.central_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    align-items: center;
+    background-color: var(--light-gray-color);
+    min-width: clamp(250px, 28vw, 1200px);
+    height: clamp(300px, 30vw, 1200px);
+    border: 3px solid var(--white-gray-color);
+    border-radius: 5px;
+    padding: 20px
+}

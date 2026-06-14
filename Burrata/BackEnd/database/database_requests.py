@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete, and_
 from sqlalchemy.dialects.postgresql import insert as pginsert
 from database.models import Admin, Users, ClaimsSchedule, Schedule
 from utils.utils import transform_datetime_item_to_str
@@ -68,7 +68,9 @@ async def get_all_users(db: AsyncSession, requested_department):
         for username, unique_id_number, position, is_trainee in all_users.all()
     }
 
-    return users
+    sorted_users = dict(sorted(users.items()))
+
+    return sorted_users
 
 
 async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_position, claims: bool = False):
@@ -78,9 +80,8 @@ async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_pos
             ClaimsSchedule.date.in_(week_dates),
             Users.position == requested_position
         ))
-    else: res = await db.execute(select(Schedule.username, Schedule.date, Schedule.shift).join(
-        Users, Users.username == Schedule.username).where(
-            Schedule.date.in_(week_dates),
+    else: res = await db.execute(select(Users.username, Schedule.date, Schedule.shift).select_from(Users).outerjoin(
+        Schedule, and_(Users.username == Schedule.username, Schedule.date.in_(week_dates))).where(
             Users.position == requested_position
         ))
 
@@ -90,7 +91,8 @@ async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_pos
         if username not in new_dict:
             new_dict[username] = {}
 
-        new_dict[username][transform_datetime_item_to_str(date)] = shift
+        if date is not None:
+            new_dict[username][transform_datetime_item_to_str(date)] = shift
 
     return new_dict
 
@@ -107,3 +109,17 @@ async def insert_users_in_database(username: str, position: str, is_trainee: boo
     await db.commit()
 
     return success_on_insert.rowcount > 0
+
+
+async def get_user_by_id(unique_id_number: str, db: AsyncSession):
+    verified_user = await db.execute(select(Users).filter(Users.unique_id_number == unique_id_number))
+    
+    return verified_user.scalar_one_or_none()
+
+
+async def delete_user_by_name(username: str, db: AsyncSession):
+    success_on_delete = await db.execute(delete(Users).where(Users.username == username))
+
+    await db.commit()
+
+    return success_on_delete.rowcount > 0

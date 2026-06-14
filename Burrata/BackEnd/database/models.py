@@ -1,6 +1,8 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint
 from database.database import Base
+from sqlalchemy.orm import relationship
 import bcrypt
+
 
 
 class Admin(Base):
@@ -25,12 +27,24 @@ class Users(Base):
     position = Column(String, nullable=False)
     is_trainee = Column(Boolean, nullable=False, default=False)
 
+    claims = relationship(
+        "ClaimsSchedule",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
+    schedules = relationship(
+        "Schedule",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
 
 class ClaimsSchedule(Base):
     __tablename__ = 'claimsschedule'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, ForeignKey("users.username"), nullable=False)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
     date = Column(DateTime, nullable=False)
     shift = Column(String, nullable=False)
     
@@ -41,7 +55,7 @@ class Schedule(Base):
     __tablename__ = 'schedule'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, ForeignKey("users.username"), nullable=False)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
     date = Column(DateTime, nullable=False)
     shift = Column(String)
 

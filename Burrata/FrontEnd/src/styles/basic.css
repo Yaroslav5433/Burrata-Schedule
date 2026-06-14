@@ -6,19 +6,6 @@ body {
     color: var(--white-color);
 }
 
-.app {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-.requestContainer {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 h1 {
     font-size: clamp(15px, 2vw, 35px)
 }
@@ -29,24 +16,9 @@ h1 {
 }
 
 .successMessage {
+    font-size: clamp(8px, 1.5vw, 12px);
     color: var(--green-color);
 }
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 40px;
-    align-items: center;
-    background-color: var(--light-gray-color);
-    min-width: clamp(250px, 28vw, 1200px);
-    height: clamp(300px, 30vw, 1200px);
-    border: 3px solid var(--white-gray-color);
-    border-radius: 5px;
-    padding: 20px
-}
-
-
 
 @media (max-width: 1000px) {
     .container {
