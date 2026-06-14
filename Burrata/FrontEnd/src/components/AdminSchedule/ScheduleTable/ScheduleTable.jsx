@@ -7,18 +7,17 @@ import AddUserInTable from '@/components/AdminSchedule/TableElements/AddUserInTa
 import CountValuesInTable from '@/components/AdminSchedule/TableElements/CountValuesInTable/CountValuesInTable.jsx'
 import { generateEightDigitNumber } from '@/utils/utils.js'
 import { useDeleteUser, useSaveUser } from '@/hooks/usersMutations'
+import { useSetSchedule } from '@/hooks/scheduleMutations'
 
 function ScheduleTable() {
 
     const {
         weekDates,
-        setSchedule,
         department,
-        setAllUsers,
-        allUsers,
         all_trainees_to_show,
         all_workers_to_show,
-        showClaims
+        showClaims,
+        setDraftSchedule,
    } = useContext(Context)
 
    const [addUser, setAddUser] = useState(false)
@@ -43,19 +42,16 @@ function ScheduleTable() {
             userIndex += Object.keys(all_workers_to_show).length
         }
 
-        const merged_to_show = () => {
-            return {
-                ...all_workers_to_show,
-                ...all_trainees_to_show
-            }
+        const merged_to_show = {
+            ...all_workers_to_show,
+            ...all_trainees_to_show
         }
-
-        const copy = structuredClone(merged_to_show());
+        const copy = structuredClone(merged_to_show)
         const userKey = Object.keys(copy)[userIndex]
 
         copy[userKey][dateIndex] = value
     
-        setSchedule(copy)
+        setDraftSchedule(copy)
     };
 
     const handleRequest = async (is_trainee) => {
@@ -107,9 +103,7 @@ function ScheduleTable() {
             handleClick = {handleClick}
             showClaims = {showClaims}
             handleChange = {handleChange}
-            is_trainees = {false}>
-            </ValuesInTable>
-
+            is_trainees = {false}/>
 
             <AddUserInTable
             addUser = {addUser}
@@ -135,8 +129,7 @@ function ScheduleTable() {
             handleClick = {handleClick}
             showClaims = {showClaims}
             handleChange = {handleChange}
-            is_trainees = {true}>
-            </ValuesInTable>
+            is_trainees = {true}/>
 
             <AddUserInTable
             addUser = {addTrainee}
