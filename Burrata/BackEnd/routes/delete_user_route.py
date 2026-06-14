@@ -17,5 +17,3 @@ async def get_users(username: str, db: AsyncSession = Depends(get_db)):
         )
     
     logger.info('User has been deleted')
-    
-    return { 'success' }
