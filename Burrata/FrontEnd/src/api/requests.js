@@ -75,6 +75,9 @@ export async function get_all_users_request(department) {
     'Content-Type': 'application/json'
   }
 })
+  if (!res.ok) {
+    throw new Error('Get users failed')
+  }
 
   return res.json()
 }
@@ -87,6 +90,9 @@ export async function get_all_claims_request(department, dateStep) {
     'Content-Type': 'application/json'
   }
 })
+  if (!res.ok) {
+    throw new Error('Get claims failed')
+  }
 
   return res.json()
 }
@@ -99,6 +105,10 @@ export async function get_schedule_request(department, dateStep) {
     'Content-Type': 'application/json'
   }
 })
+
+  if (!res.ok) {
+    throw new Error('Get schedule failed')
+  }
 
   return res.json()
 }
@@ -170,6 +180,10 @@ export async function delete_user_request(username) {
 
   if (!res.ok) {
     throw new Error('Deleting user failed')
+  }
+
+  if (res.status === 204 ) {
+    return {'success': true}
   }
 
   return res.json()
