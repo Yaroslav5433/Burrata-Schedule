@@ -4,7 +4,7 @@ import UserVerificationContainer from '@/components/CentralContainer/UserVerific
 import VerifiedUserContainer from '@/components/CentralContainer/VerifiedUser/VerifiedUserContainer/VerifiedUserContainer.jsx'
 import { verify_user_request_handler } from '@/utils/verify_user_handler.js';
 import { save_user_claims_request_handler } from '@/utils/save_user_claims_handler.js'
-import { get_dates_request_handler } from '@/utils/get_dates_handler.js';
+import { get_dates_request } from '@/api/requests';
 import { useState } from 'react';
 import { Context } from '@/components/Context.js';
 import pagestyles from '../pages.module.css'
@@ -29,7 +29,7 @@ function Request() {
         }
         setErrorOnReq(false)
 
-        const nextWeekDates = await get_dates_request_handler()
+        const nextWeekDates = await get_dates_request()
         setClaimDates(nextWeekDates["dates"]);
 
         setVerificationPage(false)

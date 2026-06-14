@@ -4,10 +4,10 @@ import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/Depa
 import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer'
 import { useState } from "react";
 import { Context } from "@/components/Context";
-import { get_all_users_request_handler } from "@/utils/get_all_users_handler";
-import { get_all_claims_request_handler } from "@/utils/get_all_claims_handler";
-import { get_dates_request_handler } from "@/utils/get_dates_handler";
-import { get_schedule_request_handler } from "@/utils/get_schedule_handler";
+import { get_all_users_request } from "@/api/requests";
+import { get_all_claims_request } from "@/api/requests";
+import { get_dates_request } from "@/api/requests";
+import { get_schedule_request } from "@/api/requests";
 import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
@@ -17,41 +17,45 @@ function Home() {
 
     const [showClaims, setShowClaims] = useState(true)
     const [dateStep, setDateStep] = useState(0)
+    const [isEdit, setIsEdit] = useState(false)
+    const [draftSchedule, setDraftSchedule] = useState(null)
 
     const { department } = useParams()
 
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],
-        queryFn: () => get_dates_request_handler(dateStep),
+        queryFn: () => get_dates_request(dateStep),
         placeholderData: (prev) => prev,
     });
 
     const usersQuery = useQuery({
         queryKey: ["users", department],
-        queryFn: () => get_all_users_request_handler(department),
+        queryFn: () => get_all_users_request(department),
         placeholderData: (prev) => prev,
         enabled: !!department,
+        retry: 0
     });
 
     const claimsQuery = useQuery({
         queryKey: ["claims", department, dateStep],
-        queryFn: () => get_all_claims_request_handler(department, dateStep),
+        queryFn: () => get_all_claims_request(department, dateStep),
         placeholderData: (prev) => prev,
         enabled: !!department,
+        retry: 0
     });
 
     const scheduleQuery = useQuery({
         queryKey: ["schedule", department, dateStep],
-        queryFn: () => get_schedule_request_handler(department, dateStep),
+        queryFn: () => get_schedule_request(department, dateStep),
         placeholderData: (prev) => prev,
         enabled: !!department,
+        retry: 0
     });
 
     const allUsers = usersQuery.data ?? {};
     const usersWithClaims = claimsQuery.data ?? {};
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
-
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -61,6 +65,9 @@ function Home() {
         Object.entries(allUsers).filter(([_, u]) => u.is_trainee)
       );
 
+    const schedule_to_show = isEdit 
+    ? draftSchedule
+    : schedule
 
     const workersWithClaims = {
     ...workers,
@@ -72,7 +79,7 @@ function Home() {
     const workersWithSchedule = {
     ...workers,
     ...Object.fromEntries(
-        Object.entries(schedule).filter(([u]) => u in workers)
+        Object.entries(schedule_to_show).filter(([u]) => u in workers)
     ),
     };
 
@@ -86,7 +93,7 @@ function Home() {
     const traineesWithSchedule = {
     ...trainees,
     ...Object.fromEntries(
-        Object.entries(schedule).filter(([u]) => u in trainees)
+        Object.entries(schedule_to_show).filter(([u]) => u in trainees)
     ),
     };
 
@@ -94,10 +101,15 @@ function Home() {
     ? workersWithClaims
     : workersWithSchedule;
 
-  const all_trainees_to_show = showClaims
+    const all_trainees_to_show = showClaims
     ? traineesWithClaims
     : traineesWithSchedule;
 
+    console.log('draftSchedule', draftSchedule)
+    
+    const handleDraftSet = () => {
+        setDraftSchedule(structuredClone(scheduleQuery.data))
+    }
 
     return (
         <div className = {pagestyles.app}>
@@ -109,18 +121,22 @@ function Home() {
                         value = {{
                             weekDates,
                             department,
-                            allUsers,
                             all_workers_to_show,
                             all_trainees_to_show,
-                            showClaims
+                            showClaims,
+                            isEdit,
+                            setIsEdit,
+                            draftSchedule,
+                            setDraftSchedule,
+                            allUsers
                         }}>
                             <main className={styles.schedule_page_main_section_container}>
                                 <ScheduleTableContainer
                                 setShowClaims = {setShowClaims}
                                 usersWithClaims = {usersWithClaims}
-                                schedule = {schedule}
-                                dateStep = {dateStep}
                                 setDateStep = {setDateStep}
+                                handleDraftSet = {handleDraftSet}
+                                dateStep = {dateStep}
                                 />
                                 <h1>Messages</h1>
                             </main>
