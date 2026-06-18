@@ -188,3 +188,25 @@ export async function delete_user_request(username) {
 
   return res.json()
 }
+
+
+export async function fill_up_schedule_request(claims, demands) {
+  const res = await fetch(`http://localhost:8000/fillupschedule`, {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'claims': claims,
+    'demands': demands
+  })
+})
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data['detail'] || 'Request failed')
+  }
+
+  return data
+}
