@@ -13,6 +13,11 @@ class Users_with_shifts(RootModel[dict[str, list[str]]]):
 class Users_with_info(RootModel[dict[str, dict]]):
     pass
 
+class Schedule_ai_response(BaseModel):
+    status: str
+    schedule: dict[str, list] | None
+    reason: str | None
+
 class Dates(BaseModel):
     dates: list[str]
 

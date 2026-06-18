@@ -8,19 +8,27 @@ import { get_all_users_request } from "@/api/requests";
 import { get_all_claims_request } from "@/api/requests";
 import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
+import { fill_up_schedule_request } from "@/api/requests"
 import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
 import { useQuery } from "@tanstack/react-query";
+import PopUp from "@/components/PopUp/PopUp";
+import { useNotification } from "@/components/ModalWindow/ModalWindow";
+import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
 
 function Home() {
 
     const [showClaims, setShowClaims] = useState(true)
     const [dateStep, setDateStep] = useState(0)
     const [isEdit, setIsEdit] = useState(false)
+    const [popUpIsOpen, setPopUpIsOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [draftSchedule, setDraftSchedule] = useState(null)
 
     const { department } = useParams()
+
+    const { showNotification } = useNotification();
 
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],
@@ -111,25 +119,63 @@ function Home() {
         setDraftSchedule(structuredClone(scheduleQuery.data))
     }
 
+    const handleFillUpSubmit = async (e, demands) => {
+        e.preventDefault();
+        const onlyWorkersDraftSchedule = Object.fromEntries(
+            Object.keys(workers).map(name => [
+                name,
+                draftSchedule[name] ?? workers[name]
+            ])
+        )
+        
+        const inputIsValid = demandsInputValidation(
+            demands,
+            getAllFreeWorkers(onlyWorkersDraftSchedule))
+
+        if (inputIsValid['isValid'] === false) {
+            showNotification(inputIsValid['message'], true)
+            return
+        }
+
+        setPopUpIsOpen(false)
+        setLoading(true)
+
+        try {
+            const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, demands)
+            setDraftSchedule(res['schedule'])
+        } catch (error) {
+            showNotification(error.message, true)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
-        <div className = {pagestyles.app}>
-            <Header
-            isAdmin = {true}/>
+        <Context.Provider
+        value = {{
+            weekDates,
+            department,
+            all_workers_to_show,
+            all_trainees_to_show,
+            showClaims,
+            isEdit,
+            setIsEdit,
+            draftSchedule,
+            setDraftSchedule,
+            allUsers,
+            setPopUpIsOpen,
+            loading,
+            setLoading
+        }}>
+            {popUpIsOpen && 
+            <PopUp
+            dates = {weekDates}
+            handleFillUpSubmit = {handleFillUpSubmit}/>}
+            <div className = {pagestyles.app}>
+                <Header
+                isAdmin = {true}/>
                     <div className={styles.schedule_page_container}>
                         <DepartmentsNavBar/>
-                        <Context.Provider
-                        value = {{
-                            weekDates,
-                            department,
-                            all_workers_to_show,
-                            all_trainees_to_show,
-                            showClaims,
-                            isEdit,
-                            setIsEdit,
-                            draftSchedule,
-                            setDraftSchedule,
-                            allUsers
-                        }}>
                             <main className={styles.schedule_page_main_section_container}>
                                 <ScheduleTableContainer
                                 setShowClaims = {setShowClaims}
@@ -140,10 +186,10 @@ function Home() {
                                 />
                                 <h1>Messages</h1>
                             </main>
-                        </Context.Provider>
                     </div>
-            <Footer/>
-        </div>
+                <Footer/>
+            </div>
+        </Context.Provider>
     );
  }
  

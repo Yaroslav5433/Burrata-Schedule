@@ -52,10 +52,6 @@
    margin-block: 0;
  }
 
- p:where(:not([class]):not(:last-child)) {
-   margin-bottom: var(--paragraphMarginBottom);
- }
-
  img,
  video {
    display: block;

@@ -1,0 +1,46 @@
+.popup_container {
+    position: fixed;
+    width: 50vw;
+    height: 50vh;
+    overflow: hidden;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4vw;
+    background-color: var(--gray-color);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 1vw;
+    border: 0.1vw solid var(--white-color);
+}
+
+.pop_up_title {
+    font-size: 1.4vw;
+}
+
+.table_input {
+    width: 100%;
+}
+
+.pop_up_cross_button {
+    position: absolute;
+    left: 95%;
+    bottom: 87%;
+}
+
+.pop_up_cross_icon {
+    width: 1vw;
+}
+
+.pop_up_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9;
+  }

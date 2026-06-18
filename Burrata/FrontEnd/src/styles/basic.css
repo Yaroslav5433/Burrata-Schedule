@@ -10,6 +10,27 @@ h1 {
     font-size: clamp(15px, 2vw, 35px)
 }
 
+select {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: var(--white-color)
+  }
+
+option {
+    background-color: var(--white-gray-color);
+    height: 100%;
+}
+
+input:focus::placeholder {
+    opacity: 0;
+  }
+
+.schedule_select_td:hover {
+    background-color: var(--green-color);
+    transition-duration: var(--transition-duration);
+}
+
 .errorMessage {
     font-size: clamp(8px, 1.5vw, 12px);
     color: var(--dark-red-color);

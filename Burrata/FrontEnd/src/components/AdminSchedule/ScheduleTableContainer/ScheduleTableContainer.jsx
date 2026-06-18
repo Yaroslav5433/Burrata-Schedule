@@ -7,6 +7,7 @@ import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
 import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import { useSaveIntoSchedule } from '@/hooks/scheduleMutations'
 import { Context } from '@/components/Context'
+import Spinner from '@/components/Spinner/Spinner'
 
 function ScheduleTableContainer(props) {
 
@@ -15,7 +16,10 @@ function ScheduleTableContainer(props) {
     department,
     setIsEdit,
     isEdit,
-    draftSchedule
+    draftSchedule,
+    setPopUpIsOpen,
+    loading,
+    setLoading
   } = useContext(Context)
 
   const {
@@ -23,27 +27,51 @@ function ScheduleTableContainer(props) {
     usersWithClaims,
     setDateStep,
     handleDraftSet,
-    dateStep
+    dateStep,
   } = props
 
   const { showNotification } = useNotification();
   const saveIntoSchedule = useSaveIntoSchedule(dateStep, department);
 
   const handleSaveSchedule = () => {
+    setLoading(true)
+
     saveIntoSchedule.mutate({
       schedule: draftSchedule
-    })
-    showNotification('Schedule has been saved')
-    setIsEdit(false)
+    }, {
+      onSuccess: () => {
+        showNotification('Schedule has been saved')
+        setIsEdit(false)
+      },
+      onError: () => {
+        showNotification('Error while saving')
+      },
+      onSettled: () => {
+        setLoading(false)
+    }})
   }
 
   const handleSaveClaims = () => {
+    setLoading(true)
     saveIntoSchedule.mutate({
       schedule: usersWithClaims
-    })
-    showNotification('Claims have been saved')
-    setShowClaims(false)
+    }, {
+      onSuccess: () => {
+        showNotification('Claims have been saved')
+        setShowClaims(false)
+      },
+      onError: () => {
+        showNotification('Error while saving')
+      },
+      onSettled: () => {
+        setLoading(false)
+    }})
   }
+
+  const handleFillUp = () => {
+    setPopUpIsOpen(true)
+  }
+  
 
   const handleClick = (step) => {
     setDateStep(prev => prev + step)
@@ -83,7 +111,16 @@ function ScheduleTableContainer(props) {
               checked = {showClaims}
               onChange = {(e) => setShowClaims(e.target.checked)}/>}
           </div>
-          <ScheduleTable/>
+          <div className={styles.loading_container}>
+              <div className = {loading ? styles.blurred : ""}>
+                <ScheduleTable/>
+              </div>
+              {loading && (
+                  <div className = {styles.loading_overlay}>
+                      <Spinner/>
+                  </div>
+              )}
+          </div>
           <div className={styles.bottom_button_line}>
             {isEdit ? 
             <>
@@ -94,28 +131,29 @@ function ScheduleTableContainer(props) {
             onClick = {() => handleEditClick("cancel changes")}/>
             <Button
             buttonStyle = {styles.bottom_button}
+            buttonText = 'Auto Fill Up'
+            type='button'
+            name='action'
+            value='fill up'
+            onClick = {handleFillUp}/>
+            <Button
+            buttonStyle = {styles.bottom_button}
             buttonText = 'Save changes'
             type='button'
             onClick={handleSaveSchedule}/> 
             </> : 
             <>
             <Button
-              buttonStyle = {styles.bottom_button}
-              buttonText = 'Auto Fill Up'
-              type='button'
-              name='action'
-              value='fill up'/>
-              <Button
-              buttonStyle = {styles.bottom_button}
-              buttonText = 'Edit Table'
-              type='button'
-              value='edit table'
-              onClick = {() => handleEditClick("edit table")}/>
-              <Button
-              buttonStyle = {styles.bottom_button}
-              buttonText = 'Save all claims'
-              type='button'
-              onClick={handleSaveClaims}/>
+            buttonStyle = {styles.bottom_button}
+            buttonText = 'Edit Table'
+            type='button'
+            value='edit table'
+            onClick = {() => handleEditClick("edit table")}/>
+            <Button
+            buttonStyle = {styles.bottom_button}
+            buttonText = 'Save all claims'
+            type='button'
+            onClick={handleSaveClaims}/>
             </>}
           </div>
       </form>

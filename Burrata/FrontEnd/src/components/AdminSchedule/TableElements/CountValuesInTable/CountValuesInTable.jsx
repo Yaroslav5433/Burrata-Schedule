@@ -12,7 +12,7 @@ function CountValuesInTable(props) {
         {name: 'Total 1', value: '1'},
         {name: 'Total 2', value: '2'},
         {name: 'Total D10', value: 'D10'},
-        {name: 'Total D12', value: 'D12'},
+        {name: 'Total D12', value: 'D12'}, 
     ]
 
   return (

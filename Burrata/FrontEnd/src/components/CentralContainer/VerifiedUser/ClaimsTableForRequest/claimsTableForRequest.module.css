@@ -1,35 +1,11 @@
-.table {
-    background-color: var(--white-gray-color);
-    font-size: 12px;
-    min-width: 500px;
-    min-height: 60px;
-    border-radius: 10px;
-    border-collapse: collapse;
-    table-layout: fixed;
-    overflow: hidden;
-    border: 1px solid var(--white-color);
-}
-
-td {
-    text-align: center;
-    border: 1px solid var(--white-color);
-    height: 32px;
-    vertical-align: middle;
-}
-
-select {
+.claims_table_select {
     width: 100%;
     background-color: transparent;
     border: none;
     color: var(--white-color)
   }
 
-option {
+.claims_table_select_option {
     background-color: var(--white-gray-color);
     height: 100%;
-}
-
-.claims td:hover {
-    background-color: var(--green-color);
-    transition-duration: var(--transition-duration);
 }

@@ -7,12 +7,13 @@ const TextField = forwardRef((props, ref) => {
         label,
         placeholder='',
         type='text',
+        inputMode='',
         value,
         onChange,
         name,
         onKeyDown,
         tableStyle,
-        onBlur
+        onBlur,
     } = props
 
     const {
@@ -34,21 +35,22 @@ const TextField = forwardRef((props, ref) => {
         <div className={styles.fieldContainer}>
             <label className={styles.fieldLabel}>
                 {label}
-            </label>
 
-            <input 
+                <input 
             name={name}
             type={type}
             value={value}
             placeholder={placeholder}
             onKeyDown={onKeyDown}
             ref={ref}
+            inputMode={inputMode}
             className={`
                 ${styles.fieldInput} ${tableStyle}
                 ${blurred && (value?.length > 0) ? styles.fieldInputOnBlur : ''}
                 ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}`}
             onBlur={handleBlur}
             onChange={onChange}/>
+            </label>
         </div>
     )
 })

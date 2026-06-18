@@ -1,6 +1,7 @@
 import { Context } from '@/components/Context.js';
 import styles from './claimsTableForRequest.module.css'
 import { useContext, useState } from 'react';
+import TableWithDates from '@/components/TableWithDates/TableWithDates.jsx';
 
 function ClaimsTableForRequest() {
 
@@ -26,38 +27,34 @@ function ClaimsTableForRequest() {
 
 
     return (
-      <table className={styles.table}>
-        <tbody>
-          <tr>
+      <TableWithDates
+      dates = {claimDates}>
+        <tr>
             {claimDates.map((date, i) => (
-              <td key={i}>{date}</td>
-            ))}
-          </tr>
-  
-          <tr>
-            {claimDates.map((date, i) => (
-              <td key={date}>
+              <td className = 'schedule_select_td' key={date}>
                 {!(userSavedClaims.some(Boolean)) ? (
-                  <select
-                    value={claimValues[i]}
-                    onChange={(e) => handleChange(i, e.target.value)}
+                  <select 
+                  value={claimValues[i]}
+                  id={i}
+                  onChange={(e) => handleChange(i, e.target.value)}
                   >
-                    <option value=""></option>
-                    <option value="X"
+                    <option 
+                    value=""></option>
+                    <option  
+                    value="X"
                     disabled={hasTwoX}>X</option>
-                    <option value="1"
-                    disabled={hasANumber}
-                    >1</option>
-                    <option value="2"
-                    disabled={hasANumber}
-                    >2</option>
+                    <option  
+                    value="1"
+                    disabled={hasANumber}>1</option>
+                    <option  
+                    value="2"
+                    disabled={hasANumber}>2</option>
                   </select>
                 ) : (userSavedClaims?.[i] ?? '')}
               </td>
             ))}
           </tr>
-        </tbody>
-      </table>
+      </TableWithDates>
     );
   }
 export default ClaimsTableForRequest

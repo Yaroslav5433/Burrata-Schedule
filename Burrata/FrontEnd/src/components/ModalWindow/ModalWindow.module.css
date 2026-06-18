@@ -2,6 +2,7 @@
     position: fixed;
     top: 20px;
     right: 20px;
+    z-index: 10;
   
     padding: 16px 24px;
   
@@ -14,8 +15,12 @@
   
     animation: fadeIn 0.3s ease;
   }
+
+.isError {
+  background: var(--dark-red-color);
+}
   
-  @keyframes fadeIn {
+@keyframes fadeIn {
     from {
       opacity: 0;
       transform: translateY(-10px);

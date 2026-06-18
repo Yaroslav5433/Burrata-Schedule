@@ -1,0 +1,17 @@
+.table {
+    background-color: var(--white-gray-color);
+    font-size: 12px;
+    width: 90%;
+    border-radius: 10px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    overflow: hidden;
+    border: 1px solid var(--white-color);
+}
+
+td {
+    text-align: center;
+    border: 1px solid var(--white-color);
+    height: 32px;
+    vertical-align: middle;
+}
