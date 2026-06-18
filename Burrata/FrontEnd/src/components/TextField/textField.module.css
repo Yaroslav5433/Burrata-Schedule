@@ -5,6 +5,9 @@
 }
 
 .fieldLabel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3vw;
     font-size: clamp(8px, 1.5vw, 12px);
     cursor: text;
 }

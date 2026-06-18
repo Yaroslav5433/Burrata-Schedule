@@ -4,12 +4,14 @@ import styles from './Svg.module.css'
 function SvgButtonIcon(props) {
   const {
     path,
-    onClick
+    onClick,
+    buttonStyles,
+    svgStyles
   } = props
 
   return (
-    <button onClick={onClick} className={styles.workerContainerButton}>
-        <svg className = {styles.button_icon} viewBox="0 0 24 24" fill="none">
+    <button onClick={onClick} className={`${buttonStyles} ${styles.workerContainerButton}`}>
+        <svg className = {`${svgStyles} ${styles.button_icon}`} viewBox="0 0 24 24" fill="none">
             <path d = {path}/>
         </svg>
     </button>

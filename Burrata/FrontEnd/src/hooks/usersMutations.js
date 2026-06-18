@@ -32,7 +32,7 @@ export function useDeleteUser(department) {
         queryClient.invalidateQueries(["users", department]);
       },
       onError: () => {
-        console.log("Users haven`t been invalidated");
+        console.log("Users haven`t been invalidated");  
     }
     });
   };
