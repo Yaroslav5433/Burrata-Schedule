@@ -23,3 +23,9 @@ class Dates(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+
+class User(BaseModel):
+    username: str
+    is_trainee: bool
+    position: str
+    unique_id_number: str

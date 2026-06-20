@@ -23,9 +23,9 @@ async def allclaimshandler(user_claims_to_save: Users_with_shifts, dateStep: int
         logger.info(claims_sql_type)
     
         success_on_req = await db_req.insert_shifts_in_database(
-            username,
-            claims_sql_type,
-            db)
+            username = username,
+            claims_sql_type = claims_sql_type,
+            db = db)
 
         if not success_on_req: 
             raise HTTPException(

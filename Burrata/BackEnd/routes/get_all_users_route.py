@@ -10,7 +10,9 @@ getuser_router = APIRouter()
 @getuser_router.get('/getallusers', response_model = Users_with_info)
 async def get_users(department: str, db: AsyncSession = Depends(get_db)):
 
-    all_users = await db_req.get_all_users(db, requested_department = department.lower())
+    all_users = await db_req.get_all_users(
+        db = db,
+        requested_department = department.lower())
 
     if not all_users:
         raise HTTPException(
