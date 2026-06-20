@@ -1,10 +1,11 @@
 import React from 'react'
+import { EMPTY_ARRAY_OF_SEVEN } from '@/utils/constants'
 
 function EmptyRowInTable() {
   return (
     <tr>
         <td></td>
-        {Array(7).fill(undefined).map((_, j) => (
+        {EMPTY_ARRAY_OF_SEVEN.map((_, j) => (
         <td key={j}></td>
         ))}
     </tr>

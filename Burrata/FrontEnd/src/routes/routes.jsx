@@ -1,4 +1,4 @@
-import { is_admin_auth } from '@/utils/login_admin_handler.js'
+import { is_admin_auth } from "@/utils/utils"
 import { Navigate } from 'react-router-dom'
 
 export function ProtectedRoute({ children }) {

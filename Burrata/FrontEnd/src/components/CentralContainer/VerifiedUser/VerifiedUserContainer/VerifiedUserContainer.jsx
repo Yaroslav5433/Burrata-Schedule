@@ -14,13 +14,12 @@ function VerifiedUserContainer(props) {
 
     const {
         userName,
-        send_a_claim,
-        errorOnClaimsSaving,
+        sendAClaim,
     } = props
 
     async function onSubmit(event) {
         event.preventDefault()
-        await send_a_claim(claimValues)
+        await sendAClaim(claimValues)
     }
 
     return (
@@ -38,9 +37,6 @@ function VerifiedUserContainer(props) {
                 )}
                 {(userSavedClaims.some(Boolean)) && (
                     <p className="successMessage">You have been sent your claims!</p>
-                )}
-                {errorOnClaimsSaving && (
-                    <p className="errorMessage">Something went wrong. Claims have not been sent</p>
                 )}
             </form>
         </Animation>

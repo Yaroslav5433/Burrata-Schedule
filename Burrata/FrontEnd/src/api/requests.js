@@ -10,6 +10,8 @@ export async function login_admin_request(data) {
     if (!res.ok) {
       throw new Error('Login failed')
     }
+    
+    localStorage.setItem('token', data.token)
 
     return res.json()
   } 
@@ -45,23 +47,6 @@ export async function save_user_claims_request(claims, userName) {
 
   if (!res.ok) {
     throw new Error('Saving a claims failed')
-  }
-
-  return res.json()
-}
-
-
-export async function save_users_claims_request(all_claims, dateStep) {
-  const res = await fetch(`http://localhost:8000/saveallusersclaims?dateStep=${dateStep}`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(all_claims) 
-})
-
-  if (!res.ok) {
-    throw new Error('Saving all claims into schedule failed')
   }
 
   return res.json()

@@ -19,16 +19,16 @@ import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
 
 function Home() {
 
-    const [showClaims, setShowClaims] = useState(true)
-    const [dateStep, setDateStep] = useState(0)
-    const [isEdit, setIsEdit] = useState(false)
-    const [popUpIsOpen, setPopUpIsOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [draftSchedule, setDraftSchedule] = useState(null)
+    const [showClaims, setShowClaims] = useState(true);
+    const [dateStep, setDateStep] = useState(0);
+    const [isEdit, setIsEdit] = useState(false);
+    const [popUpIsOpen, setPopUpIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [draftSchedule, setDraftSchedule] = useState(null);
 
     const { department } = useParams()
 
-    const { showNotification } = useNotification();
+    const { showNotification } = useNotification()
 
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],

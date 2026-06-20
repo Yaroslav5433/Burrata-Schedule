@@ -8,14 +8,14 @@ function UserVerificationContainer(props) {
 
     const {
         errorOnReq,
-        verify_user
+        verifyUser
     } = props
     
     const [id, setId] = useState('')
 
     async function onSubmit(event) {
         event.preventDefault()
-        await verify_user(id)
+        await verifyUser(id)
     }
 
     return (
