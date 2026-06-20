@@ -28,8 +28,6 @@ class GlobalConfig(BaseSettings):
     JWT_ACCESS_COOKIE_NAME: str
     JWT_TOKEN_LOCATION: List[str]
 
-    REDIS_URL: str
-
     OPEN_AI_KEY: str
     DEEPSEEK_KEY: str
 
