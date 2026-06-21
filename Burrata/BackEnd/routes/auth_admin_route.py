@@ -19,9 +19,11 @@ security = AuthX(config=jwt_config)
 
 @login_router.post("/login", response_model=Token)
 async def login(login_data: Login_data, db: AsyncSession = Depends(get_db)):
-    verified_admin = await db_req.get_admin_for_login(login_data.login, db) 
+    verified_admin = await db_req.get_admin_for_login(
+        login_data = login_data.login,
+        db = db) 
 
-    if not verified_admin or not verified_admin.verify_password(login_data.password):
+    if not verified_admin or not verified_admin.verify_password(password = login_data.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

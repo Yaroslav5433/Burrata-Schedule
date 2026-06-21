@@ -8,7 +8,7 @@ function TableWithDates(props) {
   } = props
 
   return (
-    <table className={styles.table}>
+    <table className={styles.table_with_dates}>
         <tbody>
           <tr>
             {dates.map((date, i) => (

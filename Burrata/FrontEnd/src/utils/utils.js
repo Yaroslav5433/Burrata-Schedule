@@ -53,3 +53,7 @@ export const getAllFreeWorkers = (schedule) => {
 
     return result;
 }
+
+export const is_admin_auth = () => {
+    return !!localStorage.getItem("token")
+  }

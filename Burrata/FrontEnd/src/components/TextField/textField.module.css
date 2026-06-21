@@ -13,6 +13,7 @@
 }
 
 .fieldInput {
+    align-items: flex-start;
     border: 2px solid var(--white-gray-color);
     border-radius: clamp(4px, 0.5vw, 7px);
     color: var(--white-color);
@@ -20,6 +21,7 @@
     height: clamp(18px, 1.8vw, 80px);
     font-size: 12px;
     padding-left: 5px;
+    box-shadow: var(--shadow);
 }
 
 .fieldInput:focus {

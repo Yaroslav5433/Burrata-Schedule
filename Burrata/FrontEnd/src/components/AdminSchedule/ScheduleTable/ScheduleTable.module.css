@@ -3,7 +3,8 @@
     background-color: var(--light-gray-color);
     font-size: 13px;
     width: 100%;
-    table-layout: fixed
+    table-layout: fixed;
+    box-shadow: var(--shadow);
 }
 
 .table td:first-child {

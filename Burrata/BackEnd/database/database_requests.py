@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert, delete, and_
+from sqlalchemy import select, insert, delete, and_, update
 from sqlalchemy.dialects.postgresql import insert as pginsert
-from database.models import Admin, Users, ClaimsSchedule, Schedule
+from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages
 from utils.utils import transform_datetime_item_to_str
 
 
@@ -123,3 +123,46 @@ async def delete_user_by_name(username: str, db: AsyncSession):
     await db.commit()
 
     return success_on_delete.rowcount > 0
+
+
+async def insert_message(username: str, message: str, db: AsyncSession):
+    success_on_insert = await db.execute(insert(Messages).values({
+        'username': username,
+        'message': message}))
+
+    await db.commit()
+
+    return success_on_insert.rowcount > 0
+
+
+async def get_messages(db: AsyncSession, all: bool, page: int, number_of_elements: int, read: bool = False):
+    if all:
+        messages = await db.execute(select(Messages.username, Messages.message, Messages.created_at, Messages.id)
+                            .where(Messages.read == read)
+                            .order_by(Messages.created_at.desc()))
+    else: 
+        messages = await db.execute(select(Messages.username, Messages.message, Messages.created_at, Messages.id)
+                            .where(Messages.read == read)
+                            .order_by(Messages.created_at.desc())
+                            .limit(number_of_elements)
+                            .offset((page - 1) * number_of_elements)
+    )
+
+    return messages.mappings().all()
+
+
+async def check_message_as_read(id: int, db: AsyncSession):
+    success_on_check = await db.execute(update(Messages).where(Messages.id == id).values(read = True))
+
+    await db.commit()
+
+    return success_on_check.rowcount > 0
+
+
+async def get_user_message(username: str, db: AsyncSession):
+    message = await db.execute(select(Messages.message)
+                .where(Messages.username == username)
+                .order_by(Messages.created_at.desc())
+                .limit(1))
+
+    return message.scalars().first()

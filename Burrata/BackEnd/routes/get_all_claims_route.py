@@ -11,7 +11,7 @@ getclaims_router = APIRouter()
 @getclaims_router.get('/getallclaims', response_model = Users_with_shifts)
 async def get_claims(department: str, dateStep: int, db: AsyncSession = Depends(get_db)):
     all_claims = await db_req.get_all_users_saved_shifts(
-        db, 
+        db = db, 
         requested_position = department, 
         week_dates = get_next_week_dates(steps = dateStep), 
         claims = True)

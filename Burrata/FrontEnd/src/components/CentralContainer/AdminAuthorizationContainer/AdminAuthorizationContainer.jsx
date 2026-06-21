@@ -8,7 +8,7 @@ function AdminAuthorizationContainer() {
 
     const {
         errorOnAuth,
-        login_admin
+        loginAdmin
     } = useContext(Context)
 
     const [form, setForm] = useState({
@@ -27,7 +27,7 @@ function AdminAuthorizationContainer() {
 
     async function onSubmit(event) {
         event.preventDefault()
-        await login_admin(form)
+        await loginAdmin(form)
     }
 
     return (

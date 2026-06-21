@@ -2,6 +2,7 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx'
 import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer'
+import MessagesContainer from "@/components/AdminSchedule/MessagesSection/MessagesContainer/MessagesContainer";
 import { useState } from "react";
 import { Context } from "@/components/Context";
 import { get_all_users_request } from "@/api/requests";
@@ -9,6 +10,7 @@ import { get_all_claims_request } from "@/api/requests";
 import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
 import { fill_up_schedule_request } from "@/api/requests"
+import { get_messages } from "@/api/requests";
 import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
@@ -17,18 +19,19 @@ import PopUp from "@/components/PopUp/PopUp";
 import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
 
+
 function Home() {
 
-    const [showClaims, setShowClaims] = useState(true)
-    const [dateStep, setDateStep] = useState(0)
-    const [isEdit, setIsEdit] = useState(false)
-    const [popUpIsOpen, setPopUpIsOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [draftSchedule, setDraftSchedule] = useState(null)
+    const [showClaims, setShowClaims] = useState(true);
+    const [dateStep, setDateStep] = useState(0);
+    const [isEdit, setIsEdit] = useState(false);
+    const [popUpIsOpen, setPopUpIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [draftSchedule, setDraftSchedule] = useState(null);
 
     const { department } = useParams()
 
-    const { showNotification } = useNotification();
+    const { showNotification } = useNotification()
 
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],
@@ -60,10 +63,19 @@ function Home() {
         retry: 0
     });
 
+    const messageQuery = useQuery({
+        queryKey: ["messages"],
+        queryFn: () => get_messages(true),
+        placeholderData: (prev) => prev,
+        enabled: !!department,
+        retry: 0
+    });
+
     const allUsers = usersQuery.data ?? {};
     const usersWithClaims = claimsQuery.data ?? {};
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
+    const messages = messageQuery.data ?? [];
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -150,6 +162,8 @@ function Home() {
         }
     }
 
+    console.log(messages)
+
     return (
         <Context.Provider
         value = {{
@@ -184,7 +198,8 @@ function Home() {
                                 handleDraftSet = {handleDraftSet}
                                 dateStep = {dateStep}
                                 />
-                                <h1>Messages</h1>
+                                <MessagesContainer
+                                messages = {messages}/>
                             </main>
                     </div>
                 <Footer/>

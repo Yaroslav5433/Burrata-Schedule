@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint
 from database.database import Base
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 import bcrypt
 
 
@@ -39,7 +40,13 @@ class Users(Base):
         passive_deletes=True
     )
 
+    messages = relationship(
+        "Messages",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
+    
 class ClaimsSchedule(Base):
     __tablename__ = 'claimsschedule'
 
@@ -61,3 +68,13 @@ class Schedule(Base):
 
     __table_args__ = (UniqueConstraint("date", "username"),)
     
+
+class Messages(Base):
+    __tablename__ = 'messages'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    message = Column(String, nullable=False)
+    read = Column(Boolean, nullable=False, default=False)
+

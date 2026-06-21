@@ -1,4 +1,5 @@
 from pydantic import BaseModel, RootModel
+from datetime import datetime
 
 class Login_data(BaseModel):
     login: str
@@ -6,6 +7,17 @@ class Login_data(BaseModel):
 
 class Verification_data(BaseModel):
     unique_id_number: str
+
+class Messages(BaseModel):
+    username: str
+    message: str
+    created_at: datetime
+    id: int
+
+class Users_with_shifts_and_message(BaseModel):
+    username: str
+    claims: list[str]
+    message: str | None
 
 class Users_with_shifts(RootModel[dict[str, list[str]]]):
     pass
@@ -23,3 +35,9 @@ class Dates(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+
+class User(BaseModel):
+    username: str
+    is_trainee: bool
+    position: str
+    unique_id_number: str
