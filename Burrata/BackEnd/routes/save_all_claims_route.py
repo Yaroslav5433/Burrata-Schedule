@@ -10,7 +10,7 @@ from loguru import logger
 all_claims_router = APIRouter()
 
 @all_claims_router.post('/saveallusersclaims', status_code=status.HTTP_201_CREATED)
-async def allclaimshandler(user_claims_to_save: Users_with_shifts, dateStep: int, request: Request, db: AsyncSession = Depends(get_db)):
+async def allclaimshandler(user_claims_to_save: Users_with_shifts, dateStep: int, db: AsyncSession = Depends(get_db)):
 
     for username, shifts in user_claims_to_save.root.items():
         claims_sql_type = prepare_shifts_for_sql_insert(

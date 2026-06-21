@@ -6,14 +6,14 @@ const TextField = forwardRef((props, ref) => {
     const {
         label,
         placeholder='',
-        type='text',
         inputMode='',
         value,
         onChange,
         name,
         onKeyDown,
-        tableStyle,
+        textFieldStyle,
         onBlur,
+        textArea = false
     } = props
 
     const {
@@ -31,25 +31,29 @@ const TextField = forwardRef((props, ref) => {
         }
     } 
 
+    const commonProps = {
+        name,
+        value,
+        placeholder,
+        onKeyDown,
+        onBlur: handleBlur,
+        onChange,
+        className: `
+            ${textFieldStyle} ${styles.fieldInput}
+            ${blurred && (value?.length > 0) ? styles.fieldInputOnBlur : ''}
+            ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}
+        `
+    }
+
     return (
         <div className={styles.fieldContainer}>
             <label className={styles.fieldLabel}>
                 {label}
 
-                <input 
-            name={name}
-            type={type}
-            value={value}
-            placeholder={placeholder}
-            onKeyDown={onKeyDown}
-            ref={ref}
-            inputMode={inputMode}
-            className={`
-                ${styles.fieldInput} ${tableStyle}
-                ${blurred && (value?.length > 0) ? styles.fieldInputOnBlur : ''}
-                ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}`}
-            onBlur={handleBlur}
-            onChange={onChange}/>
+            {textArea ? 
+            <textarea {...commonProps} ref={ref} maxLength={200}/> : 
+            <input {...commonProps} inputMode={inputMode} ref={ref} />}
+                
             </label>
         </div>
     )

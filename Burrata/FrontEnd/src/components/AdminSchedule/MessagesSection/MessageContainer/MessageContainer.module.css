@@ -1,0 +1,41 @@
+.message_container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    padding: 18px;
+    background-color: var(--light-gray-color);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+} 
+
+.messages_author {
+    font-size: clamp(12px, 1vw, 22px);
+}
+
+.messages_name_and_date {
+    display: inline-flex;
+    gap: 20px;
+    align-items: last baseline;
+}
+
+.messages_date {
+    display: flex;
+    gap: 15px;
+    font-size: clamp(7px, 0.7vw, 12px);
+    opacity: 70%;
+}
+
+.messages_container_top_line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.messages_button {
+    height: 105%;
+}
+
+.messages_text {
+    width: 90%;
+} 

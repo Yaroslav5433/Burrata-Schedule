@@ -7,7 +7,6 @@ import AddUserInTable from '@/components/AdminSchedule/TableElements/AddUserInTa
 import CountValuesInTable from '@/components/AdminSchedule/TableElements/CountValuesInTable/CountValuesInTable.jsx'
 import { generateEightDigitNumber } from '@/utils/utils.js'
 import { useDeleteUser, useSaveUser } from '@/hooks/usersMutations'
-import { useSetSchedule } from '@/hooks/scheduleMutations'
 
 function ScheduleTable() {
 

@@ -25,7 +25,7 @@ function AddUserInTable(props) {
             <div className={styles.userTextContainer}>
                 <TextField 
                     value = {userTextName} 
-                    tableStyle = {styles.userText}
+                    textFieldStyle = {styles.userText}
                     ref = {inputRef}
                     onBlur = {() => {
                         setAddUser(false)

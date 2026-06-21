@@ -10,6 +10,8 @@ from routes.save_all_claims_route import all_claims_router
 from routes.save_new_worker_route import save_new_worker
 from routes.delete_user_route import deleteuser_router
 from routes.fillup_schedule_route import fillup_schedule_router
+from routes.get_messages_route import get_messages_router
+from routes.check_message_route import check_message_router
 
 all_routers = [
     login_router,
@@ -23,5 +25,7 @@ all_routers = [
     all_claims_router,
     save_new_worker,
     deleteuser_router,
-    fillup_schedule_router
+    fillup_schedule_router,
+    get_messages_router,
+    check_message_router
 ]

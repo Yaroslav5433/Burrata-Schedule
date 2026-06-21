@@ -34,14 +34,16 @@ export async function verify_user_request(unique_id_number) {
     return res.json()
 }
 
-export async function save_user_claims_request(claims, userName) {
+export async function save_user_claims_request(claims, userName, text) {
   const res = await fetch('http://localhost:8000/saveuserclaims', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    [userName]: claims
+    'username': userName,
+    'claims': claims,
+    'message': text
   }) 
 })
 
@@ -194,4 +196,37 @@ export async function fill_up_schedule_request(claims, demands) {
   }
 
   return data
+}
+
+
+export async function get_messages(all = true, page = 1, number_of_elements = 5) {
+  const res = await fetch(`http://localhost:8000/getmessages?all=${all}&page=${page}&number_of_elements=${number_of_elements}`, {
+  method: "GET",
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+  if (!res.ok) {
+    return []
+  }
+
+  return res.json()
+}
+
+
+export async function check_message_as_read(id) {
+  const res = await fetch('http://localhost:8000/checkmessage', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(id)
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed during message check up')
+  }
+
+  return res.json()
 }

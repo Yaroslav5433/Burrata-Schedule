@@ -56,7 +56,7 @@ function PopUp(props) {
               {dates?.map((date, i) => (
                 <td key={date}>
                   <TextField
-                  tableStyle = {styles.table_input}
+                  textFieldStyle = {styles.table_input}
                   onChange = {handleChange}
                   label = {Object.keys(days)[i]}
                   name = {Object.keys(days)[i]}
