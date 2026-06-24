@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, and_, update
 from sqlalchemy.dialects.postgresql import insert as pginsert
-from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages
+from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations
 from utils.utils import transform_datetime_item_to_str
+from datetime import datetime
 
 
 
@@ -166,3 +167,13 @@ async def get_user_message(username: str, db: AsyncSession):
                 .limit(1))
 
     return message.scalars().first()
+
+
+async def save_vacation_in_database(username: str, start_date: datetime, end_date: datetime, db: AsyncSession):
+    success_on_insert = await db.execute(insert(Vacations).values({
+        'username': username,
+        'start_date': start_date,
+        'end_date': end_date
+    }))
+
+    return success_on_insert.rowcount > 0

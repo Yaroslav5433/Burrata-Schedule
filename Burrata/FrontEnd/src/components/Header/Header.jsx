@@ -1,6 +1,6 @@
 import styles from './header.module.css'
 import { NavLink } from 'react-router-dom';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 
 function Header (props) {
     const {
@@ -9,10 +9,11 @@ function Header (props) {
 
     const pages = [
         { label: "Schedule", value: "schedule" },
-        { label: "Limits", value: "limits" },
+        { label: "Vacations", value: "vacations" },
         { label: "Messages", value: "messages" }
       ];
 
+    const [open, setOpen] = useState(false)
 
     return (
         isAdmin ? (
@@ -23,6 +24,15 @@ function Header (props) {
                 className={`${styles.logo} ${styles.logo_admin}`}
                 loading="lazy" 
                 />
+                <input 
+                className='hidden'
+                onChange={() => setOpen(!open)}
+                checked={open}
+                type="checkbox"/>
+                <label className = {styles.burger_label}
+                onClick={() => setOpen(!open)}>
+                    <span className={styles.burger_lable_span}></span>
+                </label>
             </div>
             <div className={styles.navbar_container}>
                 <nav className={styles.navbar_items_container}>

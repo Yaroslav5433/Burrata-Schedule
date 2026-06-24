@@ -48,6 +48,13 @@ input:focus::placeholder {
     color: var(--green-color);
 }
 
+.hidden {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
 @media (max-width: 1000px) {
     .container {
         padding: 40px;

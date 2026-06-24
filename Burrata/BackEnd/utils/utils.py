@@ -1,6 +1,5 @@
 from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
-import random
 
 
 def prepare_shifts_for_sql_insert(shifts: list[str], next_week_dates: list[datetime]):
@@ -39,8 +38,12 @@ def get_seconds_to_next_monday():
     return seconds
 
 
-def transform_datetime_item_to_str(datetime_item):
+def transform_datetime_item_to_str(datetime_item: datetime):
     return datetime_item.strftime("%d.%m")
+
+
+def transform_str_item_to_datetime(str_item: str):
+    return datetime.strptime(str_item, "%Y-%m-%d")
 
 
 def interpret_claims_as_list(user_saved_claims: dict, next_week_dates: list[str]):

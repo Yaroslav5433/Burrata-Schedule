@@ -11,8 +11,6 @@ save_new_worker = APIRouter()
 @save_new_worker.post('/savenewworker', status_code=status.HTTP_201_CREATED)
 async def allclaimshandler(user_info: User, db: AsyncSession = Depends(get_db)):
 
-    print(f'All staff that i need: {user_info}')
-
     success_on_req = await db_req.insert_users_in_database(
         username = user_info.username,
         position = user_info.position,

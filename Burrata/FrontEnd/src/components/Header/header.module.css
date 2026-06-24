@@ -47,3 +47,47 @@
 .current {
     color: var(--white-gray-color);
 }
+
+.burger_label {
+    display: none;
+}
+
+
+@media (max-width: 650px) {
+    .burger_label {
+        display: block;
+        position: relative;
+        height: 25px;
+        width: 30px;
+    }
+
+    .burger_label::after, .burger_label::before, .burger_lable_span {
+        position: absolute;
+        width: 100%;
+        height: 3px;
+        background-color: var(--white-color);
+        transition: var(--transition-duration);
+    }
+
+    .burger_label::before {
+        content: '';
+        top: 0;
+    }
+
+    .burger_label::after {
+        content: '';
+        bottom: 0;
+    }
+
+    .burger_lable_span {
+        top: 11px;
+    }
+
+    .logo_admin {
+        display: none;
+    }
+
+    .navbar_items {
+        gap: 50px;
+    }
+}

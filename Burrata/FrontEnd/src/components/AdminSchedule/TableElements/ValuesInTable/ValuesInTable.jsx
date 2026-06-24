@@ -9,14 +9,15 @@ function ValuesInTable(props) {
     weekDates,
     showClaims,
     allUsers,
-    isEdit
+    isEdit,
+    customEdit,
+    draftSchedule
   } = useContext(Context)
 
   const {
     handleClick,
     all_users_to_show,
-    handleChange,
-    is_trainees
+    handleEditChange,
   } = props
 
   return (
@@ -43,20 +44,29 @@ function ValuesInTable(props) {
                 {weekDates?.map((date, dateIndex) => (
                     <td 
                     key={date}
-                    className={isEdit ? 'schedule_select_td': ''}>
-                        { showClaims || !isEdit ? 
-                        <p> { Object.values(all_users_to_show)[userIndex]?.[dateIndex] } </p> : 
+                    className={`${showClaims && all_users_to_show[user]?.[dateIndex] ? styles.claim_cell : ''}${isEdit ? 'schedule_select_td': ''}`}>
+                        { showClaims &&
+                        <p> { all_users_to_show[user]?.[dateIndex] } </p> }
+                        { isEdit && 
                         <select
-                            id = {[...date, ...user]}
-                            value={Object.values(all_users_to_show)[userIndex]?.[dateIndex]}
-                            onChange={(e) => handleChange(userIndex, dateIndex, e.target.value, is_trainees)}>
-                            <option value={undefined}>{undefined}</option>
-                            <option value="X">X</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="D12">D12</option>
-                            <option value="D10">D10</option>
+                        id = {[...date, ...user]}
+                        value={ all_users_to_show[user]?.[dateIndex] }
+                        onChange={(e) => handleEditChange(user, dateIndex, e.target.value)}>
+                        <option value={undefined}>{undefined}</option>
+                        <option value="X">X</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="D12">D12</option>
+                        <option value="D10">D10</option>
                         </select>}
+                        {customEdit && 
+                        <input className={styles.value_cell_input}
+                        value={ draftSchedule[user]?.[dateIndex] }
+                        onChange={(e) => handleEditChange(user, dateIndex, e.target.value)}
+                        id = {[...date, ...user]}
+                        />}
+                        {(!showClaims && !isEdit && !customEdit) &&
+                        <p> { all_users_to_show[user]?.[dateIndex] } </p>}
                     </td>
                 ))}
             </tr>

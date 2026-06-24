@@ -46,6 +46,12 @@ class Users(Base):
         passive_deletes=True
     )
 
+    vacations = relationship(
+        "Vacations",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
     
 class ClaimsSchedule(Base):
     __tablename__ = 'claimsschedule'
@@ -78,3 +84,11 @@ class Messages(Base):
     message = Column(String, nullable=False)
     read = Column(Boolean, nullable=False, default=False)
 
+
+class Vacations(Base):
+    __tablename__ = 'vacations'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)

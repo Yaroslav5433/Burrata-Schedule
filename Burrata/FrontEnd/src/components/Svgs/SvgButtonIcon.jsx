@@ -6,12 +6,13 @@ function SvgButtonIcon(props) {
     path,
     onClick,
     buttonStyles,
-    svgStyles
+    svgStyles,
+    viewBox="0 0 24 24"
   } = props
 
   return (
     <button onClick={onClick} className={`${buttonStyles} ${styles.workerContainerButton}`}>
-        <svg className = {`${svgStyles} ${styles.button_icon}`} viewBox="0 0 24 24" fill="none">
+        <svg className = {`${svgStyles} ${styles.button_icon}`} viewBox={viewBox} fill="none">
             <path d = {path}/>
         </svg>
     </button>

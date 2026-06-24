@@ -53,3 +53,13 @@
     pointer-events: auto;
   }
   
+.claim_cell {
+  background-color: color-mix(in srgb, var(--light-blue-color) 50%, transparent);
+}
+
+.value_cell_input {
+  width: 100%;
+  background-color: transparent;
+  color: var(--white-color);
+  text-align: center;
+}

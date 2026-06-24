@@ -19,7 +19,9 @@ function ScheduleTableContainer(props) {
     draftSchedule,
     setPopUpIsOpen,
     loading,
-    setLoading
+    setLoading,
+    setCustomEdit,
+    customEdit
   } = useContext(Context)
 
   const {
@@ -42,6 +44,7 @@ function ScheduleTableContainer(props) {
       onSuccess: () => {
         showNotification('Schedule has been saved')
         setIsEdit(false)
+        setCustomEdit(false)
       },
       onError: () => {
         showNotification('Error while saving')
@@ -68,11 +71,6 @@ function ScheduleTableContainer(props) {
     }})
   }
 
-  const handleFillUp = () => {
-    setPopUpIsOpen(true)
-  }
-  
-
   const handleClick = (step) => {
     setDateStep(prev => prev + step)
   }
@@ -80,17 +78,26 @@ function ScheduleTableContainer(props) {
   const handleEditClick = (action) => {
     if (action == "edit table") {
       handleDraftSet()
+      setCustomEdit(false)
       setShowClaims(false)
       setIsEdit(true)
     }
     if (action == "cancel changes") {
       setIsEdit(false)
     }
+    if (action == "custom edit") {
+      handleDraftSet()
+      setShowClaims(false)
+      setCustomEdit(true)
+    }
+    if (action == "cancel custom changes") {
+      setCustomEdit(false)
+    }
   }
 
   return (
     <div className={styles.tableFullContainer}>
-      {!isEdit && 
+      {(!isEdit && !customEdit) && 
       <>
       <SvgButtonIcon
       path = "M15 18L9 12L15 6 M23 18L17 12L23 6"
@@ -105,11 +112,11 @@ function ScheduleTableContainer(props) {
               className={styles.tablename_span}>
               <h2>Schedule</h2>
               </span>
-              {!isEdit && 
+              {(!isEdit && !customEdit) &&
               <Checkbox
               checkboxText = 'Show Claims'
               checked = {showClaims}
-              onChange = {(e) => setShowClaims(e.target.checked)}/>}
+              onChange = {(e) => (setShowClaims(e.target.checked))}/>}
           </div>
           <div className={styles.loading_container}>
               <div className = {loading ? styles.blurred : ""}>
@@ -122,7 +129,7 @@ function ScheduleTableContainer(props) {
               )}
           </div>
           <div className={styles.bottom_button_line}>
-            {isEdit ? 
+            {isEdit &&
             <>
             <Button
             buttonStyle = {styles.bottom_button}
@@ -135,13 +142,27 @@ function ScheduleTableContainer(props) {
             type='button'
             name='action'
             value='fill up'
-            onClick = {handleFillUp}/>
+            onClick = {() => setPopUpIsOpen(true)}/>
             <Button
             buttonStyle = {styles.bottom_button}
             buttonText = 'Save changes'
             type='button'
             onClick={handleSaveSchedule}/> 
-            </> : 
+            </> }
+            {customEdit &&
+            <>
+            <Button
+            buttonStyle = {styles.bottom_button}
+            buttonText = 'Cancel Changes'
+            type='button'
+            onClick = {() => handleEditClick("cancel custom changes")}/>
+            <Button
+            buttonStyle = {styles.bottom_button}
+            buttonText = 'Save changes'
+            type='button'
+            onClick={handleSaveSchedule}/>
+            </>}
+            {(!isEdit && !customEdit) &&
             <>
             <Button
             buttonStyle = {styles.bottom_button}
@@ -151,13 +172,19 @@ function ScheduleTableContainer(props) {
             onClick = {() => handleEditClick("edit table")}/>
             <Button
             buttonStyle = {styles.bottom_button}
+            buttonText = 'CustomEdit'
+            type='button'
+            value='custom edit'
+            onClick={() => handleEditClick("custom edit")}/>
+            <Button
+            buttonStyle = {styles.bottom_button}
             buttonText = 'Save all claims'
             type='button'
             onClick={handleSaveClaims}/>
             </>}
           </div>
       </form>
-      {!isEdit && 
+      {(!isEdit && !customEdit) && 
       <>
       <SvgButtonIcon
       path = "M9 18L15 12L9 6"

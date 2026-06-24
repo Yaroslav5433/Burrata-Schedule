@@ -684,7 +684,7 @@ def solve_schedule(
     valid, reason, score = validate_and_score(
         output_schedule,
         workers,
-        norm,
+        norm, 
         demand_ab,
     )
 
