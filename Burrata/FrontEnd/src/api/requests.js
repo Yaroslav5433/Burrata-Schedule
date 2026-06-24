@@ -230,3 +230,24 @@ export async function check_message_as_read(id) {
 
   return res.json()
 }
+
+
+export async function save_vacation(username, start_date, end_date) {
+  const res = await fetch('http://localhost:8000/savevacation', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'username': username,
+    'start_date': start_date,
+    'end_date': end_date
+  })
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed during vacation saving')
+  }
+
+  return res.json()
+}

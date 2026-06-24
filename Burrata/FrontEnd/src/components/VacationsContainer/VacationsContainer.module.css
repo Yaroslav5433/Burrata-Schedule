@@ -1,0 +1,16 @@
+.plusButton {
+    width: 2%;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+.plusSVG {
+    width: 100%;
+    height: 100%;
+}
