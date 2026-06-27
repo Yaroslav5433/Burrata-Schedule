@@ -1,0 +1,61 @@
+.p-component {
+    width: 300px;
+}
+
+.p-datepicker {
+    background-color: var(--light-gray-color);
+} 
+
+.p-datepicker-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.p-datepicker-prev,
+.p-datepicker-next {
+    background: none;
+    border: none;
+}
+
+.p-datepicker-header {
+    margin-top: 5px;
+}
+
+.p-icon {
+    color: white;
+}
+
+.p-icon:hover {
+    color: var(--white-gray-color);
+    transition: var(--transition-duration);
+}
+
+.p-datepicker-calendar {
+    table-layout: fixed;
+} 
+
+.p-datepicker-title {
+    display: flex;
+    gap: 10px;
+}
+
+.p-datepicker-month,
+.p-datepicker-year {
+    color: white;
+    font: 18px;
+}
+
+.p-datepicker-other-month {
+    opacity: 30%;
+}
+
+.p-highlight {
+    background-color: var(--white-gray-color);
+}
+
+.p-inputtext {
+    border-radius: 5px;
+    border: none;
+    box-shadow: var(--shadow)
+}

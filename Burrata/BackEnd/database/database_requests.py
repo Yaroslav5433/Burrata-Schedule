@@ -177,3 +177,9 @@ async def save_vacation_in_database(username: str, start_date: datetime, end_dat
     }))
 
     return success_on_insert.rowcount > 0
+
+async def get_vacations(db: AsyncSession):
+    vacations = await db.execute(select(Vacations.username, Vacations.start_date, Vacations.end_date)
+                                 .order_by(Vacations.start_date))
+    
+    return vacations.mappings().all()

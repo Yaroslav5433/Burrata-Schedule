@@ -251,3 +251,18 @@ export async function save_vacation(username, start_date, end_date) {
 
   return res.json()
 }
+
+
+export async function get_vacations() {
+  const res = await fetch('http://localhost:8000/getvacations', {
+  method: "GET",
+  headers: {
+    'Content-Type': 'application/json'
+  }})
+
+  if (!res.ok) {
+    throw new Error('Failed during getting vacation')
+  }
+
+  return res.json()
+}
