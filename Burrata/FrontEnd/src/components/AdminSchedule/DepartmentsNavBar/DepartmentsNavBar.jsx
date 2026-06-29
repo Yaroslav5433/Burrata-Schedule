@@ -6,9 +6,10 @@ import { memo } from 'react'
 function DepartmentsNavBar() {
 
   const departments = [
-    { label: "Bar", value: "bar" },
     { label: "Service", value: "service" },
-    { label: "Hostess", value: "hostess" }
+    { label: "Bar", value: "bar" },
+    { label: "Hostess", value: "hostess" },
+    { label: "Kitchen", value: "kitchen"}
   ];
 
   return (

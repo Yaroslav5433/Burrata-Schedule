@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import styles from './ValuesInTable.module.css'
 import SvgIcon from '@/components/Svgs/SvgIcon'
 import { Context } from '@/components/Context'
+import { useOptions } from '@/hooks/useOptions'
 
 function ValuesInTable(props) {
 
@@ -19,6 +20,9 @@ function ValuesInTable(props) {
     all_users_to_show,
     handleEditChange,
   } = props
+
+  const options = useOptions()
+  console.log(options)
 
   return (
     <>
@@ -54,11 +58,9 @@ function ValuesInTable(props) {
                         value={ all_users_to_show[user]?.[dateIndex] }
                         onChange={(e) => handleEditChange(user, dateIndex, e.target.value)}>
                         <option value={undefined}>{undefined}</option>
-                        <option value="X">X</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="D12">D12</option>
-                        <option value="D10">D10</option>
+                        {options.map((option, _) => (
+                            <option value={option}>{option}</option>
+                        ))}
                         </select>}
                         {customEdit && 
                         <input className={styles.valueCell}
