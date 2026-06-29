@@ -14,6 +14,7 @@ from routes.get_messages_route import get_messages_router
 from routes.check_message_route import check_message_router
 from routes.save_vacation_route import save_vacation_router
 from routes.get_vacations_route import get_vacations_router
+from routes.delete_vacation_route import delete_vacation_route
 
 all_routers = [
     login_router,
@@ -31,5 +32,6 @@ all_routers = [
     get_messages_router,
     check_message_router,
     save_vacation_router,
-    get_vacations_router
+    get_vacations_router,
+    delete_vacation_route
 ]

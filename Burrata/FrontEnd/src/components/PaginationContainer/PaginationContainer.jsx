@@ -9,8 +9,8 @@ function PaginationContainer(props) {
 
   return (
     <>
-    <h2 className={styles.pagination_title}>{paginationTitle}</h2>
-    <div className={styles.pagination_container}>
+    <h2 className={styles.title}>{paginationTitle}</h2>
+    <div className={styles.container}>
         {children}
     </div>
     </>

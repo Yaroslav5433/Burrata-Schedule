@@ -26,11 +26,11 @@ function MessagesPagination(props) {
     paginationTitle = 'Messages'>
         {messages.some(Boolean) ? <>
           {messages.map((message, id) => (
-            <div key={id} className={styles.pagination_element_container}>
-              <div className={styles.messages_container_top_line}>
-                  <span className={styles.messages_name_and_date}>
-                      <p className={styles.messages_author}>{message.username}</p>
-                      <time className={styles.messages_date}>
+            <div key={id} className={styles.container}>
+              <div className={styles.topLine}>
+                  <span className={styles.nameAndDate}>
+                      <p className={styles.author}>{message.username}</p>
+                      <time className={styles.date}>
                         <span>{new Date(message.created_at).toLocaleDateString()}</span>
                         <span>
                           {new Date(message.created_at).toLocaleTimeString(
@@ -44,10 +44,10 @@ function MessagesPagination(props) {
                   </span>
                   <Button
                   buttonText = 'Прочетено'
-                  buttonStyle = {styles.messages_button}
+                  buttonStyle = {styles.button}
                   onClick = {() => handleClick(message)}/>
               </div>
-              <p className={styles.messages_text}>{message.message}</p>
+              <p className={styles.text}>{message.message}</p>
             </div>))} </>:
             <p>No new messages</p>}
     </PaginationContainer>

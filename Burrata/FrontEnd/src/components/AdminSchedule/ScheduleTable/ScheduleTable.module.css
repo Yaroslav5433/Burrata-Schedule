@@ -15,4 +15,11 @@
 .table select {
     text-align: center;
     text-align-last: center;
+    border: none;
+    width: 100%;
   }
+
+.table select:hover {
+  background-color: var(--green-color);
+  transition: var(--transition-duration);
+}

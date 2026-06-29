@@ -56,6 +56,9 @@
 
 .p-inputtext {
     border-radius: 5px;
-    border: none;
-    box-shadow: var(--shadow)
+    border: 1px solid var(--white-color);
+    box-shadow: var(--shadow);
+    background-color: transparent;
+    color: var(--white-color);
+    padding-left: 5px;
 }

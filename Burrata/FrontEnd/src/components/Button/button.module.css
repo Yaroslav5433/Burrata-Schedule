@@ -1,11 +1,11 @@
 .button {
     background-color: var(--white-gray-color);
     color: var(--white-color);
-    width: clamp(60px, 6vw, 100px);
-    height: clamp(40px, 2.5vw, 800px);
+    width: clamp(70px, 6vw, 130px);
+    height: clamp(30px, 2.5vw, 60px);
     border-color: transparent;
     border-radius: 7px;
-    font-size: 12px;
+    font-size: clamp(9px, 0.7vw, 16px);
     box-shadow: var(--shadow);
 }
 

@@ -1,0 +1,30 @@
+.container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list {
+    display: flex;
+    gap: 100px;
+}
+
+.item {
+    font-size: 12px;
+}
+
+.link {
+    text-decoration: none;
+    color: var(--white-color);
+    font-size: 12px;
+}
+
+.link:hover {
+    color: var(--white-gray-color);
+    transition-duration: var(--transition-duration);
+}
+
+.current {
+    color: var(--white-gray-color);
+}

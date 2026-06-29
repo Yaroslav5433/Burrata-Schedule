@@ -17,7 +17,6 @@ function ScheduleTable() {
         all_workers_to_show,
         showClaims,
         setDraftSchedule,
-        setCustomEdit,
         draftSchedule
    } = useContext(Context)
 

@@ -1,6 +1,6 @@
 import { Context } from '@/components/Context.js'
 import styles from './textField.module.css'
-import { useContext, useState, forwardRef } from 'react'
+import { useContext, forwardRef } from 'react'
 
 const TextField = forwardRef((props, ref) => {
     const {
@@ -12,7 +12,6 @@ const TextField = forwardRef((props, ref) => {
         name,
         onKeyDown,
         textFieldStyle,
-        onBlur,
         textArea = false
     } = props
 
@@ -21,27 +20,15 @@ const TextField = forwardRef((props, ref) => {
         errorOnReq
     } = useContext(Context)
 
-    const [blurred, setBlurred] = useState(false)
-
-    const handleBlur = (e) => {
-        setBlurred(true);
-
-        if (onBlur) {
-            onBlur(e)
-        }
-    } 
-
     const commonProps = {
         name,
         value,
         placeholder,
         onKeyDown,
-        onBlur: handleBlur,
         onChange,
         className: `
-            ${textFieldStyle} ${styles.fieldInput}
-            ${blurred && (value?.length > 0) ? styles.fieldInputOnBlur : ''}
-            ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}
+        ${textFieldStyle} ${styles.fieldInput}
+        ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}
         `
     }
 

@@ -20,22 +20,8 @@ def get_next_week_dates(nosql: bool = False, steps: int = 0):
 
     return week
 
-
-def get_seconds_to_next_monday():
-    now = datetime.now(ZoneInfo("Europe/Sofia"))
-
-    print(now)
-    days_ahead_to_monday = (7 - now.weekday())
-
-    target_date = (now + timedelta(days=days_ahead_to_monday)).replace(
-        hour=0,
-        minute=0,
-        second=0
-    )
-
-    seconds = int((target_date - now).total_seconds())
-
-    return seconds
+def get_this_monday():
+    return date.today() - timedelta(days = date.today().weekday())
 
 
 def transform_datetime_item_to_str(datetime_item: datetime):

@@ -3,6 +3,7 @@ import { Context } from '@/components/Context.js'
 import TextField from '@/components/TextField/TextField.jsx'
 import Button from '@/components/Button/Button.jsx'
 import centralstyle from '@/components/CentralContainer/CentralContainer.module.css'
+import style from './AdminAuthorizationContainer.module.css'
 
 function AdminAuthorizationContainer() {
 
@@ -31,8 +32,8 @@ function AdminAuthorizationContainer() {
     }
 
     return (
-        <form className={centralstyle.central_container} onSubmit={onSubmit}>
-            <h1>Authorization</h1>
+        <form className={centralstyle.container} onSubmit={onSubmit}>
+            <h1 className={style.title}>Authorization</h1>
             <TextField 
             name='login'
             label='Login'

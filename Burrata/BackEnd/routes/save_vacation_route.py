@@ -14,8 +14,8 @@ async def savevacation(vacation_info: Vacations, db: AsyncSession = Depends(get_
 
     success_on_req = await db_req.save_vacation_in_database(
         username = vacation_info.username,
-        start_date = transform_str_item_to_datetime(vacation_info.start_date),
-        end_date = transform_str_item_to_datetime(vacation_info.end_date),
+        start_date = vacation_info.start_date,
+        end_date = vacation_info.end_date,
         db = db)
 
     if not success_on_req: 

@@ -13,14 +13,14 @@ function DepartmentsNavBar() {
 
   return (
     <nav className={styles.navigation}>
-      <ul className={styles.container}>
+      <ul className={styles.list}>
         {departments.map(dep => (
-          <li key={dep.value} className={styles.container_item}>
+          <li key={dep.value} className={styles.item}>
             <NavLink
               to={`/admin/schedule/${dep.value}`}
               className={({ isActive }) =>
-                `${styles.container_item_link} ${
-                  isActive ? styles.container_item_link_is_current : ""
+                `${styles.link} ${
+                  isActive ? styles.current : ""
                 }`
               }
             >

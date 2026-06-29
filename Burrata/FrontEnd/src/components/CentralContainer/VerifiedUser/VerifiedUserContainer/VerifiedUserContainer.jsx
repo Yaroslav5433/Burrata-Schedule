@@ -22,20 +22,20 @@ function VerifiedUserContainer(props) {
 
     return (
         <Animation>
-            <form className={centralstyle.central_container} onSubmit={onSubmit}>
-                <h1>{userName}</h1>
-                <div className={styles.choose_a_claim_container}>
+            <form className={centralstyle.container} onSubmit={onSubmit}>
+                <h1 className={styles.title}>{userName}</h1>
+                <div className={styles.container}>
                     {!(userSavedClaims.some(Boolean)) && (
-                        <p>Please, choose a claims:</p>
+                        <p className={styles.text}>Please, choose a claims:</p>
                     )}
                     <ClaimsTableForRequest/>
                 </div>
                 {!(userSavedClaims.some(Boolean)) && (
                     <>
-                    <div className={styles.write_a_complains_container}>
-                    <p>Write an additional complains</p>
+                    <div className={styles.container}>
+                    <p className={styles.text}>Write an additional complains</p>
                     <TextField
-                    textFieldStyle = {styles.request_text_field}
+                    textFieldStyle = {styles.field}
                     textArea = {true}
                     value = {userMessage}
                     onChange = {(e) => setUserMessage(e.target.value)}
@@ -48,7 +48,7 @@ function VerifiedUserContainer(props) {
                 )}
                 {(userSavedClaims.some(Boolean)) && (
                     <>
-                    <p>Вашето съобщение: {userMessage}</p>
+                    <p className={styles.text}>Вашето съобщение: {userMessage}</p>
                     <p className="successMessage">You have been sent your claims!</p>
                     </>
                 )}

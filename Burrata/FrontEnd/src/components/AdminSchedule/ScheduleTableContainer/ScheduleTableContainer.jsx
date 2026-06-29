@@ -8,6 +8,9 @@ import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import { useSaveIntoSchedule } from '@/hooks/scheduleMutations'
 import { Context } from '@/components/Context'
 import Spinner from '@/components/Spinner/Spinner'
+import IsEditButtons from './ButtonsContainers/IsEditButtons'
+import CustomEditButtons from './ButtonsContainers/CustomEditButtons'
+import BasicButtons from './ButtonsContainers/BasicButtons'
 
 function ScheduleTableContainer(props) {
 
@@ -96,7 +99,7 @@ function ScheduleTableContainer(props) {
   }
 
   return (
-    <div className={styles.tableFullContainer}>
+    <div className={styles.tableMainContainer}>
       {(!isEdit && !customEdit) && 
       <>
       <SvgButtonIcon
@@ -107,9 +110,9 @@ function ScheduleTableContainer(props) {
       onClick = {() => handleClick(-1)}/>
       </>}
       <form className={styles.container}>
-          <div className={styles.top_button_line}>
+          <div className={styles.topLine}>
               <span 
-              className={styles.tablename_span}>
+              className={styles.tablenameSpan}>
               <h2>Schedule</h2>
               </span>
               {(!isEdit && !customEdit) &&
@@ -118,70 +121,31 @@ function ScheduleTableContainer(props) {
               checked = {showClaims}
               onChange = {(e) => (setShowClaims(e.target.checked))}/>}
           </div>
-          <div className={styles.loading_container}>
+          <div className={styles.loading}>
               <div className = {loading ? styles.blurred : ""}>
                 <ScheduleTable/>
               </div>
               {loading && (
-                  <div className = {styles.loading_overlay}>
+                  <div className = {styles.loadingOverlay}>
                       <Spinner/>
                   </div>
               )}
           </div>
-          <div className={styles.bottom_button_line}>
+          <div className={styles.bottomLine}>
             {isEdit &&
-            <>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Cancel Changes'
-            type='button'
-            onClick = {() => handleEditClick("cancel changes")}/>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Auto Fill Up'
-            type='button'
-            name='action'
-            value='fill up'
-            onClick = {() => setPopUpIsOpen(true)}/>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Save changes'
-            type='button'
-            onClick={handleSaveSchedule}/> 
-            </> }
+            <IsEditButtons
+            handleEditClick = {handleEditClick}
+            handleSaveSchedule = {handleSaveSchedule}
+            setPopUpIsOpen = {setPopUpIsOpen}/>
+            }
             {customEdit &&
-            <>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Cancel Changes'
-            type='button'
-            onClick = {() => handleEditClick("cancel custom changes")}/>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Save changes'
-            type='button'
-            onClick={handleSaveSchedule}/>
-            </>}
+            <CustomEditButtons
+            handleEditClick = {handleEditClick}
+            handleSaveSchedule = {handleSaveSchedule}/>}
             {(!isEdit && !customEdit) &&
-            <>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Edit Table'
-            type='button'
-            value='edit table'
-            onClick = {() => handleEditClick("edit table")}/>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'CustomEdit'
-            type='button'
-            value='custom edit'
-            onClick={() => handleEditClick("custom edit")}/>
-            <Button
-            buttonStyle = {styles.bottom_button}
-            buttonText = 'Save all claims'
-            type='button'
-            onClick={handleSaveClaims}/>
-            </>}
+            <BasicButtons
+            handleEditClick = {handleEditClick}
+            handleSaveClaims = {handleSaveClaims}/>}
           </div>
       </form>
       {(!isEdit && !customEdit) && 
