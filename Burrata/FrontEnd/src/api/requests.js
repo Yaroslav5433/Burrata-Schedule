@@ -199,8 +199,8 @@ export async function fill_up_schedule_request(claims, demands) {
 }
 
 
-export async function get_messages(all = true, page = 1, number_of_elements = 5) {
-  const res = await fetch(`http://192.168.0.6:8000/getmessages?all=${all}&page=${page}&number_of_elements=${number_of_elements}`, {
+export async function get_messages(department, all = true, page = 1, number_of_elements = 5) {
+  const res = await fetch(`http://192.168.0.6:8000/getmessages?department=${department}&all=${all}&page=${page}&number_of_elements=${number_of_elements}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'

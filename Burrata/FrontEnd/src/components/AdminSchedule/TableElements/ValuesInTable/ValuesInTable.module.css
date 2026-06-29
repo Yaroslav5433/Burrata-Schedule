@@ -43,7 +43,7 @@
     padding-left: 15px;
   }
 
-.infoIcon:hover .workerPopUpMessage {
+.infoIcon:hover .popUp {
     opacity: 1;
     pointer-events: auto;
   }

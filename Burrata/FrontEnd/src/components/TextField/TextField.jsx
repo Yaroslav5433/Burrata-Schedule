@@ -12,6 +12,7 @@ const TextField = forwardRef((props, ref) => {
         name,
         onKeyDown,
         textFieldStyle,
+        onBlur,
         textArea = false
     } = props
 
@@ -26,6 +27,7 @@ const TextField = forwardRef((props, ref) => {
         placeholder,
         onKeyDown,
         onChange,
+        onBlur,
         className: `
         ${textFieldStyle} ${styles.fieldInput}
         ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}

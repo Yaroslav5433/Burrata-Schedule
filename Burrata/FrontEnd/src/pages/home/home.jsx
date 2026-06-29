@@ -65,8 +65,8 @@ function Home() {
     });
 
     const messageQuery = useQuery({
-        queryKey: ["messages"],
-        queryFn: () => get_messages(true),
+        queryKey: ["messages", department],
+        queryFn: () => get_messages(department, true),
         placeholderData: (prev) => prev,
         enabled: !!department,
         retry: 0
@@ -78,7 +78,7 @@ function Home() {
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
 
-    console.log('schedule', schedule)
+    console.log('messages', messageQuery.data)
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)

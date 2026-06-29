@@ -139,10 +139,11 @@ async def insert_message(username: str, message: str, db: AsyncSession):
     return success_on_insert.rowcount > 0
 
 
-async def get_messages(db: AsyncSession, all: bool, page: int, number_of_elements: int, read: bool = False):
+async def get_messages(db: AsyncSession, department: str, all: bool, page: int, number_of_elements: int, read: bool = False):
     if all:
         messages = await db.execute(select(Messages.username, Messages.message, Messages.created_at, Messages.id)
-                            .where(Messages.read == read)
+                            .join(Users, Users.username == Messages.username)
+                            .where(Messages.read == read, Users.position == department)
                             .order_by(Messages.created_at.desc()))
     else: 
         messages = await db.execute(select(Messages.username, Messages.message, Messages.created_at, Messages.id)

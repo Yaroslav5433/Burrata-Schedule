@@ -8,10 +8,12 @@ from schemas.schemas import Messages
 get_messages_router = APIRouter()
 
 @get_messages_router.get('/getmessages', response_model = list[Messages])
-async def get_messages(all: bool, page: int, number_of_elements: int, db: AsyncSession = Depends(get_db)):
+async def get_messages(department: str, all: bool, page: int, number_of_elements: int, db: AsyncSession = Depends(get_db)):
     
+    logger.info(f'Depart: {department}')
     messages = await db_req.get_messages(
         db = db,
+        department = department,
         all = all,
         page = page,
         number_of_elements = number_of_elements)    
@@ -22,6 +24,6 @@ async def get_messages(all: bool, page: int, number_of_elements: int, db: AsyncS
             detail="No saved messages",
         )
 
-    logger.info('Sending a messages')
+    logger.info(f'Sending a messages: {messages}')
     
     return messages
