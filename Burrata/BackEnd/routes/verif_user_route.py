@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
 from schemas.schemas import Verification_data, Users_with_shifts_and_message
-from utils.utils import get_next_week_dates, interpret_claims_as_list
+from utils.utils import get_next_week_dates, interpret_claims_as_list, get_this_monday
 from loguru import logger
 
 verification_router = APIRouter()
@@ -24,6 +24,7 @@ async def verification(verification_data: Verification_data, db: AsyncSession = 
         
         user_message = await db_req.get_user_message(
             username = verified_user.username,
+            date = get_this_monday(),
             db = db
         )
 

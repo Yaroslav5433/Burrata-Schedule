@@ -1,15 +1,16 @@
 import { Context } from '@/components/Context.js';
-import styles from './claimsTableForRequest.module.css'
 import { useContext, useState } from 'react';
 import TableWithDates from '@/components/TableWithDates/TableWithDates.jsx';
+import ShiftsRow from './ShiftsRow/ShiftsRow';
+import ClaimsTableMobile from './ClaimsTableMobile/ClaimsTableMobile';
 
 function ClaimsTableForRequest() {
 
     const {
       claimDates,
-      userSavedClaims,
       claimValues,
-      setClaimValues
+      setClaimValues,
+      mobile
     } = useContext(Context)
 
     const [hasANumber, setHasANumber] = useState(false) 
@@ -27,34 +28,21 @@ function ClaimsTableForRequest() {
 
 
     return (
-      <TableWithDates
-      dates = {claimDates}>
-        <tr>
-            {claimDates.map((date, i) => (
-              <td className = 'schedule_select_td' key={date}>
-                {!(userSavedClaims.some(Boolean)) ? (
-                  <select 
-                  value={claimValues[i]}
-                  id={i}
-                  onChange={(e) => handleChange(i, e.target.value)}
-                  >
-                    <option 
-                    value=""></option>
-                    <option  
-                    value="X"
-                    disabled={hasTwoX}>X</option>
-                    <option  
-                    value="1"
-                    disabled={hasANumber}>1</option>
-                    <option  
-                    value="2"
-                    disabled={hasANumber}>2</option>
-                  </select>
-                ) : (userSavedClaims?.[i] ?? '')}
-              </td>
-            ))}
-          </tr>
-      </TableWithDates>
-    );
-  }
+      !mobile ? (
+        <TableWithDates
+        dates={claimDates}>
+          <ShiftsRow
+          handleChange = {handleChange}
+          hasANumber = {hasANumber}
+          hasTwoX = {hasTwoX}/>
+        </TableWithDates>
+      ) : (
+        <ClaimsTableMobile
+        handleChange = {handleChange}
+        hasANumber = {hasANumber}
+        hasTwoX = {hasTwoX}/>
+    )
+  );
+}
+
 export default ClaimsTableForRequest

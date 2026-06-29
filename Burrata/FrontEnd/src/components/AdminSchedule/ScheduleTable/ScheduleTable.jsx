@@ -17,6 +17,7 @@ function ScheduleTable() {
         all_workers_to_show,
         showClaims,
         setDraftSchedule,
+        draftSchedule
    } = useContext(Context)
 
    const [addUser, setAddUser] = useState(false)
@@ -36,20 +37,18 @@ function ScheduleTable() {
    }, [addUser, addTrainee])
 
 
-    const handleChange = (userIndex, dateIndex, value, is_trainees) => {
-        if (is_trainees) {
-            userIndex += Object.keys(all_workers_to_show).length
-        }
+    const handleEditChange = (user, dateIndex, value) => {
+        console.log(draftSchedule)
 
         const merged_to_show = {
             ...all_workers_to_show,
             ...all_trainees_to_show
         }
+        
         const copy = structuredClone(merged_to_show)
-        const userKey = Object.keys(copy)[userIndex]
 
-        copy[userKey][dateIndex] = value
-    
+        copy[user][dateIndex] = value
+        
         setDraftSchedule(copy)
     };
 
@@ -101,8 +100,7 @@ function ScheduleTable() {
             all_users_to_show = {all_workers_to_show}
             handleClick = {handleClick}
             showClaims = {showClaims}
-            handleChange = {handleChange}
-            is_trainees = {false}/>
+            handleEditChange = {handleEditChange}/>
 
             <AddUserInTable
             addUser = {addUser}
@@ -127,8 +125,7 @@ function ScheduleTable() {
             all_users_to_show = {all_trainees_to_show}
             handleClick = {handleClick}
             showClaims = {showClaims}
-            handleChange = {handleChange}
-            is_trainees = {true}/>
+            handleEditChange = {handleEditChange}/>
 
             <AddUserInTable
             addUser = {addTrainee}

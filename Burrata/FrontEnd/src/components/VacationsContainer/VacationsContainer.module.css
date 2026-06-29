@@ -1,0 +1,60 @@
+.svgButton {
+    width: 1.5%;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+.svg {
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 18px;
+  background-color: var(--light-gray-color);
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+} 
+
+.content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 30px;
+  margin-top: 13px;
+}
+
+.button {
+  height: 100%;
+}
+
+.select {
+  border: 1px solid var(--white-color); 
+  border-radius: 5px;
+  width: 300px;
+  box-shadow: var(--shadow);  
+}
+
+.line {
+  display: inline-flex;
+  gap: 15px;
+}

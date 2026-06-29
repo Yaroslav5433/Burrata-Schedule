@@ -1,4 +1,4 @@
-.workerContainer {
+.container {
     position: relative;
     display: flex;
     align-items: center;
@@ -7,7 +7,7 @@
     padding-right: 15px;
 }
 
-.workerContainerButton {
+.containerButton {
     background: none;
     border: none;
     padding: 0;
@@ -24,7 +24,7 @@
     transition: opacity 0.2s ease;
   }
 
-.workerPopUpMessage { 
+.popUp { 
     position: absolute;
     display: flex;
     justify-content: center;
@@ -48,8 +48,22 @@
     pointer-events: auto;
   }
 
-.workerContainer:hover .workerContainerButton {
+.container:hover .containerButton {
     opacity: 1;
     pointer-events: auto;
   }
   
+.cell {
+  background-color: color-mix(in srgb, var(--light-blue-color) 50%, transparent);
+}
+
+.valueCell {
+  width: 100%;
+  background-color: transparent;
+  color: var(--white-color);
+  text-align: center;
+}
+
+.select {
+  height: 100%;
+}

@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import TextField from '@/components/TextField/TextField.jsx'
 import Button from '@/components/Button/Button.jsx'
 import Animation from '@/components/Animation/Animation.jsx'
 import centralstyle from '@/components/CentralContainer/CentralContainer.module.css'
+import styles from './UserVerificationContainer.module.css'
+import { Context } from '@/components/Context'
 
 function UserVerificationContainer(props) {
 
     const {
-        errorOnReq,
         verifyUser
     } = props
+
+    const {
+        errorOnReq
+    } = useContext(Context)
     
     const [id, setId] = useState('')
 
@@ -20,8 +25,8 @@ function UserVerificationContainer(props) {
 
     return (
         <Animation>
-            <form className={centralstyle.central_container} onSubmit={onSubmit}>
-                <h1>Sent a claim</h1>
+            <form className={`${styles.container} ${centralstyle.container}`} onSubmit={onSubmit}>
+                <h1 className={styles.title}>Sent a claim</h1>
                 <TextField 
                 name='ID'
                 label='ID Code'

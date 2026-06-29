@@ -14,6 +14,11 @@ class Messages(BaseModel):
     created_at: datetime
     id: int
 
+class Vacations(BaseModel):
+    username: str
+    start_date: datetime
+    end_date: datetime
+
 class Users_with_shifts_and_message(BaseModel):
     username: str
     claims: list[str]

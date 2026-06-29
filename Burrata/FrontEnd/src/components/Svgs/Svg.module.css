@@ -8,7 +8,7 @@
   fill: var(--white-gray-color);
 }
 
-.button_icon {
+.buttonIcon {
   stroke: var(--white-color);
   stroke-width: 2;
   stroke-linecap: round;
@@ -17,12 +17,12 @@
   height: 35px;
 }
 
-.button_icon:hover {
+.buttonIcon:hover {
   stroke: var(--white-gray-color);
 }
 
 .icon:hover,
-.button_icon:hover {
+.buttonIcon:hover {
     transition-duration: var(--transition-duration);
   }
 

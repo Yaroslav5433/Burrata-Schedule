@@ -45,18 +45,18 @@ function PopUp(props) {
   console.log(days)
 
   return (
-      <div className = {styles.pop_up_overlay}>
+      <div className = {styles.overlay}>
         <Animation>
-          <form className={styles.popup_container} onSubmit={(e) => handleFillUpSubmit(e, days)}>
+          <form className={styles.container} onSubmit={(e) => handleFillUpSubmit(e, days)}>
             <h2
-            className={styles.pop_up_title}>Auto fill up</h2>
+            className={styles.title}>Auto fill up</h2>
             <TableWithDates
             dates = {dates}>
-              <tr>
+              <tr className={styles.row}>
               {dates?.map((date, i) => (
-                <td key={date}>
+                <td className={styles.rowElement} key={date}>
                   <TextField
-                  textFieldStyle = {styles.table_input}
+                  textFieldStyle = {styles.input}
                   onChange = {handleChange}
                   label = {Object.keys(days)[i]}
                   name = {Object.keys(days)[i]}
@@ -72,8 +72,8 @@ function PopUp(props) {
             buttonText = 'Send'/>
             <SvgButtonIcon
             path = "M20 20L4 4.00003M20 4L4.00002 20"
-            buttonStyles = {styles.pop_up_cross_button}
-            svgStyles = {styles.pop_up_cross_icon}
+            buttonStyles = {styles.crossButton}
+            svgStyles = {styles.crossIcon}
             onClick = {handleClick}/>
           </form>
         </Animation>

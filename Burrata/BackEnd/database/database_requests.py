@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, and_, update
 from sqlalchemy.dialects.postgresql import insert as pginsert
-from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages
+from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations
 from utils.utils import transform_datetime_item_to_str
+from datetime import datetime
 
 
 
@@ -54,9 +55,12 @@ async def insert_shifts_in_database(username: str, claims_sql_type, db: AsyncSes
 
 
 async def get_all_users(db: AsyncSession, requested_department):
-    all_users = await db.execute(select(Users.username, Users.unique_id_number, Users.position, Users.is_trainee).where(
-        Users.position == requested_department
-    ))
+    if requested_department == "all":
+        all_users = await db.execute(select(Users.username, Users.unique_id_number, Users.position, Users.is_trainee))
+    else: 
+        all_users = await db.execute(select(Users.username, Users.unique_id_number, Users.position, Users.is_trainee).where(
+            Users.position == requested_department
+        ))
 
     users = {
         username: {
@@ -159,10 +163,36 @@ async def check_message_as_read(id: int, db: AsyncSession):
     return success_on_check.rowcount > 0
 
 
-async def get_user_message(username: str, db: AsyncSession):
+async def get_user_message(username: str, date, db: AsyncSession):
     message = await db.execute(select(Messages.message)
-                .where(Messages.username == username)
+                .where(Messages.username == username, Messages.created_at > date)
                 .order_by(Messages.created_at.desc())
                 .limit(1))
 
     return message.scalars().first()
+
+
+async def save_vacation_in_database(username: str, start_date: datetime, end_date: datetime, db: AsyncSession):
+    success_on_insert = await db.execute(insert(Vacations).values({
+        'username': username,
+        'start_date': start_date,
+        'end_date': end_date
+    }))
+
+    await db.commit()
+
+    return success_on_insert.rowcount > 0
+
+async def get_vacations(db: AsyncSession):
+    vacations = await db.execute(select(Vacations.username, Vacations.start_date, Vacations.end_date)
+                                 .order_by(Vacations.start_date))
+    
+    return vacations.mappings().all()
+
+
+async def delete_vacation(username: str, db: AsyncSession):
+    success_on_delete = await db.execute(delete(Vacations).where(Vacations.username == username))
+
+    await db.commit()
+
+    return success_on_delete.rowcount > 0

@@ -1,10 +1,10 @@
-.request_text_field {
+.field {
     height: 100px;
     resize: none;
+    padding: 6px;
 }
 
-.choose_a_claim_container,
-.write_a_complains_container {
+.container {
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -14,7 +14,7 @@ function Button(props) {
 
     return (
         <button 
-        className={`${styles.button} ${buttonStyle} ${isCurrent}`}
+        className={`${buttonStyle} ${styles.button} ${isCurrent}`}
         type = {type}
         name = {name}
         value = {value}

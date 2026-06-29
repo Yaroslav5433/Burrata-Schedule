@@ -2,7 +2,7 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx'
 import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer'
-import MessagesContainer from "@/components/AdminSchedule/MessagesSection/MessagesContainer/MessagesContainer";
+import MessagesPagination from "@/components/AdminSchedule/MessagesPagination/MessagesPagination";
 import { useState } from "react";
 import { Context } from "@/components/Context";
 import { get_all_users_request } from "@/api/requests";
@@ -28,11 +28,12 @@ function Home() {
     const [popUpIsOpen, setPopUpIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [draftSchedule, setDraftSchedule] = useState(null);
+    const [customEdit, setCustomEdit] = useState(false);
 
     const { department } = useParams()
 
     const { showNotification } = useNotification()
-
+    
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],
         queryFn: () => get_dates_request(dateStep),
@@ -76,6 +77,8 @@ function Home() {
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
+
+    console.log('schedule', schedule)
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -124,8 +127,6 @@ function Home() {
     const all_trainees_to_show = showClaims
     ? traineesWithClaims
     : traineesWithSchedule;
-
-    console.log('draftSchedule', draftSchedule)
     
     const handleDraftSet = () => {
         setDraftSchedule(structuredClone(scheduleQuery.data))
@@ -179,7 +180,9 @@ function Home() {
             allUsers,
             setPopUpIsOpen,
             loading,
-            setLoading
+            setLoading,
+            customEdit,
+            setCustomEdit
         }}>
             {popUpIsOpen && 
             <PopUp
@@ -198,7 +201,7 @@ function Home() {
                                 handleDraftSet = {handleDraftSet}
                                 dateStep = {dateStep}
                                 />
-                                <MessagesContainer
+                                <MessagesPagination
                                 messages = {messages}/>
                             </main>
                     </div>

@@ -5,7 +5,7 @@ import VerifiedUserContainer from '@/components/CentralContainer/VerifiedUser/Ve
 import { verify_user_request } from '@/api/requests'
 import { save_user_claims_request } from '@/api/requests'
 import { get_dates_request } from '@/api/requests';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Context } from '@/components/Context.js';
 import pagestyles from '../pages.module.css'
 import { EMPTY_ARRAY_OF_SEVEN } from '@/utils/constants';
@@ -23,6 +23,7 @@ function Request() {
     const [userSavedClaims, setUserSavedClaims] = useState([]);
     const [userMessage, setUserMessage] = useState('')
     const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
+    const [mobile, setMobile] = useState(window.innerWidth < 768)
 
     const {showNotification} = useNotification();
 
@@ -75,30 +76,48 @@ function Request() {
         }
     }
 
+    useEffect(() => {
+        const handler = () => {
+          setMobile(window.innerWidth < 768);
+        };
+      
+        window.addEventListener("resize", handler);
+      
+        return () => {
+          window.removeEventListener("resize", handler);
+        };
+      }, []);
+
     return (
-        <div className = {pagestyles.app}>
-            <Header />
-                <main className={pagestyles.requestContainer}>
-                    {verificationPage ? 
-                    (<UserVerificationContainer
-                    errorOnReq = {errorOnReq}
-                    verifyUser = {verifyUser}/>) : 
-                    <Context.Provider
-                    value={{
-                        userSavedClaims,
-                        claimDates,
-                        claimValues,
-                        setClaimValues,
-                    }}>
+        <Context.Provider
+        value={{
+            userSavedClaims,
+            claimDates,
+            claimValues,
+            setClaimValues,
+            mobile,
+            setMobile,
+            errorOnReq
+        }}>
+            <div className = {pagestyles.app}>
+                <Header />
+                    <main className={pagestyles.requestContainer}>
+                        {verificationPage ? 
+                        (
+                        <UserVerificationContainer
+                        verifyUser = {verifyUser}/>
+                        ) : 
+                        (
                         <VerifiedUserContainer
                         userName = {userName}
                         userMessage = {userMessage}
                         setUserMessage = {setUserMessage}
                         onSubmit = {onSubmit}/>
-                    </Context.Provider>}
-                </main>
-            <Footer />
-        </div>
+                        )}
+                    </main>
+                <Footer />
+            </div>
+        </Context.Provider>
     );
 }
  

@@ -4,46 +4,10 @@
     align-items: center;
     background-color: var(--light-dark-color);
     min-height: 50px;
+    padding-left: 10px;
 }
 
 .logo {
     width: 5em;
 }
 
-.logo_container {
-    width: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.navbar_container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.navbar_items {
-    display: flex;
-    gap: 100px;
-}
-
-.navbar_item {
-    font-size: 12px;
-}
-
-.navbar_item_link {
-    text-decoration: none;
-    color: var(--white-color);
-    font-size: 12px;
-}
-
-.navbar_item_link:hover {
-    color: var(--white-gray-color);
-    transition-duration: var(--transition-duration);
-}
-
-.current {
-    color: var(--white-gray-color);
-}
