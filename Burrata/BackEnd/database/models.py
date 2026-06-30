@@ -52,6 +52,12 @@ class Users(Base):
         passive_deletes=True
     )
 
+    shiftsValues = relationship(
+        "shifts",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
     
 class ClaimsSchedule(Base):
     __tablename__ = 'claimsschedule'
@@ -92,3 +98,17 @@ class Vacations(Base):
     username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
     start_date = Column(DateTime(timezone=True), nullable=False)
     end_date = Column(DateTime(timezone=True), nullable=False)
+
+    __table_args__ = (UniqueConstraint("username"),)
+
+
+class ShiftsValues(Base):
+    __tablename__ = 'shiftsValues'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
+    day = Column(String, nullable=False)
+    shiftValue = Column(String, nullable=False)
+    allowed = Column(Boolean, nullable=False, default=True)
+
+    __table_args__ = (UniqueConstraint("username"),)
