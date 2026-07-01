@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint
+from sqlalchemy import CheckConstraint, Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint
 from database.database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -52,8 +52,14 @@ class Users(Base):
         passive_deletes=True
     )
 
-    shiftsValues = relationship(
-        "shifts",
+    shiftsvalues = relationship(
+        "ShiftsValues",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
+    maxshiftsweektotal = relationship(
+        "MaxShiftsWeekTotal",
         cascade="all, delete-orphan",
         passive_deletes=True
     )
@@ -103,12 +109,21 @@ class Vacations(Base):
 
 
 class ShiftsValues(Base):
-    __tablename__ = 'shiftsValues'
+    __tablename__ = 'shiftsvalues'
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
     day = Column(String, nullable=False)
-    shiftValue = Column(String, nullable=False)
-    allowed = Column(Boolean, nullable=False, default=True)
+    shiftvalue = Column(String, nullable=False)
+    allowed = Column(Boolean, nullable=False)
+    
 
-    __table_args__ = (UniqueConstraint("username"),)
+class MaxShiftsWeekTotal(Base):
+    __tablename__ = 'maxshiftsweektotal'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
+    shiftvalue = Column(String, nullable=False)
+    max_count = Column(Integer, nullable=False)
+
+    __table_args__ = (CheckConstraint("max_count >= 0 AND max_count <= 7"),)
