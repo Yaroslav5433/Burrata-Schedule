@@ -5,34 +5,39 @@ import { Context } from '@/components/Context'
 function ShiftsRow(props) {
 
     const {
-        claimDates,
         userSavedClaims,
         claimValues,
+        availableShiftsValues,
+        totalMaxShifts,
+        used
     } = useContext(Context)
 
     const {
         handleChange,
-        hasANumber,
-        hasTwoX
     } = props
 
     return (
         <tr className={styles.row}>
-            {claimDates.map((_, i) => (
-                <td className={styles.rowElement} key={i}>
+            {Object.keys(availableShiftsValues).map((day, dayId) => (
+                <td className={styles.rowElement} key={day}>
                 {!userSavedClaims.some(Boolean) ? (
                     <select
                     className={styles.select}
-                    value={claimValues[i]}
-                    onChange={(e) => handleChange(i, e.target.value)}
+                    value={claimValues[dayId]}
+                    onChange={(e) => handleChange(dayId, e.target.value)}
                     >
-                    <option className={styles.option} value=""></option>
-                    <option className={styles.option} value="X" disabled={hasTwoX}>X</option>
-                    <option className={styles.option} value="1" disabled={hasANumber}>1</option>
-                    <option className={styles.option} value="2" disabled={hasANumber}>2</option>
+                        <option className={styles.option} value={undefined}></option>
+                        {Object.entries(availableShiftsValues[day])
+                        .filter(([, value]) => value)
+                        .map(([key]) => (
+                            <option 
+                            className={styles.option}
+                            value={key}
+                            disabled={used[key] >= (totalMaxShifts?.[key] ?? 0)}>{key}</option>
+                    ))}
                     </select>
                 ) : (
-                    userSavedClaims?.[i] ?? ''
+                    userSavedClaims?.[dayId] ?? ''
                 )}
                 </td>
             ))}

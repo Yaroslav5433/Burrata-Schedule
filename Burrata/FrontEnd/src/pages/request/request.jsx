@@ -2,14 +2,15 @@ import Header from '@/components/Header/Header.jsx'
 import Footer from '@/components/Footer/Footer.jsx'
 import UserVerificationContainer from '@/components/CentralContainer/UserVerificationContainer/UserVerificationContainer.jsx'
 import VerifiedUserContainer from '@/components/CentralContainer/VerifiedUser/VerifiedUserContainer/VerifiedUserContainer.jsx'
-import { verify_user_request } from '@/api/requests'
+import { get_shifts_values, get_total_max, verify_user_request } from '@/api/requests'
 import { save_user_claims_request } from '@/api/requests'
 import { get_dates_request } from '@/api/requests';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Context } from '@/components/Context.js';
 import pagestyles from '../pages.module.css'
 import { EMPTY_ARRAY_OF_SEVEN } from '@/utils/constants';
 import { useNotification } from '@/components/ModalWindow/ModalWindow'
+import { useQuery } from '@tanstack/react-query'
 
 
 function Request() {
@@ -19,11 +20,11 @@ function Request() {
     const [verificationPage, setVerificationPage] = useState(true);
 
     const [userName, setUserName] = useState('');
-    const [claimDates, setClaimDates] = useState([]);
     const [userSavedClaims, setUserSavedClaims] = useState([]);
     const [userMessage, setUserMessage] = useState('')
     const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
-    const [mobile, setMobile] = useState(window.innerWidth < 768)
+    const [mobile, setMobile] = useState(window.innerWidth < 1268)
+    const [combinedShifts, setCombinedShifts] = useState(false)
 
     const {showNotification} = useNotification();
 
@@ -31,13 +32,6 @@ function Request() {
     const verifyUser = async (unique_user_id) => {
         try {
             const userAndClaimsInfo = await verify_user_request(unique_user_id)
-
-            if (!userAndClaimsInfo) {
-                setErrorOnReq(true)
-                return
-            }
-
-            const nextWeekDates = await get_dates_request()
 
             const { username, claims, message } = userAndClaimsInfo
 
@@ -47,9 +41,7 @@ function Request() {
             if (!!message) {
                 setUserMessage(message)
             }
-
             setUserName(username)
-            setClaimDates(nextWeekDates["dates"])
 
             setErrorOnReq(false)
             setVerificationPage(false)
@@ -57,6 +49,37 @@ function Request() {
             setErrorOnReq(true)
         }
     }
+
+    const datesQuery = useQuery({
+        queryKey: ["dates"],
+        queryFn: () => get_dates_request(),
+        placeholderData: (prev) => prev,
+    });
+
+    const availableShiftsValuesQuery = useQuery({
+        queryKey: ["availableShifts"],
+        queryFn: () => get_shifts_values(userName),
+        placeholderData: (prev) => prev,
+        enabled: !!userName
+    });
+
+    const totalMaxShiftsQuery = useQuery({
+        queryKey: ["totalMax"],
+        queryFn: () => get_total_max(userName),
+        placeholderData: (prev) => prev,
+        enabled: !!userName
+    });
+
+    const claimDates = datesQuery.data?.dates ?? []
+    const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
+    const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
+
+
+    useEffect(() => {
+        if (totalMaxShifts?.short !== 0) {
+            setCombinedShifts(true)
+        }
+    }, [totalMaxShifts])
 
 
     const onSubmit = async (event) => {
@@ -76,9 +99,34 @@ function Request() {
         }
     }
 
+
+    const used = useMemo(() => {
+        const res = {};
+
+        claimValues.forEach(v => {
+            if (!v) {
+                return
+            }
+
+            if (!res[v]) {
+                res[v] = 0
+            }
+
+            if (combinedShifts && (v === "1" || v === "2")) {
+            res["1"] = (res["1"] || 0) + 1;
+            res["2"] = (res["2"] || 0) + 1;
+            } else {
+            res[v] += 1;
+            }
+        });
+
+        return res;
+    }, [claimValues, combinedShifts]);
+
+
     useEffect(() => {
         const handler = () => {
-          setMobile(window.innerWidth < 768);
+          setMobile(window.innerWidth < 1268);
         };
       
         window.addEventListener("resize", handler);
@@ -97,7 +145,11 @@ function Request() {
             setClaimValues,
             mobile,
             setMobile,
-            errorOnReq
+            errorOnReq,
+            totalMaxShifts,
+            availableShiftsValues,
+            combinedShifts,
+            used
         }}>
             <div className = {pagestyles.app}>
                 <Header />

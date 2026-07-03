@@ -23,7 +23,7 @@ function IsEditButtons(props) {
         type='button'
         name='action'
         value='fill up'
-        onClick = {() => setPopUpIsOpen(true)}/>
+        onClick = {() => setPopUpIsOpen('fillup')}/>
         <Button
         buttonStyle = {styles.bottomButton}
         buttonText = 'Save changes'

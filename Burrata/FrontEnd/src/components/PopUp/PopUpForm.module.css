@@ -21,11 +21,6 @@
     font-size: 2em
 }
 
-.input {
-    width: 100%;
-    border: 1px solid;
-}
-
 .crossButton {
     position: absolute;
     left: 95%;

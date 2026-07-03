@@ -1,5 +1,4 @@
 .container {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -7,7 +6,7 @@
     padding-right: 15px;
 }
 
-.containerButton {
+.containerSVG {
     background: none;
     border: none;
     padding: 0;
@@ -30,6 +29,8 @@
     justify-content: center;
     align-items: center;
     right: 100%;
+    top: 50%;
+    transform: translateY(-50%);  
     background-color: var(--white-gray-color);
     width: 150px;
     height: 30px;
@@ -39,25 +40,33 @@
     transition: opacity 0.2s ease;
   }
 
-.infoIcon {
+.infoIconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding-left: 15px;
   }
 
-.infoIcon:hover .popUp {
+.infoIconContainer:hover .popUp {
     opacity: 1;
     pointer-events: auto;
   }
 
-.container:hover .containerButton {
+.container:hover .containerSVG {
     opacity: 1;
     pointer-events: auto;
   }
   
-.cell {
+.claimCell {
   background-color: color-mix(in srgb, var(--light-blue-color) 50%, transparent);
 }
 
-.valueCell {
+.cell:hover {
+  background-color: var(--green-color);
+  transition: var(--transition-duration);
+}
+
+.inputCell {
   width: 100%;
   background-color: transparent;
   color: var(--white-color);
@@ -66,4 +75,23 @@
 
 .select {
   height: 100%;
+}
+
+.containerSVGButton {
+  width: 20px;
+  height: 20px;
+}
+
+.editIconButton {
+  position: absolute;
+  top: 50%;
+  left: 45px;
+  transform: translateY(-50%);
+}
+
+.svgsContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

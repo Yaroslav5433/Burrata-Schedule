@@ -15,9 +15,10 @@ import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
 import { useQuery } from "@tanstack/react-query";
-import PopUp from "@/components/PopUp/PopUp";
+import PopUpFillUp from "@/components/AdminSchedule/PopUpFillUp/PopUpFillUp";
 import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
+import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUser";
 
 
 function Home() {
@@ -25,10 +26,20 @@ function Home() {
     const [showClaims, setShowClaims] = useState(true);
     const [dateStep, setDateStep] = useState(0);
     const [isEdit, setIsEdit] = useState(false);
-    const [popUpIsOpen, setPopUpIsOpen] = useState(false);
+    const [popUpIsOpen, setPopUpIsOpen] = useState(null);
     const [loading, setLoading] = useState(false);
     const [draftSchedule, setDraftSchedule] = useState(null);
     const [customEdit, setCustomEdit] = useState(false);
+
+    const [days, setDays] = useState({
+        'Monday': '',
+        'Tuesday': '',
+        'Wednesday': '',
+        'Thursday': '',
+        'Friday': '',
+        'Saturday': '',
+        'Sunday': ''
+      });    
 
     const { department } = useParams()
 
@@ -78,7 +89,7 @@ function Home() {
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
 
-    console.log('messages', messageQuery.data)
+    console.log('users', allUsers)
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -132,7 +143,7 @@ function Home() {
         setDraftSchedule(structuredClone(scheduleQuery.data))
     }
 
-    const handleFillUpSubmit = async (e, demands) => {
+    const handlePopUpSubmit = async (e, demands) => {
         e.preventDefault();
         const onlyWorkersDraftSchedule = Object.fromEntries(
             Object.keys(workers).map(name => [
@@ -182,12 +193,17 @@ function Home() {
             loading,
             setLoading,
             customEdit,
-            setCustomEdit
+            setCustomEdit,
+            handlePopUpSubmit
         }}>
-            {popUpIsOpen && 
-            <PopUp
+            {popUpIsOpen === 'fillup' && 
+            <PopUpFillUp
             dates = {weekDates}
-            handleFillUpSubmit = {handleFillUpSubmit}/>}
+            days = {days}
+            setDays = {setDays}/>} 
+            {popUpIsOpen === 'edituser' && 
+            <PopUpEditUser/>
+            }
             <div className = {pagestyles.app}>
                 <Header
                 isAdmin = {true}/>

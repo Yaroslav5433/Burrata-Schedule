@@ -249,3 +249,31 @@ async def change_shift_access(username: str, accessability: list[dict], db: Asyn
     return total_updated > 0
 
 
+async def get_shifts_values(username: str, db: AsyncSession):
+    res = await db.execute(select(ShiftsValues.day, ShiftsValues.allowed, ShiftsValues.shiftvalue)
+                              .where(ShiftsValues.username == username))
+    
+    shifts_values = {}
+
+    for day, allowed, shiftvalue in res:
+        if day not in shifts_values:
+            shifts_values[day] = {}
+
+        shifts_values[day][shiftvalue] = allowed
+
+    return shifts_values
+
+
+async def get_max_shift_week_total(username: str, db: AsyncSession):
+    res = await db.execute(select(MaxShiftsWeekTotal.max_count, MaxShiftsWeekTotal.shiftvalue)
+                              .where(MaxShiftsWeekTotal.username == username))
+    
+
+    max_shift_total_count = {
+        shiftvalue: max_count
+        for max_count, shiftvalue in res
+    }
+
+    return max_shift_total_count
+    
+
