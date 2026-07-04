@@ -1,16 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PopUpForm from '@/components/PopUp/PopUpForm'
 import TableWithDates from '@/components/TableWithDates/TableWithDates'
 import TextField from '@/components/TextField/TextField'
 import styles from './PopUpFillUp.module.css'
+import { Context } from '@/components/Context'
 
 function PopUpFillUp(props) {
 
   const {
     dates,
+  } = props
+
+  const {
     days,
     setDays
-  } = props
+  } = useContext(Context)
 
   const handleChange = (e) => {
     let input = e.target.value

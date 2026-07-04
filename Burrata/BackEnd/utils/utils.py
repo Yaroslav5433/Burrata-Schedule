@@ -34,9 +34,3 @@ def transform_str_item_to_datetime(str_item: str):
 
 def interpret_claims_as_list(user_saved_claims: dict, next_week_dates: list[str]):
     return [user_saved_claims.get(date, "") for date in next_week_dates]
-
-def get_basic_shifts(position: str):
-    return basic_shifts_insert[position]
-
-def get_basic_totals(position: str):
-    return basic_total_insert[position]

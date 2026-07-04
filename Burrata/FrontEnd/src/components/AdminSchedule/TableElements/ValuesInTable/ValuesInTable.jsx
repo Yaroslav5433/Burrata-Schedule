@@ -14,7 +14,6 @@ function ValuesInTable(props) {
     isEdit,
     customEdit,
     draftSchedule,
-    setPopUpIsOpen
   } = useContext(Context)
 
   const {
@@ -44,7 +43,7 @@ function ValuesInTable(props) {
                             </div>
                             <SvgButtonIcon
                             type = 'button'
-                            onClick = {() => setPopUpIsOpen('edituser')}
+                            onClick = {() => handleClick("edit", user)}
                             buttonStyles = {`${styles.containerSVG} ${styles.containerSVGButton} ${styles.editIconButton}`} 
                             svgButton = {styles.editIcon} 
                             viewBox = "0 0 24 24"
@@ -52,6 +51,7 @@ function ValuesInTable(props) {
                         </div>
                         <p>{`${userIndex+1}.`} {user}</p>
                             <SvgButtonIcon
+                            type = 'button'
                             onClick = {() => handleClick("minus", user)}
                             viewBox = "0 0 50 50"
                             buttonStyles = {`${styles.containerSVG} ${styles.containerSVGButton}`}

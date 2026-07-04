@@ -20,7 +20,7 @@ function AddUserInTable(props) {
 
   return (
     <tr>
-        {addUser ?
+        {addUser.state && (is_trainee ===addUser.is_trainee) ?
         <td>
             <div className={styles.userTextContainer}>
                 <TextField 
@@ -28,7 +28,7 @@ function AddUserInTable(props) {
                     textFieldStyle = {styles.userText}
                     ref = {inputRef}
                     onBlur = {() => {
-                        setAddUser(false)
+                        setAddUser({'state': false, 'user': ''})
                         setUserTextName('')
                     }}
                     onChange = {(e) => setUserTextName(e.target.value)}

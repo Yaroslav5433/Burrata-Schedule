@@ -4,11 +4,14 @@ import React, { useContext, useState } from 'react'
 import Animation from '../Animation/Animation'
 import SvgButtonIcon from '../Svgs/SvgButtonIcon'
 import { Context } from '../Context'
+import { DAYS_OF_THE_WEEK } from '@/utils/constants'
 
 function PopUpForm(props) {
   const {
     setPopUpIsOpen,
-    handlePopUpSubmit
+    handlePopUpSubmit,
+    setDays,
+    setUserTextName
   } = useContext(Context)
 
   const {
@@ -19,6 +22,8 @@ function PopUpForm(props) {
 
   const handleClick = () => {
     setPopUpIsOpen(null)
+    setDays(DAYS_OF_THE_WEEK)
+    setUserTextName('')
   }
 
   return (

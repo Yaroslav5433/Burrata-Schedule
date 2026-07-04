@@ -11,6 +11,8 @@ import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
 import { fill_up_schedule_request } from "@/api/requests"
 import { get_messages } from "@/api/requests";
+import { get_shifts_values } from "@/api/requests";
+import { get_total_max } from "@/api/requests";
 import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
@@ -19,6 +21,7 @@ import PopUpFillUp from "@/components/AdminSchedule/PopUpFillUp/PopUpFillUp";
 import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
 import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUser";
+import { DAYS_OF_THE_WEEK } from "@/utils/constants";
 
 
 function Home() {
@@ -30,16 +33,10 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [draftSchedule, setDraftSchedule] = useState(null);
     const [customEdit, setCustomEdit] = useState(false);
+    const [addUser, setAddUser] = useState({'state': false, 'is_trainee': false})
+    const [userTextName, setUserTextName] = useState('')
 
-    const [days, setDays] = useState({
-        'Monday': '',
-        'Tuesday': '',
-        'Wednesday': '',
-        'Thursday': '',
-        'Friday': '',
-        'Saturday': '',
-        'Sunday': ''
-      });    
+    const [days, setDays] = useState(DAYS_OF_THE_WEEK);
 
     const { department } = useParams()
 
@@ -83,11 +80,28 @@ function Home() {
         retry: 0
     });
 
+    const availableShiftsValuesQuery = useQuery({
+        queryKey: ["availableShifts", userTextName],
+        queryFn: () => get_shifts_values(userTextName),
+        placeholderData: (prev) => prev,
+        enabled: popUpIsOpen === 'edituser'
+    });
+
+    const totalMaxShiftsQuery = useQuery({
+        queryKey: ["totalMax", userTextName],
+        queryFn: () => get_total_max(userTextName),
+        placeholderData: (prev) => prev,
+        enabled: popUpIsOpen === 'edituser'
+    });
+
+
     const allUsers = usersQuery.data ?? {};
     const usersWithClaims = claimsQuery.data ?? {};
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
+    const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
+    const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
 
     console.log('users', allUsers)
 
@@ -194,15 +208,22 @@ function Home() {
             setLoading,
             customEdit,
             setCustomEdit,
-            handlePopUpSubmit
+            handlePopUpSubmit,
+            days,
+            setDays,
+            userTextName,
+            setUserTextName,
+            addUser,
+            setAddUser
         }}>
             {popUpIsOpen === 'fillup' && 
             <PopUpFillUp
-            dates = {weekDates}
-            days = {days}
-            setDays = {setDays}/>} 
+            dates = {weekDates}/>} 
             {popUpIsOpen === 'edituser' && 
-            <PopUpEditUser/>
+            <PopUpEditUser
+            availableShiftsValues = {availableShiftsValues}
+            totalMaxShifts = {totalMaxShifts}
+            />
             }
             <div className = {pagestyles.app}>
                 <Header

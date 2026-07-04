@@ -30,7 +30,7 @@ basic_shifts_insert = {
             "2": True,
             "Д": False,
             "Д11": False,
-            "Д122": False
+            "Д22": False
         },
 }
 
