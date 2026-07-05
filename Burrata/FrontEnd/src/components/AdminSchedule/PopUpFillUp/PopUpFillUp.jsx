@@ -4,6 +4,9 @@ import TableWithDates from '@/components/TableWithDates/TableWithDates'
 import TextField from '@/components/TextField/TextField'
 import styles from './PopUpFillUp.module.css'
 import { Context } from '@/components/Context'
+import { demandsInputValidation, getAllFreeWorkers } from '@/utils/utils'
+import { useNotification } from '@/components/ModalWindow/ModalWindow'
+import { fill_up_schedule_request } from '@/api/requests'
 
 function PopUpFillUp(props) {
 
@@ -13,8 +16,15 @@ function PopUpFillUp(props) {
 
   const {
     days,
-    setDays
+    setDays,
+    workers,
+    draftSchedule,
+    setPopUpIsOpen,
+    setLoading,
+    setDraftSchedule
   } = useContext(Context)
+
+  const { showNotification } = useNotification()
 
   const handleChange = (e) => {
     let input = e.target.value
@@ -27,10 +37,42 @@ function PopUpFillUp(props) {
   }))
   }
 
+  const handlePopUpSubmit = async (e, demands) => {
+    e.preventDefault();
+    const onlyWorkersDraftSchedule = Object.fromEntries(
+        Object.keys(workers).map(name => [
+            name,
+            draftSchedule[name] ?? workers[name]
+        ])
+    )
+    
+    const inputIsValid = demandsInputValidation(
+        demands,
+        getAllFreeWorkers(onlyWorkersDraftSchedule))
+
+    if (inputIsValid['isValid'] === false) {
+        showNotification(inputIsValid['message'], true)
+        return
+    }
+
+    setPopUpIsOpen(false)
+    setLoading(true)
+
+    try {
+        const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, demands)
+        setDraftSchedule(res['schedule'])
+    } catch (error) {
+        showNotification(error.message, true)
+    } finally {
+        setLoading(false)
+    }
+}
+
   return (
     <PopUpForm
     title = 'Auto Fill Up'
-    buttonText = 'Submit'>
+    buttonText = 'Submit'
+    handlePopUpSubmit = {handlePopUpSubmit}>
       <TableWithDates
             dates = {dates}>
               <tr className={styles.row}>

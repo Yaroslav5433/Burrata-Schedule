@@ -9,3 +9,33 @@
     border: 1px solid var(--white-color);
     box-shadow: var(--shadow);
 }
+
+.inputNumber {
+    width: 100%;
+    height: 100%;
+    background-color: var(--white-gray-color);
+    color: var(--white-color);
+}
+
+.plusButton,
+.minusButton {
+    width: 15px;
+    height: 15px;
+}
+
+.plusButtonSVG,
+.minusButtonSVG {
+    width: 100%;
+}
+
+.plusButtonSVG:hover,
+.minusButtonSVG:hover {
+    stroke: var(--gray-color);
+}
+
+.totalMaxValueContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 5px;
+}

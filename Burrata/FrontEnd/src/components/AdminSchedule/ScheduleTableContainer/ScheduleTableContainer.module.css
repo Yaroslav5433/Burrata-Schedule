@@ -75,3 +75,8 @@
     align-items: center;
     z-index: 9;
 }
+
+.IconArrowButton {
+    width: 35px;
+    height: 35px;
+}

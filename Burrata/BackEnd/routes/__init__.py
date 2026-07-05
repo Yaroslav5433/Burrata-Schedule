@@ -17,6 +17,7 @@ from routes.get_vacations_route import get_vacations_router
 from routes.delete_vacation_route import delete_vacation_route
 from routes.get_total_max_route import gettotalmax_router
 from routes.get_shifts_values_route import getshiftsvalues_router
+from routes.save_user_settings import save_user_settings_router
 
 all_routers = [
     login_router,
@@ -37,5 +38,6 @@ all_routers = [
     get_vacations_router,
     delete_vacation_route,
     gettotalmax_router,
-    getshiftsvalues_router
+    getshiftsvalues_router,
+    save_user_settings_router
 ]

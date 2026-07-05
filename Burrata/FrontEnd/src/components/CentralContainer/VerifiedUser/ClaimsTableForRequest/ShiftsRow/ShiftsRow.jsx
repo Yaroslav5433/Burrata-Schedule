@@ -8,13 +8,22 @@ function ShiftsRow(props) {
         userSavedClaims,
         claimValues,
         availableShiftsValues,
-        totalMaxShifts,
-        used
+        totalMaxShifts
     } = useContext(Context)
 
     const {
         handleChange,
     } = props
+
+    const SHORT_GROUP = ["1", "2"];
+
+    const calculateUsed = (values) => {
+        return values.reduce((acc, v) => {
+          if (!v) return acc;
+          acc[v] = (acc[v] || 0) + 1;
+          return acc;
+        }, {});
+      };
 
     return (
         <tr className={styles.row}>
@@ -29,12 +38,35 @@ function ShiftsRow(props) {
                         <option className={styles.option} value={undefined}></option>
                         {Object.entries(availableShiftsValues[day])
                         .filter(([, value]) => value)
-                        .map(([key]) => (
-                            <option 
-                            className={styles.option}
-                            value={key}
-                            disabled={used[key] >= (totalMaxShifts?.[key] ?? 0)}>{key}</option>
-                    ))}
+                        .map(([key]) => {
+
+                            const used = calculateUsed(claimValues);
+
+                            const shortUsed = SHORT_GROUP.reduce(
+                            (sum, k) => sum + (used[k] || 0),
+                            0
+                            );
+
+                            const shortMax = totalMaxShifts?.short ?? 0;
+
+                            const isShort = SHORT_GROUP.includes(key);
+
+                            const isDisabled =
+                            isShort
+                                ? shortUsed >= shortMax
+                                : used[key] >= (totalMaxShifts?.[key] ?? 0);
+
+                            return (
+                            <option
+                                key={key}
+                                className={styles.option}
+                                value={key}
+                                disabled={isDisabled}
+                            >
+                                {key}
+                            </option>
+                            );
+                        })}
                     </select>
                 ) : (
                     userSavedClaims?.[dayId] ?? ''

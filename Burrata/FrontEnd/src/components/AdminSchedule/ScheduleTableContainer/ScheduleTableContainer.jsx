@@ -103,9 +103,11 @@ function ScheduleTableContainer(props) {
       {(!isEdit && !customEdit) && 
       <>
       <SvgButtonIcon
+      buttonStyles = {styles.IconArrowButton}
       path = "M15 18L9 12L15 6 M23 18L17 12L23 6"
       onClick = {() => handleClick(-7)}/>
       <SvgButtonIcon
+      buttonStyles = {styles.IconArrowButton}
       path = "M15 18L9 12L15 6"
       onClick = {() => handleClick(-1)}/>
       </>}
@@ -151,10 +153,12 @@ function ScheduleTableContainer(props) {
       {(!isEdit && !customEdit) && 
       <>
       <SvgButtonIcon
+      buttonStyles = {styles.IconArrowButton}
       path = "M9 18L15 12L9 6"
       onClick = {() => handleClick(+1)}/>
       <SvgButtonIcon
       path = "M9 18L15 12L9 6 M17 18L23 12L17 6"
+      buttonStyles = {styles.IconArrowButton}
       onClick = {() => handleClick(+7)}/>
       </>}
     </div>

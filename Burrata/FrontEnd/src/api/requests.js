@@ -323,3 +323,25 @@ export async function get_total_max(username) {
 
   return res.json()
 }
+
+
+export async function save_new_user_settings(username, totalMaxShifts, availableShiftsValues) {
+  const res = await fetch('http://192.168.0.4:8000/saveusersettings', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'username': username,
+    'totalMaxShifts': totalMaxShifts,
+    'availableShiftsValues': availableShiftsValues
+  })
+  })
+
+
+  if (!res.ok) {
+    throw new Error('Failed during user settings saving')
+  }
+
+  return res.json()
+}

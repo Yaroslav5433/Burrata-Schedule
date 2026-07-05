@@ -9,7 +9,6 @@ import { DAYS_OF_THE_WEEK } from '@/utils/constants'
 function PopUpForm(props) {
   const {
     setPopUpIsOpen,
-    handlePopUpSubmit,
     setDays,
     setUserTextName
   } = useContext(Context)
@@ -17,7 +16,8 @@ function PopUpForm(props) {
   const {
     children,
     title,
-    buttonText
+    buttonText,
+    handlePopUpSubmit,
   } = props
 
   const handleClick = () => {

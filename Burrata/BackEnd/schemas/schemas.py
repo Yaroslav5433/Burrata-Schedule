@@ -52,3 +52,8 @@ class ShiftsValues(RootModel[dict[str, dict]]):
 
 class MaxShiftsWeekTotal(RootModel[dict[str, int]]):
     pass
+
+class UserSettings(BaseModel):
+    username: str
+    totalMaxShifts: dict
+    availableShiftsValues: dict

@@ -28,7 +28,6 @@ function Request() {
 
     const {showNotification} = useNotification();
 
-
     const verifyUser = async (unique_user_id) => {
         try {
             const userAndClaimsInfo = await verify_user_request(unique_user_id)
@@ -99,30 +98,7 @@ function Request() {
         }
     }
 
-
-    const used = useMemo(() => {
-        const res = {};
-
-        claimValues.forEach(v => {
-            if (!v) {
-                return
-            }
-
-            if (!res[v]) {
-                res[v] = 0
-            }
-
-            if (combinedShifts && (v === "1" || v === "2")) {
-            res["1"] = (res["1"] || 0) + 1;
-            res["2"] = (res["2"] || 0) + 1;
-            } else {
-            res[v] += 1;
-            }
-        });
-
-        return res;
-    }, [claimValues, combinedShifts]);
-
+    console.log(totalMaxShifts)
 
     useEffect(() => {
         const handler = () => {
@@ -149,7 +125,6 @@ function Request() {
             totalMaxShifts,
             availableShiftsValues,
             combinedShifts,
-            used
         }}>
             <div className = {pagestyles.app}>
                 <Header />

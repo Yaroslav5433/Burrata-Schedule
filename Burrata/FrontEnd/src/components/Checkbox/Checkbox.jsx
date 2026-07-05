@@ -5,17 +5,16 @@ function Checkbox(props) {
   const {
     checkboxText,
     checked,
-    onChange
+    onChange,
+    id
   } = props
-
-  console.log('checked', checked)
 
   return (
     <div className={styles.checkboxWrapper}>
-      <label htmlFor="cbk1-65">
+      <label htmlFor={id}>
         <input 
         type="checkbox" 
-        id="cbk1-65"
+        id={id}
         checked={checked}
         onChange={onChange}/>
         <span className = {styles.cbx}>

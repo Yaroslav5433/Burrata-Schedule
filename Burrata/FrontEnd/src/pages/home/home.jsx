@@ -1,7 +1,7 @@
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx'
-import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer'
+import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx';
+import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer';
 import MessagesPagination from "@/components/AdminSchedule/MessagesPagination/MessagesPagination";
 import { useState } from "react";
 import { Context } from "@/components/Context";
@@ -9,7 +9,7 @@ import { get_all_users_request } from "@/api/requests";
 import { get_all_claims_request } from "@/api/requests";
 import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
-import { fill_up_schedule_request } from "@/api/requests"
+import { fill_up_schedule_request } from "@/api/requests";
 import { get_messages } from "@/api/requests";
 import { get_shifts_values } from "@/api/requests";
 import { get_total_max } from "@/api/requests";
@@ -19,7 +19,6 @@ import pagestyles from '@/pages/pages.module.css'
 import { useQuery } from "@tanstack/react-query";
 import PopUpFillUp from "@/components/AdminSchedule/PopUpFillUp/PopUpFillUp";
 import { useNotification } from "@/components/ModalWindow/ModalWindow";
-import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
 import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUser";
 import { DAYS_OF_THE_WEEK } from "@/utils/constants";
 
@@ -34,13 +33,11 @@ function Home() {
     const [draftSchedule, setDraftSchedule] = useState(null);
     const [customEdit, setCustomEdit] = useState(false);
     const [addUser, setAddUser] = useState({'state': false, 'is_trainee': false})
-    const [userTextName, setUserTextName] = useState('')
+    const [userTextName, setUserTextName] = useState('');
 
     const [days, setDays] = useState(DAYS_OF_THE_WEEK);
 
     const { department } = useParams()
-
-    const { showNotification } = useNotification()
     
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],
@@ -157,37 +154,6 @@ function Home() {
         setDraftSchedule(structuredClone(scheduleQuery.data))
     }
 
-    const handlePopUpSubmit = async (e, demands) => {
-        e.preventDefault();
-        const onlyWorkersDraftSchedule = Object.fromEntries(
-            Object.keys(workers).map(name => [
-                name,
-                draftSchedule[name] ?? workers[name]
-            ])
-        )
-        
-        const inputIsValid = demandsInputValidation(
-            demands,
-            getAllFreeWorkers(onlyWorkersDraftSchedule))
-
-        if (inputIsValid['isValid'] === false) {
-            showNotification(inputIsValid['message'], true)
-            return
-        }
-
-        setPopUpIsOpen(false)
-        setLoading(true)
-
-        try {
-            const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, demands)
-            setDraftSchedule(res['schedule'])
-        } catch (error) {
-            showNotification(error.message, true)
-        } finally {
-            setLoading(false)
-        }
-    }
-
     console.log(messages)
 
     return (
@@ -208,13 +174,13 @@ function Home() {
             setLoading,
             customEdit,
             setCustomEdit,
-            handlePopUpSubmit,
             days,
             setDays,
             userTextName,
             setUserTextName,
             addUser,
-            setAddUser
+            setAddUser,
+            workers
         }}>
             {popUpIsOpen === 'fillup' && 
             <PopUpFillUp

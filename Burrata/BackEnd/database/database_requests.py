@@ -229,26 +229,6 @@ async def delete_vacation(username: str, db: AsyncSession):
     return success_on_delete.rowcount > 0
 
 
-async def change_shift_access(username: str, accessability: list[dict], db: AsyncSession):
-    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    
-    total_updated = 0
-    
-    for day, shifts in zip(days, accessability):
-        for shiftValue, allowed in shifts.items():
-            success_on_update = await db.execute(update(ShiftsValues).where(
-                ShiftsValues.username == username,
-                ShiftsValues.day == day,
-                ShiftsValues.shiftValue == shiftValue,
-            ).values(allowed = allowed))
-
-            total_updated += success_on_update.rowcount
-
-    await db.commit()
-
-    return total_updated > 0
-
-
 async def get_shifts_values(username: str, db: AsyncSession):
     res = await db.execute(select(ShiftsValues.day, ShiftsValues.allowed, ShiftsValues.shiftvalue)
                               .where(ShiftsValues.username == username))
@@ -277,3 +257,35 @@ async def get_max_shift_week_total(username: str, db: AsyncSession):
     return max_shift_total_count
     
 
+async def save_user_settings(username: str, available_shifts_values: dict, total_max_shifts: dict, db: AsyncSession):
+
+    total_max_updated = 0
+    total_avail_updated = 0
+
+    for day, shifts in available_shifts_values.items():
+        for shift, allowed in shifts.items():
+            succes_on_avail_updated = await db.execute(
+                update(ShiftsValues)
+                .where(
+                    ShiftsValues.username == username,
+                    ShiftsValues.day == day,
+                    ShiftsValues.shiftvalue == shift
+                )
+                .values(allowed=allowed)
+            )
+            total_avail_updated += succes_on_avail_updated.rowcount
+
+    for shift_value, max_count in total_max_shifts.items():
+        succes_on_max_updated = await db.execute(
+            update(MaxShiftsWeekTotal)
+            .where(
+                MaxShiftsWeekTotal.username == username,
+                MaxShiftsWeekTotal.shiftvalue == shift_value
+            )
+            .values(max_count=max_count)
+        )
+        total_max_updated += succes_on_max_updated.rowcount
+
+    await db.commit()
+
+    return True
