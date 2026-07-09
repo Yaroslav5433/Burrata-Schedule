@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, and_, update
 from sqlalchemy.dialects.postgresql import insert as pginsert
-from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations, ShiftsValues, MaxShiftsWeekTotal
+from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations, ShiftsValues, MaxShiftsWeekTotal, DefaultWeekShifts
 from utils.utils import transform_datetime_item_to_str
 from datetime import datetime
 
@@ -289,3 +289,23 @@ async def save_user_settings(username: str, available_shifts_values: dict, total
     await db.commit()
 
     return True
+
+
+async def save_default_shifts(shifts: dict, db: AsyncSession):
+    success_on_insert = await db.execute(insert(DefaultWeekShifts).values(shifts))
+
+    await db.commit()
+
+    return success_on_insert.rowcount > 0
+
+
+async def get_default_shifts(db: AsyncSession):
+    res = await db.execute(select(DefaultWeekShifts.day, DefaultWeekShifts.first_shift, DefaultWeekShifts.second_shift))
+    
+    default_shifts = {
+        day: f'{first_shift}/{second_shift}'
+    for day, first_shift, second_shift in res.all()
+    }
+    
+
+    return default_shifts

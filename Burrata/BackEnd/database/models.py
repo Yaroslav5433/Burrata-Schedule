@@ -127,3 +127,12 @@ class MaxShiftsWeekTotal(Base):
     max_count = Column(Integer, nullable=False)
 
     __table_args__ = (CheckConstraint("max_count >= 0 AND max_count <= 7"),)
+
+
+class DefaultWeekShifts(Base):
+    __tablename__ = 'defaultweekshifts'
+
+    id = Column(Integer, primary_key=True, index=True)
+    day = Column(String, nullable=False, unique=True)
+    first_shift = Column(Integer, nullable=False)
+    second_shift = Column(Integer, nullable=False)

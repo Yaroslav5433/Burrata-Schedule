@@ -14,6 +14,7 @@ function ValuesInTable(props) {
     isEdit,
     customEdit,
     draftSchedule,
+    showVacations
   } = useContext(Context)
 
   const {
@@ -23,7 +24,6 @@ function ValuesInTable(props) {
   } = props
 
   const options = useOptions()
-  console.log(options)
 
   return (
     <>
@@ -63,7 +63,7 @@ function ValuesInTable(props) {
                     <td 
                     key={date}
                     className={`${isEdit && styles.cell} 
-                                ${showClaims && all_users_to_show[user]?.[dateIndex] ? styles.claimCell : ''}`}>
+                                ${(showClaims || showVacations) && all_users_to_show[user]?.[dateIndex] ? styles.claimCell : ''}`}>
                         { showClaims &&
                         <p> { all_users_to_show[user]?.[dateIndex] } </p> }
                         { isEdit && 

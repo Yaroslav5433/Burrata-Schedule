@@ -37,7 +37,7 @@ function PopUpFillUp(props) {
   }))
   }
 
-  const handlePopUpSubmit = async (e, demands) => {
+  const handlePopUpSubmit = async (e) => {
     e.preventDefault();
     const onlyWorkersDraftSchedule = Object.fromEntries(
         Object.keys(workers).map(name => [
@@ -47,7 +47,7 @@ function PopUpFillUp(props) {
     )
     
     const inputIsValid = demandsInputValidation(
-        demands,
+        days,
         getAllFreeWorkers(onlyWorkersDraftSchedule))
 
     if (inputIsValid['isValid'] === false) {
@@ -59,7 +59,7 @@ function PopUpFillUp(props) {
     setLoading(true)
 
     try {
-        const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, demands)
+        const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, days, dates)
         setDraftSchedule(res['schedule'])
     } catch (error) {
         showNotification(error.message, true)

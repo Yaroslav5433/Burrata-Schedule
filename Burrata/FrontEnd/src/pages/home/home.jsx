@@ -9,7 +9,7 @@ import { get_all_users_request } from "@/api/requests";
 import { get_all_claims_request } from "@/api/requests";
 import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
-import { fill_up_schedule_request } from "@/api/requests";
+import { get_vacations_for_table } from "@/api/requests";
 import { get_messages } from "@/api/requests";
 import { get_shifts_values } from "@/api/requests";
 import { get_total_max } from "@/api/requests";
@@ -18,14 +18,14 @@ import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
 import { useQuery } from "@tanstack/react-query";
 import PopUpFillUp from "@/components/AdminSchedule/PopUpFillUp/PopUpFillUp";
-import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUser";
 import { DAYS_OF_THE_WEEK } from "@/utils/constants";
-
+import PopUpSetDefault from "@/components/AdminSchedule/PopUpSetDefault/PopUpSetDefault";
 
 function Home() {
 
     const [showClaims, setShowClaims] = useState(true);
+    const [showVacations, setShowVacations] = useState(false);
     const [dateStep, setDateStep] = useState(0);
     const [isEdit, setIsEdit] = useState(false);
     const [popUpIsOpen, setPopUpIsOpen] = useState(null);
@@ -77,6 +77,14 @@ function Home() {
         retry: 0
     });
 
+    const vacationsQuery = useQuery({
+        queryKey: ["vacations", dateStep],
+        queryFn: () => get_vacations_for_table(dateStep),
+        placeholderData: (prev) => prev,
+        enabled: !!department,
+        retry: 0
+    });
+
     const availableShiftsValuesQuery = useQuery({
         queryKey: ["availableShifts", userTextName],
         queryFn: () => get_shifts_values(userTextName),
@@ -91,16 +99,14 @@ function Home() {
         enabled: popUpIsOpen === 'edituser'
     });
 
-
     const allUsers = usersQuery.data ?? {};
     const usersWithClaims = claimsQuery.data ?? {};
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
+    const usersWithVacations = vacationsQuery.data ?? {};
     const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
     const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
-
-    console.log('users', allUsers)
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -114,11 +120,20 @@ function Home() {
     ? draftSchedule
     : schedule
 
+    console.log('vacations', usersWithVacations)
+
     const workersWithClaims = {
     ...workers,
     ...Object.fromEntries(
         Object.entries(usersWithClaims).filter(([u]) => u in workers)
     ),
+    };
+
+    const workersWithVacations = {
+        ...workers,
+        ...Object.fromEntries(
+            Object.entries(usersWithVacations).filter(([u]) => u in workers)
+        ),
     };
 
     const workersWithSchedule = {
@@ -135,6 +150,13 @@ function Home() {
     ),
     };
 
+    const traineesWithVacations = {
+        ...trainees,
+        ...Object.fromEntries(
+            Object.entries(usersWithVacations).filter(([u]) => u in trainees)
+        ),
+    };
+
     const traineesWithSchedule = {
     ...trainees,
     ...Object.fromEntries(
@@ -142,14 +164,18 @@ function Home() {
     ),
     };
 
-    const all_workers_to_show = showClaims
-    ? workersWithClaims
-    : workersWithSchedule;
+    const all_workers_to_show = showVacations
+    ? workersWithVacations
+    : showClaims
+        ? workersWithClaims
+        : workersWithSchedule;
 
-    const all_trainees_to_show = showClaims
-    ? traineesWithClaims
-    : traineesWithSchedule;
-    
+    const all_trainees_to_show = showVacations
+        ? traineesWithVacations
+        : showClaims
+            ? traineesWithClaims
+            : traineesWithSchedule;
+
     const handleDraftSet = () => {
         setDraftSchedule(structuredClone(scheduleQuery.data))
     }
@@ -180,7 +206,9 @@ function Home() {
             setUserTextName,
             addUser,
             setAddUser,
-            workers
+            workers,
+            showVacations,
+            setShowVacations
         }}>
             {popUpIsOpen === 'fillup' && 
             <PopUpFillUp
@@ -189,8 +217,9 @@ function Home() {
             <PopUpEditUser
             availableShiftsValues = {availableShiftsValues}
             totalMaxShifts = {totalMaxShifts}
-            />
-            }
+            />}
+            {popUpIsOpen === 'editallusers' &&
+            <PopUpSetDefault/>}
             <div className = {pagestyles.app}>
                 <Header
                 isAdmin = {true}/>

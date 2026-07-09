@@ -11,6 +11,8 @@ function VerifiedUserContainer(props) {
 
     const {
         userSavedClaims,
+        blockClaims,
+        setBlockClaims
     } = useContext(Context)
 
     const {
@@ -23,35 +25,39 @@ function VerifiedUserContainer(props) {
     return (
         <Animation>
             <form className={centralstyle.container} onSubmit={onSubmit}>
-                <h1 className={styles.title}>{userName}</h1>
-                <div className={styles.container}>
-                    {!(userSavedClaims.some(Boolean)) && (
-                        <p className={styles.text}>Please, choose a claims:</p>
-                    )}
-                    <ClaimsTableForRequest/>
-                </div>
-                {!(userSavedClaims.some(Boolean)) && (
-                    <>
+                {!blockClaims ? 
+                <>
+                    <h1 className={styles.title}>{userName}</h1>
                     <div className={styles.container}>
-                    <p className={styles.text}>Write an additional complains</p>
-                    <TextField
-                    textFieldStyle = {styles.field}
-                    textArea = {true}
-                    value = {userMessage}
-                    onChange = {(e) => setUserMessage(e.target.value)}
-                    placeholder = 'Кали искам 7 почивни дни моля ти се...'/>
+                        {!(userSavedClaims.some(Boolean)) && (
+                            <p className={styles.text}>Please, choose a claims:</p>
+                        )}
+                        <ClaimsTableForRequest/>
                     </div>
-                    <Button
-                    type='submit'
-                    buttonText='Sent a claim'/>
-                    </>
-                )}
-                {(userSavedClaims.some(Boolean)) && (
-                    <>
-                    <p className={styles.text}>Вашето съобщение: {userMessage}</p>
-                    <p className="successMessage">You have been sent your claims!</p>
-                    </>
-                )}
+                    {!(userSavedClaims.some(Boolean)) && (
+                        <>
+                        <div className={styles.container}>
+                        <p className={styles.text}>Write an additional complains</p>
+                        <TextField
+                        textFieldStyle = {styles.field}
+                        textArea = {true}
+                        value = {userMessage}
+                        onChange = {(e) => setUserMessage(e.target.value)}
+                        placeholder = 'Кали искам 7 почивни дни моля ти се...'/>
+                        </div>
+                        <Button
+                        type='submit'
+                        buttonText='Sent a claim'/>
+                        </>
+                    )}
+                    {(userSavedClaims.some(Boolean)) && (
+                        <>
+                        <p className={styles.text}>Вашето съобщение: {userMessage}</p>
+                        <p className="successMessage">You have been sent your claims!</p>
+                        </>
+                    )}
+                </> :
+                    <p>'Oops... it`s wednesday already'</p>}
             </form>
         </Animation>
         )

@@ -57,3 +57,8 @@ class UserSettings(BaseModel):
     username: str
     totalMaxShifts: dict
     availableShiftsValues: dict
+
+class FillUpInfo(BaseModel):
+    claims: dict
+    demands: dict
+    dates: list

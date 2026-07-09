@@ -25,6 +25,7 @@ function Request() {
     const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
     const [mobile, setMobile] = useState(window.innerWidth < 1268)
     const [combinedShifts, setCombinedShifts] = useState(false)
+    const [blockClaims, setBlockClaims] = useState(false)
 
     const {showNotification} = useNotification();
 
@@ -81,6 +82,14 @@ function Request() {
     }, [totalMaxShifts])
 
 
+    useEffect(() => {
+        const day = new Date().getDay();
+        setBlockClaims(!(day === 1 || day === 2));
+        console.log(day)
+        console.log(!(day === 1 || day === 2))
+    }, [verificationPage]);
+
+
     const onSubmit = async (event) => {
         event.preventDefault()
         if (!claimValues.some(Boolean)) {
@@ -125,6 +134,8 @@ function Request() {
             totalMaxShifts,
             availableShiftsValues,
             combinedShifts,
+            blockClaims,
+            setBlockClaims
         }}>
             <div className = {pagestyles.app}>
                 <Header />
