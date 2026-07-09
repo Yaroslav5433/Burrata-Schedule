@@ -3,7 +3,7 @@ import styles from './Svg.module.css'
 
 function SvgIcon(props) {
     const {
-        path
+        path,
     } = props
 
     return (

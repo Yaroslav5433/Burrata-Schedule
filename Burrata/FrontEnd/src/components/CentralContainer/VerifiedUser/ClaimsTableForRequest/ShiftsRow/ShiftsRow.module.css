@@ -4,3 +4,8 @@
     border: none;
     text-align: center;
   }
+
+.rowElement:hover {
+  background-color: var(--green-color);
+  transition: var(--transition-duration);
+}

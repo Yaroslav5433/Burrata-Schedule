@@ -17,13 +17,13 @@ function ScheduleTable() {
         all_workers_to_show,
         showClaims,
         setDraftSchedule,
-        draftSchedule
+        draftSchedule,
+        setPopUpIsOpen,
+        userTextName,
+        setUserTextName,
+        addUser,
+        setAddUser
    } = useContext(Context)
-
-   const [addUser, setAddUser] = useState(false)
-   const [addTrainee, setAddTrainee] = useState(false)
-   const [userTextName, setUserTextName] = useState('')
-   const [traineeTextName, setTraineeTextName] = useState('')
 
    const saveUser = useSaveUser(department)
    const deleteUser = useDeleteUser(department)
@@ -31,10 +31,10 @@ function ScheduleTable() {
    const inputRef = useRef(null);
 
    useEffect(() => {
-    if (addUser || addTrainee) {
+    if (addUser) {
         inputRef.current?.focus();
     }
-   }, [addUser, addTrainee])
+   }, [addUser])
 
 
     const handleEditChange = (user, dateIndex, value) => {
@@ -55,27 +55,31 @@ function ScheduleTable() {
     const handleRequest = async (is_trainee) => {
         inputRef.current?.blur();
 
-        const username = is_trainee ? traineeTextName : userTextName
         const unique_id_number = generateEightDigitNumber()
 
         saveUser.mutate({
-            username,
-            unique_id_number,
-            is_trainee
+            username: userTextName,
+            unique_id_number: unique_id_number,
+            is_trainee: is_trainee
         })
     }
 
-    const handleClick = async (icon, current_username) => {
+    const handleClick = (icon, current_username) => {
         if (icon === "plus") {
-            setAddUser(true)
+            setAddUser({'state': true, 'is_trainee': false})
         }
         if (icon === "plus_trainee") {
-            setAddTrainee(true)
+            setAddUser({'state': true, 'is_trainee': true})
         }
         if (icon === "minus") {
             deleteUser.mutate({
                 current_username
             })
+        }
+        if (icon === "edit") {
+            console.log('opapa')
+            setPopUpIsOpen("edituser")
+            setUserTextName(current_username)
         }
     }
 
@@ -128,11 +132,11 @@ function ScheduleTable() {
             handleEditChange = {handleEditChange}/>
 
             <AddUserInTable
-            addUser = {addTrainee}
-            setAddUser = {setAddTrainee}
-            setUserTextName = {setTraineeTextName}
+            addUser = {addUser}
+            setAddUser = {setAddUser}
+            setUserTextName = {setUserTextName}
             handleRequest = {handleRequest}
-            userTextName = {traineeTextName}
+            userTextName = {userTextName}
             inputRef = {inputRef}
             handleClick = {handleClick}
             icon_name = 'plus_trainee'

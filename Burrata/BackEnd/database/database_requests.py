@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, and_, update
 from sqlalchemy.dialects.postgresql import insert as pginsert
-from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations
+from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations, ShiftsValues, MaxShiftsWeekTotal, DefaultWeekShifts
 from utils.utils import transform_datetime_item_to_str
 from datetime import datetime
 
@@ -101,18 +101,48 @@ async def get_all_users_saved_shifts(db: AsyncSession, week_dates, requested_pos
     return new_dict
 
 
-async def insert_users_in_database(username: str, position: str, is_trainee: bool, unique_id_number: str, db: AsyncSession):
-    success_on_insert = await db.execute(insert(Users).values({
+async def insert_users_in_database(
+        username: str,
+        position: str,
+        is_trainee: bool,
+        unique_id_number: str, 
+        basic_shifts: dict, 
+        basic_totals: dict,
+        db: AsyncSession):
+    
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    totals_to_insert = [{
+        'username': username,
+        'shiftvalue': shift,
+        'max_count': max_count,
+    }
+        for shift, max_count in basic_totals.items()
+    ]
+    
+    shifts_to_insert = [{
+        'username': username,
+        'day': day,
+        'shiftvalue': shift,
+        'allowed': allowed
+    }
+        for day in days
+        for shift, allowed in basic_shifts.items()
+    ]
+
+    users_to_insert = {
         'username': username,
         'unique_id_number': unique_id_number,
         'position': position,
         'is_trainee': is_trainee,
-        }
-    ))
+    }
 
-    await db.commit()
+    async with db.begin():
+        success_on_user_insert = await db.execute(insert(Users).values(users_to_insert))
+        success_on_shifts_insert = await db.execute(insert(ShiftsValues).values(shifts_to_insert))
+        success_on_totals_insert = await db.execute(insert(MaxShiftsWeekTotal).values(totals_to_insert))
 
-    return success_on_insert.rowcount > 0
+    return (success_on_user_insert.rowcount > 0 and success_on_shifts_insert.rowcount > 0 and success_on_totals_insert.rowcount > 0)
 
 
 async def get_user_by_id(unique_id_number: str, db: AsyncSession):
@@ -139,10 +169,11 @@ async def insert_message(username: str, message: str, db: AsyncSession):
     return success_on_insert.rowcount > 0
 
 
-async def get_messages(db: AsyncSession, all: bool, page: int, number_of_elements: int, read: bool = False):
+async def get_messages(db: AsyncSession, department: str, all: bool, page: int, number_of_elements: int, read: bool = False):
     if all:
         messages = await db.execute(select(Messages.username, Messages.message, Messages.created_at, Messages.id)
-                            .where(Messages.read == read)
+                            .join(Users, Users.username == Messages.username)
+                            .where(Messages.read == read, Users.position == department)
                             .order_by(Messages.created_at.desc()))
     else: 
         messages = await db.execute(select(Messages.username, Messages.message, Messages.created_at, Messages.id)
@@ -196,3 +227,85 @@ async def delete_vacation(username: str, db: AsyncSession):
     await db.commit()
 
     return success_on_delete.rowcount > 0
+
+
+async def get_shifts_values(username: str, db: AsyncSession):
+    res = await db.execute(select(ShiftsValues.day, ShiftsValues.allowed, ShiftsValues.shiftvalue)
+                              .where(ShiftsValues.username == username))
+    
+    shifts_values = {}
+
+    for day, allowed, shiftvalue in res:
+        if day not in shifts_values:
+            shifts_values[day] = {}
+
+        shifts_values[day][shiftvalue] = allowed
+
+    return shifts_values
+
+
+async def get_max_shift_week_total(username: str, db: AsyncSession):
+    res = await db.execute(select(MaxShiftsWeekTotal.max_count, MaxShiftsWeekTotal.shiftvalue)
+                              .where(MaxShiftsWeekTotal.username == username))
+    
+
+    max_shift_total_count = {
+        shiftvalue: max_count
+        for max_count, shiftvalue in res
+    }
+
+    return max_shift_total_count
+    
+
+async def save_user_settings(username: str, available_shifts_values: dict, total_max_shifts: dict, db: AsyncSession):
+
+    total_max_updated = 0
+    total_avail_updated = 0
+
+    for day, shifts in available_shifts_values.items():
+        for shift, allowed in shifts.items():
+            succes_on_avail_updated = await db.execute(
+                update(ShiftsValues)
+                .where(
+                    ShiftsValues.username == username,
+                    ShiftsValues.day == day,
+                    ShiftsValues.shiftvalue == shift
+                )
+                .values(allowed=allowed)
+            )
+            total_avail_updated += succes_on_avail_updated.rowcount
+
+    for shift_value, max_count in total_max_shifts.items():
+        succes_on_max_updated = await db.execute(
+            update(MaxShiftsWeekTotal)
+            .where(
+                MaxShiftsWeekTotal.username == username,
+                MaxShiftsWeekTotal.shiftvalue == shift_value
+            )
+            .values(max_count=max_count)
+        )
+        total_max_updated += succes_on_max_updated.rowcount
+
+    await db.commit()
+
+    return True
+
+
+async def save_default_shifts(shifts: dict, db: AsyncSession):
+    success_on_insert = await db.execute(insert(DefaultWeekShifts).values(shifts))
+
+    await db.commit()
+
+    return success_on_insert.rowcount > 0
+
+
+async def get_default_shifts(db: AsyncSession):
+    res = await db.execute(select(DefaultWeekShifts.day, DefaultWeekShifts.first_shift, DefaultWeekShifts.second_shift))
+    
+    default_shifts = {
+        day: f'{first_shift}/{second_shift}'
+    for day, first_shift, second_shift in res.all()
+    }
+    
+
+    return default_shifts

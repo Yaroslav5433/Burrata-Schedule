@@ -10,37 +10,29 @@ function ClaimsTableForRequest() {
       claimDates,
       claimValues,
       setClaimValues,
-      mobile
+      mobile,
     } = useContext(Context)
 
-    const [hasANumber, setHasANumber] = useState(false) 
-    const [hasTwoX, setHasTwoX] = useState(false)
-
     const handleChange = (index, value) => {
-      const copy = [...claimValues];
-      copy[index] = value
-      setClaimValues(copy);
-      
-      setHasANumber(["1", "2"].some(v => copy.includes(v)));
-      setHasTwoX(copy.filter(v => v === "X").length > 1);
-      {console.log(copy)}
+      setClaimValues(prev => {
+        const copy = [...prev];
+        copy[index] = value;
+        return copy;
+      });
     };
 
+    {console.log('claimValues', claimValues)}
 
     return (
       !mobile ? (
         <TableWithDates
         dates={claimDates}>
           <ShiftsRow
-          handleChange = {handleChange}
-          hasANumber = {hasANumber}
-          hasTwoX = {hasTwoX}/>
+          handleChange = {handleChange}/>
         </TableWithDates>
       ) : (
         <ClaimsTableMobile
-        handleChange = {handleChange}
-        hasANumber = {hasANumber}
-        hasTwoX = {hasTwoX}/>
+        handleChange = {handleChange}/>
     )
   );
 }

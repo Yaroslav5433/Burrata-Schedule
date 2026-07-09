@@ -5,34 +5,71 @@ import { Context } from '@/components/Context'
 function ShiftsRow(props) {
 
     const {
-        claimDates,
         userSavedClaims,
         claimValues,
+        availableShiftsValues,
+        totalMaxShifts
     } = useContext(Context)
 
     const {
         handleChange,
-        hasANumber,
-        hasTwoX
     } = props
+
+    const SHORT_GROUP = ["1", "2"];
+
+    const calculateUsed = (values) => {
+        return values.reduce((acc, v) => {
+          if (!v) return acc;
+          acc[v] = (acc[v] || 0) + 1;
+          return acc;
+        }, {});
+      };
 
     return (
         <tr className={styles.row}>
-            {claimDates.map((_, i) => (
-                <td className={styles.rowElement} key={i}>
+            {Object.keys(availableShiftsValues).map((day, dayId) => (
+                <td className={styles.rowElement} key={day}>
                 {!userSavedClaims.some(Boolean) ? (
                     <select
                     className={styles.select}
-                    value={claimValues[i]}
-                    onChange={(e) => handleChange(i, e.target.value)}
+                    value={claimValues[dayId]}
+                    onChange={(e) => handleChange(dayId, e.target.value)}
                     >
-                    <option className={styles.option} value=""></option>
-                    <option className={styles.option} value="X" disabled={hasTwoX}>X</option>
-                    <option className={styles.option} value="1" disabled={hasANumber}>1</option>
-                    <option className={styles.option} value="2" disabled={hasANumber}>2</option>
+                        <option className={styles.option} value={undefined}></option>
+                        {Object.entries(availableShiftsValues[day])
+                        .filter(([, value]) => value)
+                        .map(([key]) => {
+
+                            const used = calculateUsed(claimValues);
+
+                            const shortUsed = SHORT_GROUP.reduce(
+                            (sum, k) => sum + (used[k] || 0),
+                            0
+                            );
+
+                            const shortMax = totalMaxShifts?.short ?? 0;
+
+                            const isShort = SHORT_GROUP.includes(key);
+
+                            const isDisabled =
+                            isShort
+                                ? shortUsed >= shortMax
+                                : used[key] >= (totalMaxShifts?.[key] ?? 0);
+
+                            return (
+                            <option
+                                key={key}
+                                className={styles.option}
+                                value={key}
+                                disabled={isDisabled}
+                            >
+                                {key}
+                            </option>
+                            );
+                        })}
                     </select>
                 ) : (
-                    userSavedClaims?.[i] ?? ''
+                    userSavedClaims?.[dayId] ?? ''
                 )}
                 </td>
             ))}

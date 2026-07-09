@@ -1,7 +1,7 @@
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx'
-import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer'
+import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx';
+import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer';
 import MessagesPagination from "@/components/AdminSchedule/MessagesPagination/MessagesPagination";
 import { useState } from "react";
 import { Context } from "@/components/Context";
@@ -9,30 +9,35 @@ import { get_all_users_request } from "@/api/requests";
 import { get_all_claims_request } from "@/api/requests";
 import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
-import { fill_up_schedule_request } from "@/api/requests"
+import { get_vacations_for_table } from "@/api/requests";
 import { get_messages } from "@/api/requests";
+import { get_shifts_values } from "@/api/requests";
+import { get_total_max } from "@/api/requests";
 import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
 import { useQuery } from "@tanstack/react-query";
-import PopUp from "@/components/PopUp/PopUp";
-import { useNotification } from "@/components/ModalWindow/ModalWindow";
-import { demandsInputValidation, getAllFreeWorkers } from "@/utils/utils";
-
+import PopUpFillUp from "@/components/AdminSchedule/PopUpFillUp/PopUpFillUp";
+import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUser";
+import { DAYS_OF_THE_WEEK } from "@/utils/constants";
+import PopUpSetDefault from "@/components/AdminSchedule/PopUpSetDefault/PopUpSetDefault";
 
 function Home() {
 
     const [showClaims, setShowClaims] = useState(true);
+    const [showVacations, setShowVacations] = useState(false);
     const [dateStep, setDateStep] = useState(0);
     const [isEdit, setIsEdit] = useState(false);
-    const [popUpIsOpen, setPopUpIsOpen] = useState(false);
+    const [popUpIsOpen, setPopUpIsOpen] = useState(null);
     const [loading, setLoading] = useState(false);
     const [draftSchedule, setDraftSchedule] = useState(null);
     const [customEdit, setCustomEdit] = useState(false);
+    const [addUser, setAddUser] = useState({'state': false, 'is_trainee': false})
+    const [userTextName, setUserTextName] = useState('');
+
+    const [days, setDays] = useState(DAYS_OF_THE_WEEK);
 
     const { department } = useParams()
-
-    const { showNotification } = useNotification()
     
     const datesQuery = useQuery({
         queryKey: ["dates", dateStep],
@@ -65,11 +70,33 @@ function Home() {
     });
 
     const messageQuery = useQuery({
-        queryKey: ["messages"],
-        queryFn: () => get_messages(true),
+        queryKey: ["messages", department],
+        queryFn: () => get_messages(department, true),
         placeholderData: (prev) => prev,
         enabled: !!department,
         retry: 0
+    });
+
+    const vacationsQuery = useQuery({
+        queryKey: ["vacations", dateStep],
+        queryFn: () => get_vacations_for_table(dateStep),
+        placeholderData: (prev) => prev,
+        enabled: !!department,
+        retry: 0
+    });
+
+    const availableShiftsValuesQuery = useQuery({
+        queryKey: ["availableShifts", userTextName],
+        queryFn: () => get_shifts_values(userTextName),
+        placeholderData: (prev) => prev,
+        enabled: popUpIsOpen === 'edituser'
+    });
+
+    const totalMaxShiftsQuery = useQuery({
+        queryKey: ["totalMax", userTextName],
+        queryFn: () => get_total_max(userTextName),
+        placeholderData: (prev) => prev,
+        enabled: popUpIsOpen === 'edituser'
     });
 
     const allUsers = usersQuery.data ?? {};
@@ -77,8 +104,9 @@ function Home() {
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
-
-    console.log('schedule', schedule)
+    const usersWithVacations = vacationsQuery.data ?? {};
+    const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
+    const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -92,11 +120,20 @@ function Home() {
     ? draftSchedule
     : schedule
 
+    console.log('vacations', usersWithVacations)
+
     const workersWithClaims = {
     ...workers,
     ...Object.fromEntries(
         Object.entries(usersWithClaims).filter(([u]) => u in workers)
     ),
+    };
+
+    const workersWithVacations = {
+        ...workers,
+        ...Object.fromEntries(
+            Object.entries(usersWithVacations).filter(([u]) => u in workers)
+        ),
     };
 
     const workersWithSchedule = {
@@ -113,6 +150,13 @@ function Home() {
     ),
     };
 
+    const traineesWithVacations = {
+        ...trainees,
+        ...Object.fromEntries(
+            Object.entries(usersWithVacations).filter(([u]) => u in trainees)
+        ),
+    };
+
     const traineesWithSchedule = {
     ...trainees,
     ...Object.fromEntries(
@@ -120,47 +164,20 @@ function Home() {
     ),
     };
 
-    const all_workers_to_show = showClaims
-    ? workersWithClaims
-    : workersWithSchedule;
+    const all_workers_to_show = showVacations
+    ? workersWithVacations
+    : showClaims
+        ? workersWithClaims
+        : workersWithSchedule;
 
-    const all_trainees_to_show = showClaims
-    ? traineesWithClaims
-    : traineesWithSchedule;
-    
+    const all_trainees_to_show = showVacations
+        ? traineesWithVacations
+        : showClaims
+            ? traineesWithClaims
+            : traineesWithSchedule;
+
     const handleDraftSet = () => {
         setDraftSchedule(structuredClone(scheduleQuery.data))
-    }
-
-    const handleFillUpSubmit = async (e, demands) => {
-        e.preventDefault();
-        const onlyWorkersDraftSchedule = Object.fromEntries(
-            Object.keys(workers).map(name => [
-                name,
-                draftSchedule[name] ?? workers[name]
-            ])
-        )
-        
-        const inputIsValid = demandsInputValidation(
-            demands,
-            getAllFreeWorkers(onlyWorkersDraftSchedule))
-
-        if (inputIsValid['isValid'] === false) {
-            showNotification(inputIsValid['message'], true)
-            return
-        }
-
-        setPopUpIsOpen(false)
-        setLoading(true)
-
-        try {
-            const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, demands)
-            setDraftSchedule(res['schedule'])
-        } catch (error) {
-            showNotification(error.message, true)
-        } finally {
-            setLoading(false)
-        }
     }
 
     console.log(messages)
@@ -182,12 +199,27 @@ function Home() {
             loading,
             setLoading,
             customEdit,
-            setCustomEdit
+            setCustomEdit,
+            days,
+            setDays,
+            userTextName,
+            setUserTextName,
+            addUser,
+            setAddUser,
+            workers,
+            showVacations,
+            setShowVacations
         }}>
-            {popUpIsOpen && 
-            <PopUp
-            dates = {weekDates}
-            handleFillUpSubmit = {handleFillUpSubmit}/>}
+            {popUpIsOpen === 'fillup' && 
+            <PopUpFillUp
+            dates = {weekDates}/>} 
+            {popUpIsOpen === 'edituser' && 
+            <PopUpEditUser
+            availableShiftsValues = {availableShiftsValues}
+            totalMaxShifts = {totalMaxShifts}
+            />}
+            {popUpIsOpen === 'editallusers' &&
+            <PopUpSetDefault/>}
             <div className = {pagestyles.app}>
                 <Header
                 isAdmin = {true}/>

@@ -1,9 +1,9 @@
 .container {
     position: fixed;
-    width: 50vw;
-    height: 50vh;
+    min-width: 50vw;
+    min-height: 50vh;
     overflow: hidden;
-    padding: 10px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -21,15 +21,10 @@
     font-size: 2em
 }
 
-.input {
-    width: 100%;
-    border: 1px solid;
-}
-
 .crossButton {
-    position: absolute;
-    left: 95%;
-    bottom: 87%;
+    position: fixed;
+    right: 15px;
+    top: 15px;
 }
 
 .crossIcon {

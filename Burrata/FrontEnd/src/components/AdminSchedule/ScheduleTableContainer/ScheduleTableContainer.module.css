@@ -21,7 +21,8 @@
     width: 120px;
 }
 
-.tablenameSpan {
+.tableName {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,7 +33,12 @@
     border-color: transparent;
     border-radius: 7px 7px 0px 0px;
     font-size: 16px;
+    gap: 10px;
 }
+
+/* .tableNameContainer {
+    position: relative;
+} */
 
 .tableMainContainer {
     display: flex;
@@ -75,3 +81,20 @@
     align-items: center;
     z-index: 9;
 }
+
+.IconArrowButton {
+    width: 35px;
+    height: 35px;
+}
+
+.checkboxContainer {
+    display: flex;
+    gap: 30px;
+}
+
+.editIconButton {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: 107%;
+} 

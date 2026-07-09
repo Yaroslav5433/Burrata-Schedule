@@ -25,13 +25,6 @@ export const demandsInputValidation = (demands, numberOfFreeWorkers) => {
         }
 
         const min = first + second;
-
-        if (min < max) {
-            return {
-                isValid: false,
-                message: 'At some day you didn`t use all day offs'
-            };
-        }
     }
 
     return {

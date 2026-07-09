@@ -46,3 +46,19 @@ class User(BaseModel):
     is_trainee: bool
     position: str
     unique_id_number: str
+
+class ShiftsValues(RootModel[dict[str, dict]]):
+    pass
+
+class MaxShiftsWeekTotal(RootModel[dict[str, int]]):
+    pass
+
+class UserSettings(BaseModel):
+    username: str
+    totalMaxShifts: dict
+    availableShiftsValues: dict
+
+class FillUpInfo(BaseModel):
+    claims: dict
+    demands: dict
+    dates: list

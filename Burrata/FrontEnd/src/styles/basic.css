@@ -2,7 +2,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: var(--gray-color);
-    font-family: "FACEBOLF", sans-serif;
+    font-family: "Rubik-Medium", sans-serif;
     color: var(--white-color);
 }
 
