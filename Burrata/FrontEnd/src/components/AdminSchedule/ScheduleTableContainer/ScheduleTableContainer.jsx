@@ -51,7 +51,7 @@ function ScheduleTableContainer(props) {
         setCustomEdit(false)
       },
       onError: () => {
-        showNotification('Error while saving')
+        showNotification('Error while saving', true)
       },
       onSettled: () => {
         setLoading(false)
@@ -68,7 +68,7 @@ function ScheduleTableContainer(props) {
         setShowClaims(false)
       },
       onError: () => {
-        showNotification('Error while saving')
+        showNotification('Error while saving', true)
       },
       onSettled: () => {
         setLoading(false)

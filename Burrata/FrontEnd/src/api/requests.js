@@ -361,3 +361,36 @@ const res = await fetch(`http://localhost:8000/getvacationstable?dateStep=${date
 
   return res.json()
 }
+
+
+export async function get_default_shifts() {
+  const res = await fetch(`http://localhost:8000/getdefaultshifts`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json'
+    }})
+  
+    if (!res.ok) {
+      throw new Error('Failed during getting shifts')
+    }
+  
+    return res.json()
+}
+  
+
+export async function save_default_shifts(shifts) {
+  const res = await fetch(`http://localhost:8000/savedefaultshifts`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(shifts)
+  })
+  
+    if (!res.ok) {
+      throw new Error('Failed during saving shifts')
+    }
+  
+    return res.json()
+  }
+    

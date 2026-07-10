@@ -22,7 +22,6 @@ function PopUpForm(props) {
 
   const handleClick = () => {
     setPopUpIsOpen(null)
-    setDays(DAYS_OF_THE_WEEK)
     setUserTextName('')
   }
 

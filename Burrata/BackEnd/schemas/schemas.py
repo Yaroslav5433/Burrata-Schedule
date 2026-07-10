@@ -62,3 +62,12 @@ class FillUpInfo(BaseModel):
     claims: dict
     demands: dict
     dates: list
+
+class DefaultShifts(BaseModel):
+    Monday: str
+    Tuesday: str
+    Wednesday: str
+    Thursday: str
+    Friday: str
+    Saturday: str
+    Sunday: str

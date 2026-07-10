@@ -292,7 +292,29 @@ async def save_user_settings(username: str, available_shifts_values: dict, total
 
 
 async def save_default_shifts(shifts: dict, db: AsyncSession):
-    success_on_insert = await db.execute(insert(DefaultWeekShifts).values(shifts))
+
+    shifts_for_insert = []
+
+    for day, shift in shifts.model_dump().items():
+        first_shift, second_shift = map(int, shift.split('/'))
+
+        shifts_for_insert.append({
+            'day': day,
+            'first_shift': first_shift,
+            'second_shift': second_shift
+        })
+
+    stmt = pginsert(DefaultWeekShifts).values(shifts_for_insert)
+
+    stmt = stmt.on_conflict_do_update(
+        index_elements=['day'],
+        set_={
+            'first_shift': stmt.excluded.first_shift,
+            'second_shift': stmt.excluded.second_shift
+        }
+    )
+
+    success_on_insert = await db.execute(stmt)
 
     await db.commit()
 
@@ -307,5 +329,4 @@ async def get_default_shifts(db: AsyncSession):
     for day, first_shift, second_shift in res.all()
     }
     
-
     return default_shifts
