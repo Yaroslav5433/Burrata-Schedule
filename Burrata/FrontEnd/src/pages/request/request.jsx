@@ -2,7 +2,7 @@ import Header from '@/components/Header/Header.jsx'
 import Footer from '@/components/Footer/Footer.jsx'
 import UserVerificationContainer from '@/components/CentralContainer/UserVerificationContainer/UserVerificationContainer.jsx'
 import VerifiedUserContainer from '@/components/CentralContainer/VerifiedUser/VerifiedUserContainer/VerifiedUserContainer.jsx'
-import { get_shifts_values, get_total_max, verify_user_request } from '@/api/requests'
+import { get_limits, get_shifts_values, get_total_max, verify_user_request } from '@/api/requests'
 import { save_user_claims_request } from '@/api/requests'
 import { get_dates_request } from '@/api/requests';
 import { useState, useEffect, useMemo } from 'react';
@@ -19,7 +19,7 @@ function Request() {
 
     const [verificationPage, setVerificationPage] = useState(true);
 
-    const [userName, setUserName] = useState('');
+    const [user, setUser] = useState({'username': '', 'id': null});
     const [userSavedClaims, setUserSavedClaims] = useState([]);
     const [userMessage, setUserMessage] = useState('')
     const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
@@ -33,7 +33,7 @@ function Request() {
         try {
             const userAndClaimsInfo = await verify_user_request(unique_user_id)
 
-            const { username, claims, message } = userAndClaimsInfo
+            const { userId, username, claims, message } = userAndClaimsInfo
 
             if (!!claims) {
                 setUserSavedClaims(claims)
@@ -41,7 +41,7 @@ function Request() {
             if (!!message) {
                 setUserMessage(message)
             }
-            setUserName(username)
+            setUser({'username': username, 'id': userId})
 
             setErrorOnReq(false)
             setVerificationPage(false)
@@ -57,23 +57,31 @@ function Request() {
     });
 
     const availableShiftsValuesQuery = useQuery({
-        queryKey: ["availableShifts"],
-        queryFn: () => get_shifts_values(userName),
+        queryKey: ["availableShifts", user],
+        queryFn: () => get_shifts_values(user),
         placeholderData: (prev) => prev,
-        enabled: !!userName
+        enabled: !!user
     });
 
     const totalMaxShiftsQuery = useQuery({
-        queryKey: ["totalMax"],
-        queryFn: () => get_total_max(userName),
+        queryKey: ["totalMax", user],
+        queryFn: () => get_total_max(user),
         placeholderData: (prev) => prev,
-        enabled: !!userName
+        enabled: !!user
+    });
+
+    const limitsQuery = useQuery({
+        queryKey: ["limits", user],
+        queryFn: () => get_limits(user),
+        placeholderData: (prev) => prev,
+        enabled: !!user,
+        retry: 0
     });
 
     const claimDates = datesQuery.data?.dates ?? []
     const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
     const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
-
+    const limits = limitsQuery.data ?? {}
 
     useEffect(() => {
         if (totalMaxShifts?.short !== 0) {
@@ -82,12 +90,10 @@ function Request() {
     }, [totalMaxShifts])
 
 
-    useEffect(() => {
-        const day = new Date().getDay();
-        setBlockClaims(!(day === 1 || day === 2));
-        console.log(day)
-        console.log(!(day === 1 || day === 2))
-    }, [verificationPage]);
+    // useEffect(() => {
+    //     const day = new Date().getDay();
+    //     setBlockClaims(!(day === 1 || day === 2));
+    // }, [verificationPage]);
 
 
     const onSubmit = async (event) => {
@@ -98,7 +104,7 @@ function Request() {
         }
         try {
             console.log(userMessage)
-            await save_user_claims_request(claimValues, userName, userMessage)
+            await save_user_claims_request(claimValues, user.username, user.id, userMessage)
 
             setUserSavedClaims(claimValues)
         } catch (error) {
@@ -135,7 +141,8 @@ function Request() {
             availableShiftsValues,
             combinedShifts,
             blockClaims,
-            setBlockClaims
+            setBlockClaims,
+            limits
         }}>
             <div className = {pagestyles.app}>
                 <Header />
@@ -147,7 +154,7 @@ function Request() {
                         ) : 
                         (
                         <VerifiedUserContainer
-                        userName = {userName}
+                        user = {user}
                         userMessage = {userMessage}
                         setUserMessage = {setUserMessage}
                         onSubmit = {onSubmit}/>

@@ -2,3 +2,19 @@
     width: 100%;
     border: 1px solid;
 }
+
+.specifyContainer {
+    width: 90%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.shiftContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+

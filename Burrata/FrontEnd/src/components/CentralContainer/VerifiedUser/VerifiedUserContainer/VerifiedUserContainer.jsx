@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import ClaimsTableForRequest from '@/components/CentralContainer/VerifiedUser/ClaimsTableForRequest/ClaimsTableForRequest.jsx'
 import Button from '@/components/Button/Button.jsx'
 import { Context } from '@/components/Context.js'
@@ -12,11 +12,10 @@ function VerifiedUserContainer(props) {
     const {
         userSavedClaims,
         blockClaims,
-        setBlockClaims
     } = useContext(Context)
 
     const {
-        userName,
+        user,
         onSubmit,
         userMessage,
         setUserMessage
@@ -27,7 +26,7 @@ function VerifiedUserContainer(props) {
             <form className={centralstyle.container} onSubmit={onSubmit}>
                 {!blockClaims ? 
                 <>
-                    <h1 className={styles.title}>{userName}</h1>
+                    <h1 className={styles.title}>{user.username}</h1>
                     <div className={styles.container}>
                         {!(userSavedClaims.some(Boolean)) && (
                             <p className={styles.text}>Please, choose a claims:</p>

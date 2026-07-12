@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
 from loguru import logger
-from utils.utils import get_next_week_dates, interpret_claims_as_list
+from utils.utils import get_next_week_dates
 from schemas.schemas import Users_with_shifts
 
 getclaims_router = APIRouter()
@@ -15,13 +15,13 @@ async def get_claims(department: str, dateStep: int, db: AsyncSession = Depends(
         requested_position = department, 
         week_dates = get_next_week_dates(steps = dateStep), 
         claims = True)
+    
+    if not all_claims:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Claims not found",
+        )
 
-    for username, user_saved_claims in all_claims.items():
-        all_claims[username] = interpret_claims_as_list(
-            user_saved_claims = user_saved_claims, 
-            next_week_dates = get_next_week_dates(nosql = True, steps = dateStep))
-
-    print(all_claims)
     logger.info('Sending a claims...')
     
     return all_claims

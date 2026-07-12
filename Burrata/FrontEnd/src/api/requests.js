@@ -182,7 +182,7 @@ export async function delete_user_request(username) {
 }
 
 
-export async function fill_up_schedule_request(claims, demands, dates) {
+export async function fill_up_schedule_request(claims, demands, dates, only_long, only_short) {
   const res = await fetch(`http://localhost:8000/fillupschedule`, {
   method: "POST",
   headers: {
@@ -191,7 +191,9 @@ export async function fill_up_schedule_request(claims, demands, dates) {
   body: JSON.stringify({
     'claims': claims,
     'demands': demands,
-    'dates': dates
+    'dates': dates,
+    'only_long': only_long,
+    'only_short': only_short
   })
 })
 
@@ -394,3 +396,20 @@ export async function save_default_shifts(shifts) {
     return res.json()
   }
     
+
+
+export async function get_limits(username) {
+  const res = await fetch(`http://localhost:8000/getlimits?username=${username}`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  
+    if (!res.ok) {
+      throw new Error('Failed during gettings limits')
+    }
+  
+    return res.json()
+  }
+      

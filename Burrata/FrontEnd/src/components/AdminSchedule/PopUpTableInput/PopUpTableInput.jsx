@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import PopUpForm from '@/components/PopUp/PopUpForm'
 import TableWithDates from '@/components/TableWithDates/TableWithDates'
 import TextField from '@/components/TextField/TextField'
@@ -8,6 +8,7 @@ import { demandsInputValidation, getAllFreeWorkers } from '@/utils/utils'
 import { useNotification } from '@/components/ModalWindow/ModalWindow'
 import { fill_up_schedule_request } from '@/api/requests'
 import { useSaveDefaultShifts } from '@/hooks/defaultShiftsMutations'
+import Select from "react-select";
 
 function PopUpTableInput(props) {
 
@@ -26,8 +27,12 @@ function PopUpTableInput(props) {
     days,
     setDays,
     popUpIsOpen,
-    defaultShifts
+    defaultShifts,
+    all_workers_to_show
   } = useContext(Context)
+
+  const [onlyShort, setOnlyShort] = useState([])
+  const [onlyLong, setOnlyLong] = useState([])  
 
   const { showNotification } = useNotification()
   const saveDefaultShifts = useSaveDefaultShifts()
@@ -73,11 +78,14 @@ function PopUpTableInput(props) {
           return
       }
 
+      const only_short = onlyShort.map(worker => worker.value)
+      const only_long = onlyLong.map(worker => worker.value)
+
       setPopUpIsOpen(false)
 
       try {
           setLoading(true)
-          const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, days, dates)
+          const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, days, dates, only_long, only_short)
           setDraftSchedule(res['schedule'])
       } catch (error) {
           showNotification(error.message, true)
@@ -122,6 +130,139 @@ function PopUpTableInput(props) {
               ))}
               </tr>
         </TableWithDates>
+        {popUpIsOpen === 'fillup' &&
+        <div className={styles.specifyContainer}>
+          <div className={styles.shiftContainer}>
+              <p>Only Short</p>
+              <Select
+              isMulti
+              classNamePrefix="worker-select"
+              options={Object.keys(all_workers_to_show).map(worker => ({
+                value: worker,
+                label: worker,
+              }))}
+              onChange={setOnlyShort}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                  border: 0,
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  minWidth: '300px',
+                  paddingBlock: '5px'
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: '#FFFFFF'
+                }),
+                multiValueRemove: (base, state) => ({
+                  ...base,
+                  color: state.isFocused ? '#ff5555' : '#161414',
+                  backgroundColor: 'transparent',
+                
+                  '&:hover': {
+                    transitionDuration: '0.2s',
+                    backgroundColor: 'transparent',
+                    color: '#ff5555',
+                  },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                }),
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 999,
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                  caretColor: "#FFFFFF", 
+                }),
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                clearIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? "#555555"   
+                    : "#4b4a4a",
+                  color: "white",
+                }),
+                }}
+            />
+          </div>
+          <div className={styles.shiftContainer}>
+              <p>Only Long</p>
+              <Select
+              isMulti
+              classNamePrefix="worker-select"
+              options={Object.keys(all_workers_to_show).map(worker => ({
+                value: worker,
+                label: worker,
+              }))}
+              onChange={setOnlyLong}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                  border: 0,
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  minWidth: '300px',
+                  paddingBlock: '5px'
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: '#FFFFFF'
+                }),
+                multiValueRemove: (base, state) => ({
+                  ...base,
+                  color: state.isFocused ? '#ff5555' : '#161414',
+                  backgroundColor: 'transparent',
+                
+                  '&:hover': {
+                    transitionDuration: '0.2s',
+                    backgroundColor: 'transparent',
+                    color: '#ff5555',
+                  },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                }),
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 999,
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                  caretColor: "#FFFFFF", 
+                }),
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                clearIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? "#555555"   
+                    : "#4b4a4a",
+                  color: "white",
+                }),
+                }}
+            />
+          </div>
+        </div>}
     </PopUpForm>
   )
 }
