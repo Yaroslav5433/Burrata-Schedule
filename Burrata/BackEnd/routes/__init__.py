@@ -6,7 +6,7 @@ from routes.get_all_users_route import getuser_router
 from routes.get_all_claims_route import getclaims_router
 from routes.get_dates_route import getdates_router
 from routes.get_schedule_route import getschedule_router
-from routes.save_all_claims_route import all_claims_router
+from routes.save_schedule_route import save_schedule_router
 from routes.save_new_worker_route import save_new_worker
 from routes.delete_user_route import deleteuser_router
 from routes.fillup_schedule_route import fillup_schedule_router
@@ -32,7 +32,7 @@ all_routers = [
     getclaims_router,
     getdates_router,
     getschedule_router,
-    all_claims_router,
+    save_schedule_router,
     save_new_worker,
     deleteuser_router,
     fillup_schedule_router,

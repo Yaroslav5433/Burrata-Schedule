@@ -7,8 +7,8 @@ from loguru import logger
 delete_vacation_route = APIRouter()
 
 @delete_vacation_route.delete('/deletevacation', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_vacation(username: str, db: AsyncSession = Depends(get_db)):
-    success_on_deleting = await db_req.delete_vacation(username = username, db = db)
+async def delete_vacation(user_id: int, db: AsyncSession = Depends(get_db)):
+    success_on_deleting = await db_req.delete_vacation(user_id = user_id, db = db)
 
     if not success_on_deleting:
         raise HTTPException(

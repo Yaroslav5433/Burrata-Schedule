@@ -64,9 +64,9 @@ function Vacations() {
   const handleSaveVacations = () => {
     saveVacations.mutate(
       {
-        username: username,
-        start_date: dates[0],
-        end_date: dates[1]
+        userId: userId,
+        startDate: dates[0],
+        endDate: dates[1]
       },
       {
         onSuccess: () => {

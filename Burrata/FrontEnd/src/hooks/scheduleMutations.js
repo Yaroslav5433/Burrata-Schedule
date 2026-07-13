@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { save_schedule_table_request } from "@/api/requests";
 
 
-export function useSaveIntoSchedule(dateStep, department) {
+export function useSaveIntoSchedule(department) {
   const queryClient = useQueryClient() 
   return useMutation({
     mutationFn: ({ schedule }) => 
-      save_schedule_table_request(schedule, dateStep),
+      save_schedule_table_request(schedule),
 
     onSuccess: () => {
-        queryClient.invalidateQueries({queryKey: ["schedule", department, dateStep]});
+        queryClient.invalidateQueries({queryKey: ["schedule", department]});
     },
     onError: () => {
         console.log("Schedule hasn`t been invalidate");

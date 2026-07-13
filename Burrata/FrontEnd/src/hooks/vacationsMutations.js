@@ -5,11 +5,11 @@ export function useSaveVacation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ username, start_date, end_date }) =>
+    mutationFn: ({ userId, startDate, endDate }) =>
       save_vacation(
-        username,
-        start_date,
-        end_date
+        userId,
+        startDate,
+        endDate
       ),
 
     onSuccess: () => {

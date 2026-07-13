@@ -8,11 +8,11 @@ from schemas.schemas import MaxShiftsWeekTotal
 gettotalmax_router = APIRouter()
 
 @gettotalmax_router.get('/gettotalmax', response_model = MaxShiftsWeekTotal)
-async def get_shifts_values(username: str, db: AsyncSession = Depends(get_db)):
+async def get_shifts_values(user_id: int, db: AsyncSession = Depends(get_db)):
     
     max_shift_week_total = await db_req.get_max_shift_week_total(
         db = db,
-        username = username
+        user_id = user_id
     )
 
     if not max_shift_week_total:

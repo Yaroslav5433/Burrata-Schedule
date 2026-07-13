@@ -6,12 +6,12 @@ export function useSaveUser(department) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ username, unique_id_number, is_trainee }) =>
+    mutationFn: ({ username, uniqueIdNumber, isTrainee }) =>
       save_new_worker_request(
         username,
         department,
-        unique_id_number,
-        is_trainee
+        uniqueIdNumber,
+        isTrainee
       ),
 
     onSuccess: () => {
@@ -25,8 +25,8 @@ export function useDeleteUser(department) {
     const queryClient = useQueryClient();
   
     return useMutation({
-      mutationFn: ({ current_username }) =>
-        delete_user_request(current_username),
+      mutationFn: ({ current_user_id }) =>
+        delete_user_request(current_user_id),
   
       onSuccess: () => {
         queryClient.invalidateQueries(["users", department]);

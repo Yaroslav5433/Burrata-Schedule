@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
@@ -14,11 +14,11 @@ async def allclaimshandler(user_info: User, db: AsyncSession = Depends(get_db)):
 
     success_on_req = await db_req.insert_users_in_database(
         username = user_info.username,
-        position = user_info.position,
+        department = user_info.department,
         is_trainee = user_info.is_trainee,
         unique_id_number = user_info.unique_id_number,
-        basic_shifts = basic_shifts_insert[user_info.position],
-        basic_totals = basic_total_insert[user_info.position],
+        basic_shifts = basic_shifts_insert[user_info.department],
+        basic_totals = basic_total_insert[user_info.department],
         db = db)
 
     if not success_on_req: 

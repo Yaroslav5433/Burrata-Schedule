@@ -7,8 +7,8 @@ from loguru import logger
 deleteuser_router = APIRouter()
 
 @deleteuser_router.delete('/deleteuser', status_code=status.HTTP_204_NO_CONTENT)
-async def get_users(username: str, db: AsyncSession = Depends(get_db)):
-    success_on_deleting = await db_req.delete_user_by_name(username, db)
+async def get_users(user_id: str, db: AsyncSession = Depends(get_db)):
+    success_on_deleting = await db_req.delete_user(user_id = user_id, db = db)
 
     if not success_on_deleting:
         raise HTTPException(

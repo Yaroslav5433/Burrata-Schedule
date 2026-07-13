@@ -34,13 +34,14 @@ export async function verify_user_request(unique_id_number) {
     return res.json()
 }
 
-export async function save_user_claims_request(claims, userName, text) {
+export async function save_user_claims_request(claims, userName, id, text, ) {
   const res = await fetch('http://localhost:8000/saveuserclaims', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
+    'userId': id,
     'username': userName,
     'claims': claims,
     'message': text
@@ -123,8 +124,8 @@ export async function get_dates_request(dateStep) {
 }
 
 
-export async function save_schedule_table_request(schedule, dateStep) {
-  const res = await fetch(`http://localhost:8000/saveallusersclaims?dateStep=${dateStep}`, {
+export async function save_schedule_table_request(schedule) {
+  const res = await fetch(`http://localhost:8000/saveschedule`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -148,9 +149,9 @@ export async function save_new_worker_request(userTextName, department, unique_i
   },
   body: JSON.stringify( {
     'username': userTextName,
-    'position': department,
-    'unique_id_number': unique_id_number,
-    'is_trainee': is_trainee,
+    'department': department,
+    'uniqueIdNumber': unique_id_number,
+    'isTrainee': is_trainee,
   })
   })
 
@@ -162,8 +163,8 @@ export async function save_new_worker_request(userTextName, department, unique_i
 }
 
 
-export async function delete_user_request(username) {
-  const res = await fetch(`http://localhost:8000/deleteuser?username=${username}`, {
+export async function delete_user_request(user_id) {
+  const res = await fetch(`http://localhost:8000/deleteuser?user_id=${user_id}`, {
   method: "DELETE",
   headers: {
     'Content-Type': 'application/json'
@@ -182,7 +183,7 @@ export async function delete_user_request(username) {
 }
 
 
-export async function fill_up_schedule_request(claims, demands, dates, only_long, only_short) {
+export async function fill_up_schedule_request(claims, demands, dates, onlyLong, onlyShort) {
   const res = await fetch(`http://localhost:8000/fillupschedule`, {
   method: "POST",
   headers: {
@@ -192,8 +193,8 @@ export async function fill_up_schedule_request(claims, demands, dates, only_long
     'claims': claims,
     'demands': demands,
     'dates': dates,
-    'only_long': only_long,
-    'only_short': only_short
+    'onlyLong': onlyLong,
+    'onlyShort': onlyShort
   })
 })
 
@@ -240,16 +241,16 @@ export async function check_message_as_read(id) {
 }
 
 
-export async function save_vacation(username, start_date, end_date) {
+export async function save_vacation(user_id, startDate, endDate) {
   const res = await fetch('http://localhost:8000/savevacation', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    'username': username,
-    'start_date': start_date,
-    'end_date': end_date
+    'userId': user_id,
+    'startDate': startDate,
+    'endDate': endDate
   })
   })
 
@@ -276,8 +277,8 @@ export async function get_vacations() {
 }
 
 
-export async function delete_vacation(username) {
-  const res = await fetch(`http://localhost:8000/deletevacation?username=${username}`, {
+export async function delete_vacation(userId) {
+  const res = await fetch(`http://localhost:8000/deletevacation?user_id=${userId}`, {
   method: "DELETE",
   headers: {
     'Content-Type': 'application/json'
@@ -296,8 +297,8 @@ export async function delete_vacation(username) {
 }
 
 
-export async function get_shifts_values(username) {
-  const res = await fetch(`http://localhost:8000/getshiftsvalues?username=${username}`, {
+export async function get_allowed_shifts_values(userId) {
+  const res = await fetch(`http://localhost:8000/getshiftsvalues?user_id=${userId}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -312,8 +313,8 @@ export async function get_shifts_values(username) {
 }
 
 
-export async function get_total_max(username) {
-  const res = await fetch(`http://localhost:8000/gettotalmax?username=${username}`, {
+export async function get_total_max(userId) {
+  const res = await fetch(`http://localhost:8000/gettotalmax?user_id=${userId}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -328,14 +329,14 @@ export async function get_total_max(username) {
 }
 
 
-export async function save_new_user_settings(username, totalMaxShifts, availableShiftsValues) {
+export async function save_new_user_settings(userId, totalMaxShifts, availableShiftsValues) {
   const res = await fetch('http://localhost:8000/saveusersettings', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    'username': username,
+    'userId': userId,
     'totalMaxShifts': totalMaxShifts,
     'availableShiftsValues': availableShiftsValues
   })

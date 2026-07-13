@@ -12,7 +12,7 @@ save_user_settings_router = APIRouter()
 async def allclaimshandler(settings: UserSettings, db: AsyncSession = Depends(get_db)):
 
     success_on_req = await db_req.save_user_settings(
-        username = settings.username,
+        user_id = settings.user_id,
         available_shifts_values = settings.availableShiftsValues,
         total_max_shifts = settings.totalMaxShifts,
         db = db)

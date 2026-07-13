@@ -31,15 +31,41 @@ async def get_user_saved_claims(verified_user: str, next_week_dates, db: AsyncSe
     }
 
 
-async def insert_shifts_in_database(user_id: int, claims_sql_type, db: AsyncSession, claims: bool = False):
+async def save_all_shifts(shifts: dict[datetime, str], db: AsyncSession):
+    values = []
 
-    model = ClaimsSchedule if claims else Schedule
+    for user in shifts:
+        user_id = user["user_id"]
+
+        for date, shift in user["shifts"].items():
+            values.append({
+                "user_id": user_id,
+                "date": date,
+                "shift": shift,
+            })
+
+    stmt = pginsert(Schedule).values(values)
+
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["date", "user_id"],
+        set_={"shift": stmt.excluded.shift}
+    )
+
+    res = await db.execute(stmt)
+    await db.commit()
+
+    return res.rowcount > 0
+
+
+async def insert_shifts_in_database(user_id: int, shifts: dict[datetime, str], db: AsyncSession, isClaims: bool = False):
+
+    model = ClaimsSchedule if isClaims else Schedule
 
     success_on_insert = pginsert(model).values([
         {"date": date,
          "shift": shift,
          "user_id": user_id}
-        for date, shift in claims_sql_type.items()
+        for date, shift in shifts.items()
     ])
 
     success_on_insert = success_on_insert.on_conflict_do_update(
@@ -210,6 +236,7 @@ async def get_user_message(user_id: str, date, db: AsyncSession):
 
 
 async def save_vacation_in_database(user_id: int, start_date: datetime, end_date: datetime, db: AsyncSession):
+
     success_on_insert = await db.execute(insert(Vacations).values({
         'user_id': user_id,
         'start_date': start_date,
@@ -269,7 +296,7 @@ async def get_max_shift_week_total(user_id: str, db: AsyncSession):
     return {'limits': max_shift_total_count}
     
 
-async def save_user_settings(user_id: str, available_shifts_values: dict, total_max_shifts: dict, db: AsyncSession):
+async def save_user_settings(user_id: int, available_shifts_values: dict, total_max_shifts: dict, db: AsyncSession):
 
     total_max_updated = 0
     total_avail_updated = 0

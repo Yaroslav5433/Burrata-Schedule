@@ -86,14 +86,14 @@ function Home() {
 
     const availableShiftsValuesQuery = useQuery({
         queryKey: ["availableShifts", userTextName],
-        queryFn: () => get_shifts_values(userTextName),
+        queryFn: () => get_allowed_shifts_values(userId),
         placeholderData: (prev) => prev,
         enabled: popUpIsOpen === 'edituser'
     });
 
     const totalMaxShiftsQuery = useQuery({
         queryKey: ["totalMax", userTextName],
-        queryFn: () => get_total_max(userTextName),
+        queryFn: () => get_total_max(userId),
         placeholderData: (prev) => prev,
         enabled: popUpIsOpen === 'edituser'
     });

@@ -13,7 +13,7 @@ save_vacation_router = APIRouter()
 async def savevacation(vacation_info: Vacations, db: AsyncSession = Depends(get_db)):
 
     success_on_req = await db_req.save_vacation_in_database(
-        username = vacation_info.username,
+        user_id = vacation_info.user_id,
         start_date = vacation_info.start_date,
         end_date = vacation_info.end_date,
         db = db)

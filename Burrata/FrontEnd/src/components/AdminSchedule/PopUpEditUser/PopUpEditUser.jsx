@@ -22,7 +22,7 @@ function PopUpEditUser(props) {
     setPopUpIsOpen,
   } = useContext(Context)
 
-  const saveUserSettings = useSaveUserSettings(userTextName)
+  const saveUserSettings = useSaveUserSettings(userId)
   const { showNotification } = useNotification()
 
   useEffect(() => {

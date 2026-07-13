@@ -37,7 +37,7 @@ function ScheduleTableContainer(props) {
   } = props
 
   const { showNotification } = useNotification();
-  const saveIntoSchedule = useSaveIntoSchedule(dateStep, department);
+  const saveIntoSchedule = useSaveIntoSchedule(department);
 
   const handleSaveSchedule = () => {
     setLoading(true)

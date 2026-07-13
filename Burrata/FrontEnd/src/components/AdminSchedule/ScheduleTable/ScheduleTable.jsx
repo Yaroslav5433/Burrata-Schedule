@@ -52,19 +52,19 @@ function ScheduleTable() {
         setDraftSchedule(copy)
     };
 
-    const handleRequest = async (is_trainee) => {
+    const handleRequest = async (isTrainee) => {
         inputRef.current?.blur();
 
         const unique_id_number = generateEightDigitNumber()
 
         saveUser.mutate({
             username: userTextName,
-            unique_id_number: unique_id_number,
-            is_trainee: is_trainee
+            uniqueIdNumber: uniqueIdNumber,
+            isTrainee: isTrainee
         })
     }
 
-    const handleClick = (icon, current_username) => {
+    const handleClick = (icon, current_user_id) => {
         if (icon === "plus") {
             setAddUser({'state': true, 'is_trainee': false})
         }
@@ -73,11 +73,10 @@ function ScheduleTable() {
         }
         if (icon === "minus") {
             deleteUser.mutate({
-                current_username
+                current_user_id
             })
         }
         if (icon === "edit") {
-            console.log('opapa')
             setPopUpIsOpen("edituser")
             setUserTextName(current_username)
         }

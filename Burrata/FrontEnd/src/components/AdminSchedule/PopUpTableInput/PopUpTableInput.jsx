@@ -78,14 +78,14 @@ function PopUpTableInput(props) {
           return
       }
 
-      const only_short = onlyShort.map(worker => worker.value)
-      const only_long = onlyLong.map(worker => worker.value)
+      const onlyShortShifts = onlyShort.map(worker => worker.value)
+      const onlyLongShifts = onlyLong.map(worker => worker.value)
 
       setPopUpIsOpen(false)
 
       try {
           setLoading(true)
-          const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, days, dates, only_long, only_short)
+          const res = await fill_up_schedule_request(onlyWorkersDraftSchedule, days, dates, onlyLongShifts, onlyShortShifts)
           setDraftSchedule(res['schedule'])
       } catch (error) {
           showNotification(error.message, true)

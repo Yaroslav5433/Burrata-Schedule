@@ -16,7 +16,7 @@ class Messages(APIModel):
 
 class Vacations(APIModel):
     id: str
-    username: str
+    user_id: str
     start_date: datetime
     end_date: datetime
 
@@ -51,10 +51,10 @@ class Token(APIModel):
 class User(APIModel):
     username: str
     is_trainee: bool
-    position: str
+    department: str
     unique_id_number: str
 
-class ShiftsValues(APIModel):
+class AllowedShiftsValues(APIModel):
     day: str
     shifts: list[dict]
 
@@ -62,7 +62,7 @@ class MaxShiftsWeekTotal(APIModel):
     limits: dict[str, int]
 
 class UserSettings(APIModel):
-    username: str
+    user_id: str
     totalMaxShifts: dict
     availableShiftsValues: dict
 

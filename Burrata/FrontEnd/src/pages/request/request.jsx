@@ -58,14 +58,14 @@ function Request() {
 
     const availableShiftsValuesQuery = useQuery({
         queryKey: ["availableShifts", user],
-        queryFn: () => get_shifts_values(user),
+        queryFn: () => get_allowed_shifts_values(userId),
         placeholderData: (prev) => prev,
         enabled: !!user
     });
 
     const totalMaxShiftsQuery = useQuery({
         queryKey: ["totalMax", user],
-        queryFn: () => get_total_max(user),
+        queryFn: () => get_total_max(userId),
         placeholderData: (prev) => prev,
         enabled: !!user
     });
