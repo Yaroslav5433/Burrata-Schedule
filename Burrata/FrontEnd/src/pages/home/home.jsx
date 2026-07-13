@@ -3,9 +3,9 @@ import Footer from "@/components/Footer/Footer";
 import DepartmentsNavBar from '@/components/AdminSchedule/DepartmentsNavBar/DepartmentsNavBar.jsx';
 import ScheduleTableContainer from '@/components/AdminSchedule/ScheduleTableContainer/ScheduleTableContainer';
 import MessagesPagination from "@/components/AdminSchedule/MessagesPagination/MessagesPagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Context } from "@/components/Context";
-import { get_all_users_request } from "@/api/requests";
+import { get_all_users_request, get_default_shifts } from "@/api/requests";
 import { get_all_claims_request } from "@/api/requests";
 import { get_dates_request } from "@/api/requests";
 import { get_schedule_request } from "@/api/requests";
@@ -17,10 +17,9 @@ import { useParams } from "react-router-dom";
 import styles from './home.module.css'
 import pagestyles from '@/pages/pages.module.css'
 import { useQuery } from "@tanstack/react-query";
-import PopUpFillUp from "@/components/AdminSchedule/PopUpFillUp/PopUpFillUp";
+import PopUpTableInput from "@/components/AdminSchedule/PopUpTableInput/PopUpTableInput";
 import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUser";
 import { DAYS_OF_THE_WEEK } from "@/utils/constants";
-import PopUpSetDefault from "@/components/AdminSchedule/PopUpSetDefault/PopUpSetDefault";
 
 function Home() {
 
@@ -35,7 +34,7 @@ function Home() {
     const [addUser, setAddUser] = useState({'state': false, 'is_trainee': false})
     const [userTextName, setUserTextName] = useState('');
 
-    const [days, setDays] = useState(DAYS_OF_THE_WEEK);
+    const [days, setDays] = useState({});
 
     const { department } = useParams()
     
@@ -99,14 +98,23 @@ function Home() {
         enabled: popUpIsOpen === 'edituser'
     });
 
+    const defaultShiftsQuery = useQuery({
+        queryKey: ["defaultShifts"],
+        queryFn: () => get_default_shifts(),
+        placeholderData: (prev) => prev,
+        enabled: (popUpIsOpen === 'fillup' || popUpIsOpen === 'editallusers'),
+        retry: 0
+    });
+
     const allUsers = usersQuery.data ?? {};
     const usersWithClaims = claimsQuery.data ?? {};
     const schedule = scheduleQuery.data ?? {};
     const weekDates = datesQuery.data?.dates ?? [];
     const messages = messageQuery.data ?? [];
     const usersWithVacations = vacationsQuery.data ?? {};
-    const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
-    const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
+    const availableShiftsValues = availableShiftsValuesQuery.data ?? {};
+    const totalMaxShifts = totalMaxShiftsQuery.data ?? {};
+    const defaultShifts = defaultShiftsQuery.data ?? DAYS_OF_THE_WEEK;
 
     const workers = Object.fromEntries(
         Object.entries(allUsers).filter(([_, u]) => !u.is_trainee)
@@ -180,8 +188,6 @@ function Home() {
         setDraftSchedule(structuredClone(scheduleQuery.data))
     }
 
-    console.log(messages)
-
     return (
         <Context.Provider
         value = {{
@@ -195,31 +201,38 @@ function Home() {
             draftSchedule,
             setDraftSchedule,
             allUsers,
+            popUpIsOpen,
             setPopUpIsOpen,
             loading,
             setLoading,
             customEdit,
             setCustomEdit,
-            days,
-            setDays,
             userTextName,
             setUserTextName,
             addUser,
             setAddUser,
             workers,
             showVacations,
-            setShowVacations
+            setShowVacations,
+            days,
+            setDays,
+            defaultShifts
         }}>
             {popUpIsOpen === 'fillup' && 
-            <PopUpFillUp
-            dates = {weekDates}/>} 
+            <PopUpTableInput
+            dates = {weekDates}
+            fillUpTitle = 'Auto Fill Up'
+            showLabel = {true}/>} 
             {popUpIsOpen === 'edituser' && 
             <PopUpEditUser
             availableShiftsValues = {availableShiftsValues}
             totalMaxShifts = {totalMaxShifts}
             />}
             {popUpIsOpen === 'editallusers' &&
-            <PopUpSetDefault/>}
+            <PopUpTableInput
+            fillUpTitle = 'Basic Settings'
+            showLabel = {false}
+            dates = {Object.keys(days)}/>}
             <div className = {pagestyles.app}>
                 <Header
                 isAdmin = {true}/>

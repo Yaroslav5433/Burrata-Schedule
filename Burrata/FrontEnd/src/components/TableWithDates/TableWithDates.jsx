@@ -4,7 +4,7 @@ import styles from './TableWithDates.module.css'
 function TableWithDates(props) {
   const {
     children,
-    dates
+    dates,
   } = props
 
   return (

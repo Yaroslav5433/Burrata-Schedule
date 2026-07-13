@@ -19,6 +19,9 @@ from routes.get_total_max_route import gettotalmax_router
 from routes.get_shifts_values_route import getshiftsvalues_router
 from routes.save_user_settings import save_user_settings_router
 from routes.get_vacations_for_table import get_vacations_for_table_router
+from routes.get_default_shifts_route import get_default_shifts_router
+from routes.save_default_shifts_route import save_default_shifts_router
+from routes.get_limits_route import get_limits_router
 
 all_routers = [
     login_router,
@@ -41,5 +44,8 @@ all_routers = [
     gettotalmax_router,
     getshiftsvalues_router,
     save_user_settings_router,
-    get_vacations_for_table_router
+    get_vacations_for_table_router,
+    get_default_shifts_router,
+    save_default_shifts_router,
+    get_limits_router
 ]

@@ -2,7 +2,7 @@ import Header from '@/components/Header/Header.jsx'
 import Footer from '@/components/Footer/Footer.jsx'
 import UserVerificationContainer from '@/components/CentralContainer/UserVerificationContainer/UserVerificationContainer.jsx'
 import VerifiedUserContainer from '@/components/CentralContainer/VerifiedUser/VerifiedUserContainer/VerifiedUserContainer.jsx'
-import { get_shifts_values, get_total_max, verify_user_request } from '@/api/requests'
+import { get_limits, get_shifts_values, get_total_max, verify_user_request } from '@/api/requests'
 import { save_user_claims_request } from '@/api/requests'
 import { get_dates_request } from '@/api/requests';
 import { useState, useEffect, useMemo } from 'react';
@@ -19,7 +19,7 @@ function Request() {
 
     const [verificationPage, setVerificationPage] = useState(true);
 
-    const [userName, setUserName] = useState('');
+    const [userName, setUserName] = useState(null);
     const [userSavedClaims, setUserSavedClaims] = useState([]);
     const [userMessage, setUserMessage] = useState('')
     const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
@@ -57,23 +57,31 @@ function Request() {
     });
 
     const availableShiftsValuesQuery = useQuery({
-        queryKey: ["availableShifts"],
+        queryKey: ["availableShifts", userName],
         queryFn: () => get_shifts_values(userName),
         placeholderData: (prev) => prev,
         enabled: !!userName
     });
 
     const totalMaxShiftsQuery = useQuery({
-        queryKey: ["totalMax"],
+        queryKey: ["totalMax", userName],
         queryFn: () => get_total_max(userName),
         placeholderData: (prev) => prev,
         enabled: !!userName
     });
 
+    const limitsQuery = useQuery({
+        queryKey: ["limits", userName],
+        queryFn: () => get_limits(userName),
+        placeholderData: (prev) => prev,
+        enabled: !!userName,
+        retry: 0
+    });
+
     const claimDates = datesQuery.data?.dates ?? []
     const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
     const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
-
+    const limits = limitsQuery.data ?? {}
 
     useEffect(() => {
         if (totalMaxShifts?.short !== 0) {
@@ -82,12 +90,10 @@ function Request() {
     }, [totalMaxShifts])
 
 
-    useEffect(() => {
-        const day = new Date().getDay();
-        setBlockClaims(!(day === 1 || day === 2));
-        console.log(day)
-        console.log(!(day === 1 || day === 2))
-    }, [verificationPage]);
+    // useEffect(() => {
+    //     const day = new Date().getDay();
+    //     setBlockClaims(!(day === 1 || day === 2));
+    // }, [verificationPage]);
 
 
     const onSubmit = async (event) => {
@@ -135,7 +141,8 @@ function Request() {
             availableShiftsValues,
             combinedShifts,
             blockClaims,
-            setBlockClaims
+            setBlockClaims,
+            limits
         }}>
             <div className = {pagestyles.app}>
                 <Header />

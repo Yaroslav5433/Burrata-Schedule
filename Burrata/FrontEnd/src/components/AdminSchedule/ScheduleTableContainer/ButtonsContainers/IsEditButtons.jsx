@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Button from '@/components/Button/Button'
 import styles from '../ScheduleTableContainer.module.css'
+import { Context } from '@/components/Context'
 
 function IsEditButtons(props) {
 
@@ -23,7 +24,7 @@ function IsEditButtons(props) {
         type='button'
         name='action'
         value='fill up'
-        onClick = {() => setPopUpIsOpen('fillup')}/>
+        onClick = {() => {setPopUpIsOpen('fillup')}}/>
         <Button
         buttonStyle = {styles.bottomButton}
         buttonText = 'Save changes'

@@ -2,7 +2,6 @@
     position: fixed;
     min-width: 50vw;
     min-height: 50vh;
-    overflow: hidden;
     padding: 20px;
     display: flex;
     flex-direction: column;

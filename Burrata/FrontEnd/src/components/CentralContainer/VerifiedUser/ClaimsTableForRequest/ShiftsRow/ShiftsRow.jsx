@@ -8,12 +8,17 @@ function ShiftsRow(props) {
         userSavedClaims,
         claimValues,
         availableShiftsValues,
-        totalMaxShifts
+        totalMaxShifts,
+        limits
     } = useContext(Context)
+
+    console.log(limits)
 
     const {
         handleChange,
     } = props
+
+    console.log('limits', limits)
 
     const SHORT_GROUP = ["1", "2"];
 
@@ -61,7 +66,7 @@ function ShiftsRow(props) {
                                 key={key}
                                 className={styles.option}
                                 value={key}
-                                disabled={isDisabled}
+                                disabled={isDisabled || !(limits[day])}
                             >
                                 {key}
                             </option>
