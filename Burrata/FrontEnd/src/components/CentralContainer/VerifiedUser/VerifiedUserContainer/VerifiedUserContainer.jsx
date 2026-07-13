@@ -15,7 +15,7 @@ function VerifiedUserContainer(props) {
     } = useContext(Context)
 
     const {
-        user,
+        userName,
         onSubmit,
         userMessage,
         setUserMessage
@@ -26,7 +26,7 @@ function VerifiedUserContainer(props) {
             <form className={centralstyle.container} onSubmit={onSubmit}>
                 {!blockClaims ? 
                 <>
-                    <h1 className={styles.title}>{user.username}</h1>
+                    <h1 className={styles.title}>{userName}</h1>
                     <div className={styles.container}>
                         {!(userSavedClaims.some(Boolean)) && (
                             <p className={styles.text}>Please, choose a claims:</p>

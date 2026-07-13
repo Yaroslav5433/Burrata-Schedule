@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from database import database_requests as db_req
-from utils.utils import get_next_week_dates
+from utils.utils import prepare_shifts_for_sql_insert, get_next_week_dates
 from schemas.schemas import Users_with_shifts_and_message
 from loguru import logger
 
@@ -12,15 +12,19 @@ claims_router = APIRouter()
 @claims_router.post('/saveuserclaims', status_code=status.HTTP_201_CREATED)
 async def claimshandler(user_claims_to_save: Users_with_shifts_and_message, db: AsyncSession = Depends(get_db)):
 
+    claims_sql_type = prepare_shifts_for_sql_insert(
+        shifts = user_claims_to_save.claims,
+        next_week_dates = get_next_week_dates())
+    
     success_on_shifts_insert = await db_req.insert_shifts_in_database(
-        user_id = user_claims_to_save.user_id,
-        claims_sql_type = user_claims_to_save.claims,
+        username = user_claims_to_save.username,
+        claims_sql_type = claims_sql_type,
         db = db,
         claims = True)
     
     if user_claims_to_save.message:
         success_on_message_insert = await db_req.insert_message(
-        user_id = user_claims_to_save.user_id,
+        username = user_claims_to_save.username,
         message = user_claims_to_save.message,
         db = db
     )
@@ -32,5 +36,4 @@ async def claimshandler(user_claims_to_save: Users_with_shifts_and_message, db: 
         )
     
     logger.info('CLAIMS HAS BEEN SAVED')
-
-    return { 'status_code': 'success' }
+    return { 'success' }

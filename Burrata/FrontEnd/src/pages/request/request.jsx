@@ -19,7 +19,7 @@ function Request() {
 
     const [verificationPage, setVerificationPage] = useState(true);
 
-    const [user, setUser] = useState({'username': '', 'id': null});
+    const [userName, setUserName] = useState(null);
     const [userSavedClaims, setUserSavedClaims] = useState([]);
     const [userMessage, setUserMessage] = useState('')
     const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
@@ -33,7 +33,7 @@ function Request() {
         try {
             const userAndClaimsInfo = await verify_user_request(unique_user_id)
 
-            const { userId, username, claims, message } = userAndClaimsInfo
+            const { username, claims, message } = userAndClaimsInfo
 
             if (!!claims) {
                 setUserSavedClaims(claims)
@@ -41,7 +41,7 @@ function Request() {
             if (!!message) {
                 setUserMessage(message)
             }
-            setUser({'username': username, 'id': userId})
+            setUserName(username)
 
             setErrorOnReq(false)
             setVerificationPage(false)
@@ -57,24 +57,24 @@ function Request() {
     });
 
     const availableShiftsValuesQuery = useQuery({
-        queryKey: ["availableShifts", user],
-        queryFn: () => get_shifts_values(user),
+        queryKey: ["availableShifts", userName],
+        queryFn: () => get_shifts_values(userName),
         placeholderData: (prev) => prev,
-        enabled: !!user
+        enabled: !!userName
     });
 
     const totalMaxShiftsQuery = useQuery({
-        queryKey: ["totalMax", user],
-        queryFn: () => get_total_max(user),
+        queryKey: ["totalMax", userName],
+        queryFn: () => get_total_max(userName),
         placeholderData: (prev) => prev,
-        enabled: !!user
+        enabled: !!userName
     });
 
     const limitsQuery = useQuery({
-        queryKey: ["limits", user],
-        queryFn: () => get_limits(user),
+        queryKey: ["limits", userName],
+        queryFn: () => get_limits(userName),
         placeholderData: (prev) => prev,
-        enabled: !!user,
+        enabled: !!userName,
         retry: 0
     });
 
@@ -104,7 +104,7 @@ function Request() {
         }
         try {
             console.log(userMessage)
-            await save_user_claims_request(claimValues, user.username, user.id, userMessage)
+            await save_user_claims_request(claimValues, userName, userMessage)
 
             setUserSavedClaims(claimValues)
         } catch (error) {
@@ -154,7 +154,7 @@ function Request() {
                         ) : 
                         (
                         <VerifiedUserContainer
-                        user = {user}
+                        userName = {userName}
                         userMessage = {userMessage}
                         setUserMessage = {setUserMessage}
                         onSubmit = {onSubmit}/>

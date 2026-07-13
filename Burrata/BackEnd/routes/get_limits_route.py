@@ -25,6 +25,8 @@ async def get_limits(username: str, db: AsyncSession = Depends(get_db)):
         default_shifts = default_shifts,
         all_claims = all_claims,
         all_vacations = vacation_to_dict(vacations))
+    
+    logger.info(f'Info for limits {depart} {all_users} {default_shifts} {all_claims} {vacations}')
 
     logger.info(f'Sendind limits {limits}')
     

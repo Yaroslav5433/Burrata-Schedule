@@ -21,6 +21,8 @@ async def get_users(fill_up_info: FillUpInfo, db: AsyncSession = Depends(get_db)
     nine_days_claims = merge_to_nine_days(
         seven_days_claims = fill_up_info.claims, 
         two_days_claims = two_days_claims)
+    
+    logger.info(f'claims {nine_days_claims}')
 
     res = calculate_schedule(
         claims = nine_days_claims,

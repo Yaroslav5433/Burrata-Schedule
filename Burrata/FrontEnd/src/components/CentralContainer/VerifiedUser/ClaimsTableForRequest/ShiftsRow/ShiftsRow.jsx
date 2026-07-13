@@ -12,6 +12,8 @@ function ShiftsRow(props) {
         limits
     } = useContext(Context)
 
+    console.log(limits)
+
     const {
         handleChange,
     } = props
