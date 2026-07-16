@@ -1,38 +1,44 @@
-import { Context } from '@/components/Context.js';
-import { useContext, useState } from 'react';
 import TableWithDates from '@/components/TableWithDates/TableWithDates.jsx';
+import ShiftsMobileRow from './ShiftsMobileRow/ShiftsMobileRow';
+import { useUIStore } from '@/hooks/requestPageHooks/stores/useUIStore';
+import { useDates } from '@/hooks/useDates';
 import ShiftsRow from './ShiftsRow/ShiftsRow';
-import ClaimsTableMobile from './ClaimsTableMobile/ClaimsTableMobile';
+import { useUserStore } from '@/hooks/requestPageHooks/stores/useUserStore';
+import { useAvailableShifts } from '@/hooks/useAvailableShifts';
+import Spinner from '@/components/Spinner/Spinner';
 
 function ClaimsTableForRequest() {
 
+    const mobile = useUIStore(state => state.mobile)
+
+    const claimDatesQuery = useDates(0)
+    const claimDates = claimDatesQuery.data?.dates ?? [];
+
+    const userName = useUserStore(state => state.userName)
+
     const {
-      claimDates,
-      claimValues,
-      setClaimValues,
-      mobile,
-    } = useContext(Context)
-
-    const handleChange = (index, value) => {
-      setClaimValues(prev => {
-        const copy = [...prev];
-        copy[index] = value;
-        return copy;
-      });
-    };
-
-    {console.log('claimValues', claimValues)}
+      data: availableShiftsValues = {},
+      isLoading
+    } = useAvailableShifts(userName);
 
     return (
-      !mobile ? (
+      mobile ? (
+        isLoading ? (<Spinner/>) :
         <TableWithDates
-        dates={claimDates}>
-          <ShiftsRow
-          handleChange = {handleChange}/>
+        dates={claimDates}
+        orientation = 'vertical'>
+          {(date, dateId) => (
+            <ShiftsMobileRow
+            date = {date}
+            dateId = {dateId}
+            day={Object.keys(availableShiftsValues)[dateId]}/>
+          )}
         </TableWithDates>
       ) : (
-        <ClaimsTableMobile
-        handleChange = {handleChange}/>
+        <TableWithDates
+        dates={claimDates}>
+          <ShiftsRow/>
+        </TableWithDates>
     )
   );
 }

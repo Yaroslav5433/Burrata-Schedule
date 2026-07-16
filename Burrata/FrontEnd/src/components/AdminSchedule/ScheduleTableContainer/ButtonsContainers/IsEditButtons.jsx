@@ -6,6 +6,10 @@ import { Context } from '@/components/Context'
 function IsEditButtons(props) {
 
   const {
+    department
+  } = useContext(Context)
+
+  const {
     handleEditClick,
     handleSaveSchedule,
     setPopUpIsOpen
@@ -18,13 +22,14 @@ function IsEditButtons(props) {
         buttonText = 'Cancel Changes'
         type='button'
         onClick = {() => handleEditClick("cancel changes")}/>
+        {department == 'service' && 
         <Button
         buttonStyle = {styles.bottomButton}
         buttonText = 'Auto Fill Up'
         type='button'
         name='action'
         value='fill up'
-        onClick = {() => {setPopUpIsOpen('fillup')}}/>
+        onClick = {() => {setPopUpIsOpen('fillup')}}/>}
         <Button
         buttonStyle = {styles.bottomButton}
         buttonText = 'Save changes'

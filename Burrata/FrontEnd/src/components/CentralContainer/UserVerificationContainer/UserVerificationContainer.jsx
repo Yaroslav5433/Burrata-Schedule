@@ -1,26 +1,23 @@
-import React, { useContext, useState } from 'react'
+import React, {useState } from 'react'
 import TextField from '@/components/TextField/TextField.jsx'
 import Button from '@/components/Button/Button.jsx'
 import Animation from '@/components/Animation/Animation.jsx'
 import centralstyle from '@/components/CentralContainer/CentralContainer.module.css'
 import styles from './UserVerificationContainer.module.css'
-import { Context } from '@/components/Context'
+import { useVerifyUser } from '@/hooks/requestPageHooks/useVerifyUser'
+import { useUIStore } from '@/hooks/requestPageHooks/stores/useUIStore'
 
-function UserVerificationContainer(props) {
+function UserVerificationContainer() {
 
-    const {
-        verifyUser
-    } = props
+    const errorOnReq = useUIStore(state => state.errorOnReq)
 
-    const {
-        errorOnReq
-    } = useContext(Context)
-    
     const [id, setId] = useState('')
+
+    const { verifyUser } = useVerifyUser();
 
     async function onSubmit(event) {
         event.preventDefault()
-        await verifyUser(id)
+        verifyUser(id)
     }
 
     return (

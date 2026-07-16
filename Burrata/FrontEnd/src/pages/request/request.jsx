@@ -2,118 +2,23 @@ import Header from '@/components/Header/Header.jsx'
 import Footer from '@/components/Footer/Footer.jsx'
 import UserVerificationContainer from '@/components/CentralContainer/UserVerificationContainer/UserVerificationContainer.jsx'
 import VerifiedUserContainer from '@/components/CentralContainer/VerifiedUser/VerifiedUserContainer/VerifiedUserContainer.jsx'
-import { get_limits, get_shifts_values, get_total_max, verify_user_request } from '@/api/requests'
-import { save_user_claims_request } from '@/api/requests'
-import { get_dates_request } from '@/api/requests';
-import { useState, useEffect, useMemo } from 'react';
-import { Context } from '@/components/Context.js';
 import pagestyles from '../pages.module.css'
-import { EMPTY_ARRAY_OF_SEVEN } from '@/utils/constants';
-import { useNotification } from '@/components/ModalWindow/ModalWindow'
-import { useQuery } from '@tanstack/react-query'
-
+import { useEffect } from 'react'
+import { useUIStore } from '@/hooks/requestPageHooks/stores/useUIStore'
+import { useClaimStore } from '@/hooks/requestPageHooks/stores/useClaimStore'
 
 function Request() {
 
-    const [errorOnReq, setErrorOnReq] = useState(false);
-
-    const [verificationPage, setVerificationPage] = useState(true);
-
-    const [userName, setUserName] = useState(null);
-    const [userSavedClaims, setUserSavedClaims] = useState([]);
-    const [userMessage, setUserMessage] = useState('')
-    const [claimValues, setClaimValues] = useState(EMPTY_ARRAY_OF_SEVEN);
-    const [mobile, setMobile] = useState(window.innerWidth < 1268)
-    const [combinedShifts, setCombinedShifts] = useState(false)
-    const [blockClaims, setBlockClaims] = useState(false)
-
-    const {showNotification} = useNotification();
-
-    const verifyUser = async (unique_user_id) => {
-        try {
-            const userAndClaimsInfo = await verify_user_request(unique_user_id)
-
-            const { username, claims, message } = userAndClaimsInfo
-
-            if (!!claims) {
-                setUserSavedClaims(claims)
-            }
-            if (!!message) {
-                setUserMessage(message)
-            }
-            setUserName(username)
-
-            setErrorOnReq(false)
-            setVerificationPage(false)
-        } catch {
-            setErrorOnReq(true)
-        }
-    }
-
-    const datesQuery = useQuery({
-        queryKey: ["dates"],
-        queryFn: () => get_dates_request(),
-        placeholderData: (prev) => prev,
-    });
-
-    const availableShiftsValuesQuery = useQuery({
-        queryKey: ["availableShifts", userName],
-        queryFn: () => get_shifts_values(userName),
-        placeholderData: (prev) => prev,
-        enabled: !!userName
-    });
-
-    const totalMaxShiftsQuery = useQuery({
-        queryKey: ["totalMax", userName],
-        queryFn: () => get_total_max(userName),
-        placeholderData: (prev) => prev,
-        enabled: !!userName
-    });
-
-    const limitsQuery = useQuery({
-        queryKey: ["limits", userName],
-        queryFn: () => get_limits(userName),
-        placeholderData: (prev) => prev,
-        enabled: !!userName,
-        retry: 0
-    });
-
-    const claimDates = datesQuery.data?.dates ?? []
-    const availableShiftsValues = availableShiftsValuesQuery.data ?? {}
-    const totalMaxShifts = totalMaxShiftsQuery.data ?? {}
-    const limits = limitsQuery.data ?? {}
-
-    useEffect(() => {
-        if (totalMaxShifts?.short !== 0) {
-            setCombinedShifts(true)
-        }
-    }, [totalMaxShifts])
-
+    const verificationPage = useUIStore(state => state.verificationPage);
+    const setMobile = useUIStore(state => state.setMobile)
+    const setBlockClaims = useClaimStore(state => state.setBlockClaims)
 
     // useEffect(() => {
     //     const day = new Date().getDay();
     //     setBlockClaims(!(day === 1 || day === 2));
     // }, [verificationPage]);
 
-
-    const onSubmit = async (event) => {
-        event.preventDefault()
-        if (!claimValues.some(Boolean)) {
-            showNotification('Изберете поне 1 претенция', true)
-            return
-        }
-        try {
-            console.log(userMessage)
-            await save_user_claims_request(claimValues, userName, userMessage)
-
-            setUserSavedClaims(claimValues)
-        } catch (error) {
-            showNotification('Claims haven`t been sent', true)
-            console.log(error)
-        }
-    }
-
-    console.log(totalMaxShifts)
+    console.log('component renderred')
 
     useEffect(() => {
         const handler = () => {
@@ -127,42 +32,17 @@ function Request() {
         };
       }, []);
 
+
     return (
-        <Context.Provider
-        value={{
-            userSavedClaims,
-            claimDates,
-            claimValues,
-            setClaimValues,
-            mobile,
-            setMobile,
-            errorOnReq,
-            totalMaxShifts,
-            availableShiftsValues,
-            combinedShifts,
-            blockClaims,
-            setBlockClaims,
-            limits
-        }}>
-            <div className = {pagestyles.app}>
-                <Header />
-                    <main className={pagestyles.requestContainer}>
-                        {verificationPage ? 
-                        (
-                        <UserVerificationContainer
-                        verifyUser = {verifyUser}/>
-                        ) : 
-                        (
-                        <VerifiedUserContainer
-                        userName = {userName}
-                        userMessage = {userMessage}
-                        setUserMessage = {setUserMessage}
-                        onSubmit = {onSubmit}/>
-                        )}
-                    </main>
-                <Footer />
-            </div>
-        </Context.Provider>
+        <div className = {pagestyles.app}>
+            <Header />
+                <main className={pagestyles.requestContainer}>
+                    {verificationPage ? 
+                    (<UserVerificationContainer/>) : 
+                    (<VerifiedUserContainer/>)}
+                </main>
+            <Footer />
+        </div>
     );
 }
  
