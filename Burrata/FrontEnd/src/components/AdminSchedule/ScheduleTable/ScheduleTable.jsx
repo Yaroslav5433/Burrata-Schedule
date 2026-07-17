@@ -7,12 +7,18 @@ import AddUserInTable from '@/components/AdminSchedule/TableElements/AddUserInTa
 import CountValuesInTable from '@/components/AdminSchedule/TableElements/CountValuesInTable/CountValuesInTable.jsx'
 import { generateEightDigitNumber } from '@/utils/utils.js'
 import { useDeleteUser, useSaveUser } from '@/hooks/usersMutations'
+import { useDates } from '@/hooks/useDates'
+import { useScheduleStore } from '@/hooks/homePageHooks/stores/useScheduleStore'
 
 function ScheduleTable() {
 
+    const {department} = useRef();
+
+    const dateStep = useScheduleStore(state => state.dateStep)
+
+    const weekDates = useDates(dateStep)
+
     const {
-        weekDates,
-        department,
         all_trainees_to_show,
         all_workers_to_show,
         showClaims,
@@ -38,7 +44,6 @@ function ScheduleTable() {
 
 
     const handleEditChange = (user, dateIndex, value) => {
-        console.log(draftSchedule)
 
         const merged_to_show = {
             ...all_workers_to_show,
@@ -83,13 +88,6 @@ function ScheduleTable() {
         }
     }
 
-    const countShift = (dateIndex, shiftType) => {
-        return Object.values(all_workers_to_show).filter(
-            user => user?.[dateIndex] === shiftType
-        ).length;
-    };
-
-
   return (
     <table className={styles.table}>
         <tbody>
@@ -120,8 +118,7 @@ function ScheduleTable() {
             <EmptyRowInTable/>
 
             <CountValuesInTable
-            weekDates = {weekDates}
-            countShift = {countShift}/>
+            weekDates = {weekDates}/>
 
             <EmptyRowInTable/>
 

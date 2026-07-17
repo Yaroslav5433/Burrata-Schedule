@@ -1,10 +1,10 @@
+import { useScheduleView } from '@/hooks/homePageHooks/useScheduleView';
 import React from 'react'
 
 function CountValuesInTable(props) {
 
     const {
         weekDates,
-        countShift
     } = props
 
     const NamesAndValues = [
@@ -15,17 +15,26 @@ function CountValuesInTable(props) {
         {name: 'Total Д12', value: 'Д12'}, 
     ]
 
-  return (
-    NamesAndValues.map(name => (
-        <tr key = {name.value}>
-            <td>{name.name}</td>
-            {weekDates?.map((_, i) => (
-                <td key={i}>
-                    {countShift(i, name.value)}
-                </td>
-            ))}
-        </tr>
-    ))
-)}
+    const { all_workers_to_show } = useScheduleView()
+
+    const countShift = (dateIndex, shiftType) => {
+        return Object.values(all_workers_to_show).filter(
+            user => user?.[dateIndex] === shiftType
+        ).length;
+    };
+
+    return (
+        NamesAndValues.map(name => (
+            <tr key = {name.value}>
+                <td>{name.name}</td>
+                {weekDates?.map((_, i) => (
+                    <td key={i}>
+                        {countShift(i, name.value)}
+                    </td>
+                ))}
+            </tr>
+        ))
+    )
+}
 
 export default CountValuesInTable

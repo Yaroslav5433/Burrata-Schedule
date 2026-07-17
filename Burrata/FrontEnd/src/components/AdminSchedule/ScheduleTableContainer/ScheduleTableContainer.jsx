@@ -1,109 +1,42 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styles from './ScheduleTableContainer.module.css'
 import ScheduleTable from '@/components/AdminSchedule/ScheduleTable/ScheduleTable'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
-import { useNotification } from "@/components/ModalWindow/ModalWindow";
-import { useSaveIntoSchedule } from '@/hooks/scheduleMutations'
-import { Context } from '@/components/Context'
 import Spinner from '@/components/Spinner/Spinner'
 import IsEditButtons from './ButtonsContainers/IsEditButtons'
 import CustomEditButtons from './ButtonsContainers/CustomEditButtons'
 import BasicButtons from './ButtonsContainers/BasicButtons'
+import { useScheduleStore } from '@/hooks/homePageHooks/stores/useScheduleStore'
+import { useSaveClaims, useSaveSchedule } from '@/hooks/homePageHooks/useSave'
+import { usePopupStore } from '@/hooks/homePageHooks/stores/usePopUpStore'
+import { useUIStore } from '@/hooks/requestPageHooks/stores/useUIStore'
+import { useEditClick } from '@/hooks/homePageHooks/useEditClick'
 
-function ScheduleTableContainer(props) {
+function ScheduleTableContainer() {
 
-  const {
-    showClaims,
-    department,
-    setIsEdit,
-    isEdit,
-    draftSchedule,
-    setPopUpIsOpen,
-    loading,
-    setLoading,
-    setCustomEdit,
-    customEdit,
-    showVacations,
-    setShowVacations,
-  } = useContext(Context)
+  const showClaims = useScheduleStore(state => state.showClaims)
+  const showVacations = useScheduleStore(state => state.showVacations)
+  const isEdit = useScheduleStore(state => state.isEdit)
+  const setShowVacations = useScheduleStore(state => state.setShowVacations)
+  const setShowClaims = useScheduleStore(state => state.setShowClaims)
+  const setDateStep = useScheduleStore(state => state.setDateStep)
+  const openPopup = usePopupStore(state => state.openPopup)
+  const loading = useUIStore(state => state.loading)
+  const customEdit = useScheduleStore(state => state.customEdit)
 
-  const {
-    setShowClaims,
-    usersWithClaims,
-    setDateStep,
-    handleDraftSet,
-    dateStep,
-  } = props
-
-  const { showNotification } = useNotification();
-  const saveIntoSchedule = useSaveIntoSchedule(dateStep, department);
-
-  const handleSaveSchedule = () => {
-    setLoading(true)
-
-    saveIntoSchedule.mutate({
-      schedule: draftSchedule
-    }, {
-      onSuccess: () => {
-        showNotification('Schedule has been saved')
-        setIsEdit(false)
-        setCustomEdit(false)
-      },
-      onError: () => {
-        showNotification('Error while saving', true)
-      },
-      onSettled: () => {
-        setLoading(false)
-    }})
-  }
-
-  const handleSaveClaims = () => {
-    setLoading(true)
-    saveIntoSchedule.mutate({
-      schedule: usersWithClaims
-    }, {
-      onSuccess: () => {
-        showNotification('Claims have been saved')
-        setShowClaims(false)
-      },
-      onError: () => {
-        showNotification('Error while saving', true)
-      },
-      onSettled: () => {
-        setLoading(false)
-    }})
-  }
+  const handleSaveSchedule = useSaveSchedule()
+  const handleSaveClaims = useSaveClaims()
 
   const handleClick = (step) => {
     setDateStep(prev => prev + step)
   }
 
-  const handleEditClick = (action) => {
-    if (action == "edit table") {
-      handleDraftSet()
-      setCustomEdit(false)
-      setShowClaims(false)
-      setIsEdit(true)
-    }
-    if (action == "cancel changes") {
-      setIsEdit(false)
-    }
-    if (action == "custom edit") {
-      handleDraftSet()
-      setShowClaims(false)
-      setCustomEdit(true)
-    }
-    if (action == "cancel custom changes") {
-      setCustomEdit(false)
-    }
-  }
-
   const handleEditSettings = () => {
-    setPopUpIsOpen('editallusers')
+    openPopup('editallusers')
   }
 
-
+  const handleEditClick = useEditClick(action)
 
   return (
     <div className={styles.tableMainContainer}>
@@ -163,8 +96,7 @@ function ScheduleTableContainer(props) {
             {isEdit &&
             <IsEditButtons
             handleEditClick = {handleEditClick}
-            handleSaveSchedule = {handleSaveSchedule}
-            setPopUpIsOpen = {setPopUpIsOpen}/>
+            handleSaveSchedule = {handleSaveSchedule}/>
             }
             {customEdit &&
             <CustomEditButtons
