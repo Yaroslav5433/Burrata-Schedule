@@ -23,15 +23,16 @@ function UserVerificationContainer() {
     return (
         <Animation>
             <form className={`${styles.container} ${centralstyle.container}`} onSubmit={onSubmit}>
-                <h1 className={styles.title}>Sent a claim</h1>
+                <h1 className={styles.title}>Верифицирай се</h1>
                 <TextField 
                 name='ID'
                 label='ID Code'
                 value={id}
-                onChange={(e) => setId(e.target.value)}/>
+                onChange={(e) => setId(e.target.value)}
+                error = {errorOnReq}/>
                 <Button 
                 type='submit'
-                buttonText='Verify me'/>
+                buttonText='Изпрати'/>
                 {errorOnReq && (
                     <p className="errorMessage">Incorrect ID</p>
                 )}

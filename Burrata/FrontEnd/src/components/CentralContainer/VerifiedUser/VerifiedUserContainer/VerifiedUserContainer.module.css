@@ -11,3 +11,12 @@
     justify-content: center;
     gap: 15px;
 }
+
+.text {
+    font-size: clamp(11px, 0.8vw, 16px);
+}
+
+.blockMessage {
+    text-align: center; 
+    font-size: clamp(11px, 0.8vw, 16px);
+}

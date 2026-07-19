@@ -296,7 +296,7 @@ async def save_user_settings(username: str, available_shifts_values: dict, total
     return True
 
 
-async def save_default_shifts(shifts: dict, db: AsyncSession):
+async def save_default_shifts(shifts: dict, department: str, db: AsyncSession):
 
     shifts_for_insert = []
 
@@ -306,14 +306,15 @@ async def save_default_shifts(shifts: dict, db: AsyncSession):
         shifts_for_insert.append({
             'day': day,
             'first_shift': first_shift,
-            'second_shift': second_shift
+            'second_shift': second_shift,
+            'department': department
         })
 
     stmt = pginsert(DefaultWeekShifts).values(shifts_for_insert)
 
     stmt = stmt.on_conflict_do_update(
-        index_elements=['day'],
-        set_={
+        index_elements=['day', 'department'],
+        set_={  
             'first_shift': stmt.excluded.first_shift,
             'second_shift': stmt.excluded.second_shift
         }
@@ -326,8 +327,9 @@ async def save_default_shifts(shifts: dict, db: AsyncSession):
     return success_on_insert.rowcount > 0
 
 
-async def get_default_shifts(db: AsyncSession):
-    res = await db.execute(select(DefaultWeekShifts.day, DefaultWeekShifts.first_shift, DefaultWeekShifts.second_shift))
+async def get_default_shifts(department: str, db: AsyncSession):
+    res = await db.execute(select(DefaultWeekShifts.day, DefaultWeekShifts.first_shift, DefaultWeekShifts.second_shift)
+                           .where(DefaultWeekShifts.department == department))
     
     default_shifts = {
         day: f'{first_shift}/{second_shift}'

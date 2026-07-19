@@ -37,7 +37,7 @@ class GlobalConfig(BaseSettings):
         return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     model_config = SettingsConfigDict(
-        env_file = BASE_DIR / "dev.env"
+        env_file = BASE_DIR / ".env"
     )
 
 @lru_cache()

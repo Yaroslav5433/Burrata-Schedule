@@ -1,24 +1,28 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styles from './ValuesInTable.module.css'
 import SvgIcon from '@/components/Svgs/SvgIcon'
-import { Context } from '@/components/Context'
 import { useOptions } from '@/hooks/useOptions'
 import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
+import { useDates } from '@/hooks/useDates'
+import { useScheduleStore } from '@/hooks/homePageHooks/stores/useScheduleStore'
+import { useScheduleView } from '@/hooks/homePageHooks/useScheduleView'
 
 function ValuesInTable(props) {
 
-  const {
-    weekDates,
-    showClaims,
-    allUsers,
-    isEdit,
-    customEdit,
-    draftSchedule,
-    showVacations
-  } = useContext(Context)
+  const dateStep = useScheduleStore(state => state.dateStep)
+  const weekDatesQuery = useDates(dateStep)
+  const weekDates = weekDatesQuery.data?.dates ?? []
+  
+  const showClaims = useScheduleStore(state => state.showClaims)
+  const isEdit = useScheduleStore(state => state.isEdit)
+  const customEdit = useScheduleStore(state => state.customEdit)
+  const draftSchedule = useScheduleStore(state => state.draftSchedule)
+  const showVacations = useScheduleStore(state => state.showVacations)
+
+  const { allUsers } = useScheduleView()
 
   const {
-    handleClick,
+    handleSVGClick,
     all_users_to_show,
     handleEditChange,
   } = props
@@ -34,7 +38,7 @@ function ValuesInTable(props) {
                         <div className={styles.svgsContainer}>
                             <div className={styles.infoIconContainer}>
                                 <div className={styles.popUp}>
-                                    <p>id:  {allUsers[user].unique_id_number}</p>
+                                    <p>id:  {allUsers[user]?.unique_id_number}</p>
                                 </div>
                                 <div className={`${styles.infoIcon} ${styles.containerSVG}`}>
                                     <SvgIcon
@@ -43,7 +47,7 @@ function ValuesInTable(props) {
                             </div>
                             <SvgButtonIcon
                             type = 'button'
-                            onClick = {() => handleClick("edit", user)}
+                            onClick = {() => handleSVGClick("edit", user)}
                             buttonStyles = {`${styles.containerSVG} ${styles.containerSVGButton} ${styles.editIconButton}`} 
                             svgButton = {styles.editIcon} 
                             viewBox = "0 0 24 24"
@@ -52,7 +56,7 @@ function ValuesInTable(props) {
                         <p>{`${userIndex+1}.`} {user}</p>
                             <SvgButtonIcon
                             type = 'button'
-                            onClick = {() => handleClick("minus", user)}
+                            onClick = {() => handleSVGClick("minus", user)}
                             viewBox = "0 0 50 50"
                             buttonStyles = {`${styles.containerSVG} ${styles.containerSVGButton}`}
                             path = "M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 13 24 L 37 24 L 37 26 L 13 26 Z"/>

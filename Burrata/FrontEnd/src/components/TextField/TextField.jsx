@@ -1,6 +1,5 @@
-import { Context } from '@/components/Context.js'
 import styles from './textField.module.css'
-import { useContext, forwardRef } from 'react'
+import { forwardRef } from 'react'
 
 const TextField = forwardRef((props, ref) => {
     const {
@@ -13,13 +12,9 @@ const TextField = forwardRef((props, ref) => {
         onKeyDown,
         textFieldStyle,
         onBlur,
-        textArea = false
+        textArea = false,
+        error = false
     } = props
-
-    const {
-        errorOnAuth,
-        errorOnReq
-    } = useContext(Context)
 
     const commonProps = {
         name,
@@ -30,7 +25,7 @@ const TextField = forwardRef((props, ref) => {
         onBlur,
         className: `
         ${textFieldStyle} ${styles.fieldInput}
-        ${errorOnAuth || errorOnReq ? styles.fieldInputOnError: ''}
+        ${error ? styles.fieldInputOnError: ''}
         `
     }
 

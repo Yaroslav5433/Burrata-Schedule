@@ -5,5 +5,5 @@ export const useUserStore = create((set) => ({
     addUser: {'state': false, 'isTrainee': false},
 
     setUserTextName: (userTextName) => set({ userTextName }),
-    setAddUser: (state, isTrainee) => set({addUser: {'state': state, 'isTrainee': isTrainee}})
+    setAddUser: (state, isTrainee) => set({'addUser': state, 'isTrainee': isTrainee})
 }))

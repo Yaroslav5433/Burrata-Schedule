@@ -8,9 +8,9 @@ from schemas.schemas import DefaultShifts
 save_default_shifts_router = APIRouter()
 
 @save_default_shifts_router.post('/savedefaultshifts', status_code=status.HTTP_201_CREATED)
-async def get_default_shifts(shifts: DefaultShifts, db: AsyncSession = Depends(get_db)):
+async def get_default_shifts(shifts: DefaultShifts, department: str, db: AsyncSession = Depends(get_db)):
     
-    success_on_insert = await db_req.save_default_shifts(shifts = shifts, db = db)  
+    success_on_insert = await db_req.save_default_shifts(shifts = shifts, department = department, db = db)  
 
     if not success_on_insert:
         raise HTTPException(

@@ -10,7 +10,7 @@ import BasicButtons from './ButtonsContainers/BasicButtons'
 import { useScheduleStore } from '@/hooks/homePageHooks/stores/useScheduleStore'
 import { useSaveClaims, useSaveSchedule } from '@/hooks/homePageHooks/useSave'
 import { usePopupStore } from '@/hooks/homePageHooks/stores/usePopUpStore'
-import { useUIStore } from '@/hooks/requestPageHooks/stores/useUIStore'
+import { useUIStore } from '@/hooks/homePageHooks/stores/useUIStore'
 import { useEditClick } from '@/hooks/homePageHooks/useEditClick'
 
 function ScheduleTableContainer() {
@@ -20,23 +20,24 @@ function ScheduleTableContainer() {
   const isEdit = useScheduleStore(state => state.isEdit)
   const setShowVacations = useScheduleStore(state => state.setShowVacations)
   const setShowClaims = useScheduleStore(state => state.setShowClaims)
+  const dateStep = useScheduleStore(state => state.dateStep)
   const setDateStep = useScheduleStore(state => state.setDateStep)
   const openPopup = usePopupStore(state => state.openPopup)
   const loading = useUIStore(state => state.loading)
   const customEdit = useScheduleStore(state => state.customEdit)
 
   const handleSaveSchedule = useSaveSchedule()
-  const handleSaveClaims = useSaveClaims()
+  const handleSaveClaims = useSaveClaims(showVacations)
 
   const handleClick = (step) => {
-    setDateStep(prev => prev + step)
+    setDateStep(dateStep + step)
   }
 
   const handleEditSettings = () => {
     openPopup('editallusers')
   }
 
-  const handleEditClick = useEditClick(action)
+  const handleEditClick = useEditClick()
 
   return (
     <div className={styles.tableMainContainer}>

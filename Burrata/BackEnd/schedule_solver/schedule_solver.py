@@ -1394,7 +1394,7 @@ def calculate_schedule(
     return solve_schedule(
         input_matrix=claims,
         daily_demands=demands,
-        time_limit_seconds=60,
+        time_limit_seconds=30,
         num_search_workers=8,
         weight_overrides=BALANCED_WEIGHTS,
         require_optimal=False,

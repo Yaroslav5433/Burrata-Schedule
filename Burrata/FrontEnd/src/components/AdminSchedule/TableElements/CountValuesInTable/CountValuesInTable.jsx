@@ -1,11 +1,13 @@
+import { useScheduleStore } from '@/hooks/homePageHooks/stores/useScheduleStore';
 import { useScheduleView } from '@/hooks/homePageHooks/useScheduleView';
+import { useDates } from '@/hooks/useDates';
 import React from 'react'
 
-function CountValuesInTable(props) {
+function CountValuesInTable() {
 
-    const {
-        weekDates,
-    } = props
+    const dateStep = useScheduleStore(state => state.dateStep)
+    const weekDatesQuery = useDates(dateStep)
+    const weekDates = weekDatesQuery.data?.dates ?? []
 
     const NamesAndValues = [
         {name: 'Total X', value: 'X'},

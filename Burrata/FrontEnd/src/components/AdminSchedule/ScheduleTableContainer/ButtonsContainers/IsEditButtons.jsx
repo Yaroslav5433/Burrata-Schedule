@@ -1,18 +1,18 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Button from '@/components/Button/Button'
 import styles from '../ScheduleTableContainer.module.css'
-import { Context } from '@/components/Context'
+import { useParams } from 'react-router-dom'
+import { usePopupStore } from '@/hooks/homePageHooks/stores/usePopUpStore'
 
 function IsEditButtons(props) {
 
-  const {
-    department
-  } = useContext(Context)
+  const { department } = useParams()
+
+  const openPopup = usePopupStore(state => state.openPopup) 
 
   const {
     handleEditClick,
     handleSaveSchedule,
-    setPopUpIsOpen
   } = props
 
   return (
@@ -29,7 +29,7 @@ function IsEditButtons(props) {
         type='button'
         name='action'
         value='fill up'
-        onClick = {() => {setPopUpIsOpen('fillup')}}/>}
+        onClick = {() => {openPopup('fillup')}}/>}
         <Button
         buttonStyle = {styles.bottomButton}
         buttonText = 'Save changes'

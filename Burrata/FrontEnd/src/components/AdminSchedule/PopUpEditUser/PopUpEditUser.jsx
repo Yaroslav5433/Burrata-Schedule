@@ -1,93 +1,40 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React from 'react'
 import PopUpForm from '@/components/PopUp/PopUpForm'
 import styles from './PopUpEditUser.module.css'
-import { Context } from '@/components/Context'
 import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
 import Checkbox from '@/components/Checkbox/Checkbox'
-import { useSaveUserSettings } from '@/hooks/userSettingsMutations'
-import { useNotification } from '@/components/ModalWindow/ModalWindow'
+import { usePopupEditDraft } from '@/hooks/homePageHooks/popupHooks/usePopUpEditDraft'
+import { usePopupEditSubmit } from '@/hooks/homePageHooks/popupHooks/usePopUpEditSubmit'
+import { useUserStore } from '@/hooks/homePageHooks/stores/useUserStore'
 
-function PopUpEditUser(props) {
+function PopUpEditUser() {
 
-  const {
-    availableShiftsValues,
-    totalMaxShifts
-  } = props
-
-  const [totalMaxShiftDraft, setTotalMaxShiftDraft] = useState({});
-  const [availableShiftsValuesDraft, setAvailableShiftsValuesDraft] = useState({});
+  const userTextName = useUserStore(state => state.userTextName)
 
   const {
-    userTextName,
-    setPopUpIsOpen,
-  } = useContext(Context)
+    totalMaxShiftDraft,
+    availableShiftsValuesDraft,
+    handleCheckChange,
+    handleCount,
+    days,
+    shifts
+  } = usePopupEditDraft();
 
-  const saveUserSettings = useSaveUserSettings(userTextName)
-  const { showNotification } = useNotification()
+  const handlePopUpSubmit = usePopupEditSubmit()
 
-  useEffect(() => {
-    if (availableShiftsValues) {
-      setAvailableShiftsValuesDraft(structuredClone(availableShiftsValues));
-    }
-  }, [availableShiftsValues]);
-  
-  useEffect(() => {
-    if (totalMaxShifts) {
-      setTotalMaxShiftDraft(structuredClone(totalMaxShifts));
-    }
-  }, [totalMaxShifts]);
-
-
-  const days = Object.keys(availableShiftsValuesDraft ?? {});
-  const shifts = Object.keys(availableShiftsValuesDraft?.[days[0]] ?? {});
-
-  console.log('total', totalMaxShiftDraft)
-  console.log('days', days)
-
-  const handleCheckChange = (day, shift, checked) => {
-    setAvailableShiftsValuesDraft(prev => {
-      const copy = structuredClone(prev);
-      copy[day][shift] = checked;
-      return copy;
-    });
-  };
-
-  const handleCount = (shift, operator) => {
-    setTotalMaxShiftDraft(prev => {
-      const current = prev[shift];
-  
-      const next =
-        operator === 'plus'
-          ? current + 1
-          : current - 1;
-  
-      return {
-        ...prev,
-        [shift]: Math.min(7, Math.max(0, next))
-      };
-    });
-  };
-
-  const handlePopUpSubmit = (e) => {
-    e.preventDefault();
-    saveUserSettings.mutate({
-      totalMaxShifts: totalMaxShiftDraft,
-      availableShiftsValues: availableShiftsValuesDraft
-    }, {
-      onSuccess: () => {
-        showNotification('Settings have been saved')
-        setPopUpIsOpen(null)
-      },
-      onError: () => {
-        showNotification('Error while saving', true)
-      },
-  })}
+  const handleSubmit = (e) => {
+    handlePopUpSubmit(
+        e,
+        totalMaxShiftDraft,
+        availableShiftsValuesDraft
+    )
+  } 
   
   return (
     <PopUpForm
     title = {userTextName}
     buttonText = 'Submit'
-    handlePopUpSubmit = {handlePopUpSubmit}>
+    handlePopUpSubmit = {handleSubmit}>
       <table className={styles.table}>
         <thead>
           <tr>

@@ -10,28 +10,12 @@ import { useClaimStore } from '@/hooks/requestPageHooks/stores/useClaimStore'
 function Request() {
 
     const verificationPage = useUIStore(state => state.verificationPage);
-    const setMobile = useUIStore(state => state.setMobile)
     const setBlockClaims = useClaimStore(state => state.setBlockClaims)
 
     // useEffect(() => {
     //     const day = new Date().getDay();
     //     setBlockClaims(!(day === 1 || day === 2));
     // }, [verificationPage]);
-
-    console.log('component renderred')
-
-    useEffect(() => {
-        const handler = () => {
-          setMobile(window.innerWidth < 1268);
-        };
-      
-        window.addEventListener("resize", handler);
-      
-        return () => {
-          window.removeEventListener("resize", handler);
-        };
-      }, []);
-
 
     return (
         <div className = {pagestyles.app}>

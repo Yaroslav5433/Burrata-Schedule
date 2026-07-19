@@ -1,15 +1,15 @@
-import { useRef } from "react";
+import { useParams } from "react-router-dom";
 import { useScheduleStore } from "./stores/useScheduleStore";
 import { useClaims } from "./useClaims";
 import { useSchedule } from "./useSchedule";
-import { useUsers } from "./useUsers";
-import { useVacations } from "./useVacations";
+import { useUsers } from "../useUsers";
+import { useTableVacations } from "./useTableVacations";
 import { useMemo } from "react";
 
 export function useScheduleView() {
     
     const dateStep = useScheduleStore(state => state.dateStep)
-    const {department} = useRef()
+    const { department } = useParams()
 
     const draftSchedule = useScheduleStore(state => state.draftSchedule)
     const showClaims = useScheduleStore(state => state.showClaims)
@@ -18,7 +18,7 @@ export function useScheduleView() {
 
     const usersQuery = useUsers(department, !!department)
     const claimsQuery = useClaims(department, dateStep, !!department)
-    const vacationsQuery = useVacations(dateStep, !!department)
+    const vacationsQuery = useTableVacations(dateStep, !!department)
     const scheduleQuery = useSchedule(department, dateStep, !!department)
 
     const usersWithClaims = claimsQuery.data ?? {};
@@ -129,5 +129,9 @@ export function useScheduleView() {
         trainees,
         all_workers_to_show,
         all_trainees_to_show,
+        allUsers,
+        usersWithClaims,
+        usersWithVacations,
+        schedule
     };
 }

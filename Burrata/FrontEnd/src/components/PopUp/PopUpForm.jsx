@@ -1,17 +1,15 @@
 import styles from './PopUpForm.module.css'
 import Button from '../Button/Button'
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import Animation from '../Animation/Animation'
 import SvgButtonIcon from '../Svgs/SvgButtonIcon'
-import { Context } from '../Context'
-import { DAYS_OF_THE_WEEK } from '@/utils/constants'
+import { usePopupStore } from '@/hooks/homePageHooks/stores/usePopUpStore'
+import { useUserStore } from '@/hooks/homePageHooks/stores/useUserStore'
 
 function PopUpForm(props) {
-  const {
-    setPopUpIsOpen,
-    setDays,
-    setUserTextName
-  } = useContext(Context)
+
+  const closePopup = usePopupStore(state => state.closePopup)
+  const setUserTextName = useUserStore(state => state.setUserTextName)
 
   const {
     children,
@@ -21,7 +19,7 @@ function PopUpForm(props) {
   } = props
 
   const handleClick = () => {
-    setPopUpIsOpen(null)
+    closePopup()
     setUserTextName('')
   }
 

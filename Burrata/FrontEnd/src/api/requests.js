@@ -269,7 +269,7 @@ export async function get_vacations() {
   }})
 
   if (!res.ok) {
-    throw new Error('Failed during getting vacation')
+    return []
   }
 
   return res.json()
@@ -365,8 +365,8 @@ const res = await fetch(`http://localhost:8000/getvacationstable?dateStep=${date
 }
 
 
-export async function get_default_shifts() {
-  const res = await fetch(`http://localhost:8000/getdefaultshifts`, {
+export async function get_default_shifts(department) {
+  const res = await fetch(`http://localhost:8000/getdefaultshifts?department=${department}`, {
     method: "GET",
     headers: {
       'Content-Type': 'application/json'
@@ -380,8 +380,8 @@ export async function get_default_shifts() {
 }
   
 
-export async function save_default_shifts(shifts) {
-  const res = await fetch(`http://localhost:8000/savedefaultshifts`, {
+export async function save_default_shifts(shifts, department) {
+  const res = await fetch(`http://localhost:8000/savedefaultshifts?department=${department}`, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json'

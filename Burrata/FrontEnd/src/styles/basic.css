@@ -37,7 +37,7 @@ input:focus::placeholder {
 }
 
 .successMessage {
-    font-size: clamp(8px, 1.5vw, 12px);
+    font-size: clamp(10px, 1.5vw, 12px);
     color: var(--green-color);
 }
 

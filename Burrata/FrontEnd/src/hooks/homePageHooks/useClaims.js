@@ -1,12 +1,12 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { get_all_claims_request } from "@/api/requests";
 
-export function useClaims(department, datestep, enabled = true) {
+export function useClaims(department, dateStep, enabled = true) {
     return useQuery({
-        queryKey: ["claims", department],
+        queryKey: ["claims", department, dateStep],
 
         queryFn: () =>
-            get_all_claims_request(department, datestep),
+            get_all_claims_request(department, dateStep),
 
         enabled: enabled,
 

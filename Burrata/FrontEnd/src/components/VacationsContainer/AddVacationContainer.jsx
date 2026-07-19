@@ -1,20 +1,22 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Button from '@/components/Button/Button'
 import { Calendar } from 'primereact/calendar'
 import styles from './VacationsContainer.module.css'
-import { Context } from '@/components/Context'
+import { useHandleSaveVacations } from '@/hooks/vacationsPageHooks/useHandleEditVacations'
+import { useVacationsStore } from '@/hooks/vacationsPageHooks/stores/useVacationsStore'
+import { useGetUsersForSelect } from '@/hooks/vacationsPageHooks/useGetUsersForSelect'
 
 function AddVacationContainer() {
 
-  const {
-    username,
-    setUsername,
-    getUsersForSelect,
-    dates,
-    setDates,
-    handleSaveVacations,
-    setAddVacation
-  } = useContext(Context)
+  const dates = useVacationsStore(state => state.dates)
+  const setDates = useVacationsStore(state => state.setDates)
+  const username = useVacationsStore(state => state.username)
+  const setUsername = useVacationsStore(state => state.setUsername)
+  const setAddVacation = useVacationsStore(state => state.setAddVacation)
+
+  const usersForSelect = useGetUsersForSelect()
+
+  const handleSaveVacations = useHandleSaveVacations()
 
   return (
     <div className={styles.container}>
@@ -25,7 +27,7 @@ function AddVacationContainer() {
             value = {username}
             onChange={(e) => setUsername(e.target.value)}>
                 <option value=""></option>
-                {getUsersForSelect().map((user, userId) => (
+                {usersForSelect.map((user, userId) => (
                 <option key = {userId} value={user}>{user}</option>
                 ))}
             </select>

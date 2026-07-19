@@ -1,16 +1,15 @@
-import React, { useContext, useState } from 'react'
-import { Context } from '@/components/Context.js'
+import React, { useState } from 'react'
 import TextField from '@/components/TextField/TextField.jsx'
 import Button from '@/components/Button/Button.jsx'
 import centralstyle from '@/components/CentralContainer/CentralContainer.module.css'
 import style from './AdminAuthorizationContainer.module.css'
+import { useLoginStore } from '@/hooks/loginHooks/useLoginStore'
+import { useHandleLogin } from '@/hooks/loginHooks/useHandleLogin'
 
 function AdminAuthorizationContainer() {
 
-    const {
-        errorOnAuth,
-        loginAdmin
-    } = useContext(Context)
+    const loginAdmin = useHandleLogin()
+    const errorOnAuth = useLoginStore(state => state.errorOnAuth)
 
     const [form, setForm] = useState({
         login: '',
@@ -38,13 +37,15 @@ function AdminAuthorizationContainer() {
             name='login'
             label='Login'
             value={form.login}
-            onChange={handleChange}/>
+            onChange={handleChange}
+            error = {errorOnAuth}/>
             <TextField 
             label='Password'
             type='password'
             name='password'
             value={form.password}
-            onChange={handleChange}/>
+            onChange={handleChange}
+            error = {errorOnAuth}/>
             <Button 
             type='submit'
             buttonText='Sign In'/>

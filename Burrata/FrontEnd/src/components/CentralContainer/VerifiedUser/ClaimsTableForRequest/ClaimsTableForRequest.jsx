@@ -1,6 +1,6 @@
 import TableWithDates from '@/components/TableWithDates/TableWithDates.jsx';
 import ShiftsMobileRow from './ShiftsMobileRow/ShiftsMobileRow';
-import { useUIStore } from '@/hooks/requestPageHooks/stores/useUIStore';
+import { useMobile } from '@/hooks/useMobile';
 import { useDates } from '@/hooks/useDates';
 import ShiftsRow from './ShiftsRow/ShiftsRow';
 import { useUserStore } from '@/hooks/requestPageHooks/stores/useUserStore';
@@ -9,8 +9,7 @@ import Spinner from '@/components/Spinner/Spinner';
 
 function ClaimsTableForRequest() {
 
-    const mobile = useUIStore(state => state.mobile)
-
+    const isMobile = useMobile();
     const claimDatesQuery = useDates(0)
     const claimDates = claimDatesQuery.data?.dates ?? [];
 
@@ -22,7 +21,7 @@ function ClaimsTableForRequest() {
     } = useAvailableShifts(userName);
 
     return (
-      mobile ? (
+      isMobile ? (
         isLoading ? (<Spinner/>) :
         <TableWithDates
         dates={claimDates}

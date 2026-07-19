@@ -10,17 +10,22 @@ import PopUpEditUser from "@/components/AdminSchedule/PopUpEditUser/PopUpEditUse
 import { useDates } from "@/hooks/useDates";
 import { usePopupStore } from "@/hooks/homePageHooks/stores/usePopUpStore";
 import { useScheduleStore } from "@/hooks/homePageHooks/stores/useScheduleStore";
+import { useMobile } from "@/hooks/useMobile";
 
 function Home() {
     
     const popup = usePopupStore(state => state.popup)
     const days = useScheduleStore(state => state.days)
     
+    const dateStep = useScheduleStore(state => state.dateStep)
     const datesQuery = useDates(dateStep);
     const weekDates = datesQuery.data?.dates ?? [];
 
+    const isMobile = useMobile();
+
     return (
-        <>
+        !isMobile ? (
+            <>
             {popup === 'fillup' && 
             <PopUpTableInput
             dates = {weekDates}
@@ -45,7 +50,8 @@ function Home() {
                     </div>
                 <Footer/>
             </div>
-        </>
+        </> ) :
+        <p>This site doesn`t have a mobile version</p>
     );
  }
  

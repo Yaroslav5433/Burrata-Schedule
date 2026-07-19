@@ -7,92 +7,27 @@ import PaginationContainer from '@/components/PaginationContainer/PaginationCont
 import VacationContainer from '@/components/VacationsContainer/VacationContainer'
 import AddVacationContainer from '@/components/VacationsContainer/AddVacationContainer'
 import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
-import { useNotification } from '@/components/ModalWindow/ModalWindow'
-import { useQuery } from '@tanstack/react-query'
-import { useSaveVacation, useDeleteVacation } from '@/hooks/vacationsMutations'
-import { Context } from '@/components/Context'
-import { get_vacations, get_all_users_request } from '@/api/requests'
+import { useVacations } from '@/hooks/vacationsPageHooks/useVacations'
+import { useVacationsStore } from '@/hooks/vacationsPageHooks/stores/useVacationsStore'
+import { useMobile } from '@/hooks/useMobile'
 
 
 function Vacations() {
 
-  const { showNotification } = useNotification()
-
-  const vacationsQuery = useQuery({
-    queryKey: ["vacations"],
-    queryFn: () => get_vacations(),
-    placeholderData: (prev) => prev,
-    retry: 0
-  })
-
-  const usersQuery = useQuery({
-    queryKey: ["users"],
-    queryFn: () => get_all_users_request(),
-    placeholderData: (prev) => prev,
-    retry: 0
-});
+  const vacationsQuery = useVacations()
 
   const vacations = vacationsQuery.data ?? [];
-  const users = usersQuery.data ?? [];
 
-  const getUsersForSelect = () => {
-    const vacationsUsers = vacations.map(item => item.username)
+  const addVacation = useVacationsStore(state => state.addVacation)
+  const setAddVacation = useVacationsStore(state => state.setAddVacation)
 
-    return Object.keys(users).filter(user => !vacationsUsers.includes(user))
-  }
-
-  const [dates, setDates] = useState('')
-  const [username, setUsername] = useState('')
-  const [addVacation, setAddVacation] = useState(false)
-
-  const saveVacations = useSaveVacation()
-  const deleteVacations = useDeleteVacation()
-
-  const handleDeleteVacations = (current_username) => {
-    deleteVacations.mutate(
-      {
-        username: current_username
-      },
-      {
-        onError: () => {
-          showNotification('Something went wrong', true)
-        }
-      }
-    ) 
-  }
-
-  const handleSaveVacations = () => {
-    saveVacations.mutate(
-      {
-        username: username,
-        start_date: dates[0],
-        end_date: dates[1]
-      },
-      {
-        onSuccess: () => {
-          setAddVacation(false)
-        },
-        onError: () => {
-          showNotification('Fill up all fields', true)
-        }
-      }
-    ) 
-  }
+  const isMobile = useMobile()
 
   return (
-    <Context.Provider
-    value={{
-      dates,
-      setDates,
-      username,
-      setUsername,
-      addVacation,
-      setAddVacation,
-      getUsersForSelect,
-      handleDeleteVacations,
-      handleSaveVacations}}>
       <div className={pagestyles.app}>
-        <Header
+        {!isMobile ? (
+          <>
+          <Header
         isAdmin = {true}/>
           <main className={styles.container}>
             <PaginationContainer
@@ -113,8 +48,9 @@ function Vacations() {
               />
           </main>
         <Footer/>
+        </>
+        ): <p>This site doesn`t have a mobile version</p>} 
       </div>
-    </Context.Provider>
   )
 }
 

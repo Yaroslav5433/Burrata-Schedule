@@ -46,34 +46,34 @@ function VerifiedUserContainer() {
                     <h1 className={styles.title}>{userName}</h1>
                     <div className={styles.container}>
                         {!(userSavedClaims.some(Boolean)) && (
-                            <p className={styles.text}>Please, choose a claims:</p>
+                            <p className={styles.text}>Моля, изберете претенции:</p>
                         )}
                         <ClaimsTableForRequest/>
                     </div>
                     {!(userSavedClaims.some(Boolean)) && (
                         <>
                         <div className={styles.container}>
-                        <p className={styles.text}>Write an additional complains</p>
+                        <p className={styles.text}>Напишете допълнително съобщение</p>
                         <TextField
                         textFieldStyle = {styles.field}
                         textArea = {true}
                         value = {userMessage}
                         onChange = {(e) => setUserMessage(e.target.value)}
-                        placeholder = 'Кали искам 7 почивни дни моля ти се...'/>
+                        placeholder = 'Ако може...'/>
                         </div>
                         <Button
                         type='submit'
-                        buttonText='Sent a claim'/>
+                        buttonText='Изпрати'/>
                         </>
                     )}
                     {(userSavedClaims.some(Boolean)) && (
                         <>
                         <p className={styles.text}>Вашето съобщение: {userMessage}</p>
-                        <p className="successMessage">You have been sent your claims!</p>
+                        <p className="successMessage">Успешно изпратихте претенциите</p>
                         </>
                     )}
                 </> :
-                    <p>'Oops... it`s wednesday already'</p>}
+                    <p className={styles.blockMessage}>Претенциите може да се пращат само понеделник и вторник</p>}
             </form>
         </Animation>
         )

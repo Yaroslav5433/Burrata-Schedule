@@ -1,7 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import SvgButtonIcon from '@/components/Svgs/SvgButtonIcon'
 import styles from './VacationsContainer.module.css'
 import { Context } from '@/components/Context'
+import { useHandleDeleteVacations } from '@/hooks/vacationsPageHooks/useHandleEditVacations'
 
 function VacationContainer(props) {
 
@@ -10,9 +11,7 @@ function VacationContainer(props) {
     vacation
   } = props
 
-  const {
-     handleDeleteVacations
-  } = useContext(Context)
+  const handleDeleteVacations = useHandleDeleteVacations()
 
   return (
     <div key={id} className={styles.container}>

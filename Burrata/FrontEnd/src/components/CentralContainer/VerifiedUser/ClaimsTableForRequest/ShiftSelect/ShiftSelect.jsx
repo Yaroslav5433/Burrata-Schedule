@@ -42,8 +42,6 @@ function ShiftSelect(props) {
         0
     );
 
-    console.log('day', day)
-
     return (
         <select
             value={claimValues[dayId]}

@@ -8,9 +8,9 @@ from schemas.schemas import DefaultShifts
 get_default_shifts_router = APIRouter()
 
 @get_default_shifts_router.get('/getdefaultshifts', response_model = DefaultShifts)
-async def get_default_shifts(db: AsyncSession = Depends(get_db)):
+async def get_default_shifts(department: str, db: AsyncSession = Depends(get_db)):
     
-    default_shifts = await db_req.get_default_shifts(db = db)  
+    default_shifts = await db_req.get_default_shifts(department = department, db = db)  
 
     if not default_shifts:
         raise HTTPException(

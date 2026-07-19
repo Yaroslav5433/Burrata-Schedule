@@ -4,11 +4,14 @@ import Button from '@/components/Button/Button'
 import { useNotification } from "@/components/ModalWindow/ModalWindow";
 import { useCheckAsRead } from '@/hooks/messageMutations';
 import PaginationContainer from '@/components/PaginationContainer/PaginationContainer';
+import { useMessage } from '@/hooks/homePageHooks/useMessage';
+import { useParams } from 'react-router-dom';
 
-function MessagesPagination(props) {
-  const {
-    messages,
-  } = props
+function MessagesPagination() {
+
+  const { department } = useParams()
+  const messagesQuery = useMessage(department, !!department)
+  const messages = messagesQuery.data ?? []
 
   const { showNotification } = useNotification()
   const checkAsRead = useCheckAsRead()
