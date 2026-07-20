@@ -8,8 +8,6 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 @final 
 class GlobalConfig(BaseSettings):
 
-    DEBUG: bool
-
     WEBHOOK_PATH: str
 
     CORS_ORIGINS: List[str]
