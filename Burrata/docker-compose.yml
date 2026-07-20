@@ -9,7 +9,7 @@ services:
 
     environment:
       POSTGRES_USER: appuser
-      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_PASSWORD: burratapostgres
       POSTGRES_DB: appdb
 
     volumes:
@@ -21,12 +21,12 @@ services:
 
   backend:
     build:
-      ./backend
+      ./BackEnd
 
-    container_name: backend
+    container_name: BackEnd
 
     env_file:
-      - backend/.env
+       - BackEnd/.env
 
     depends_on:
       - postgres
@@ -40,9 +40,9 @@ services:
 
   frontend:
     build:
-      ./frontend
+      ./FrontEnd
 
-    container_name: frontend
+    container_name: FrontEnd
 
     ports:
       - "3000:80"
