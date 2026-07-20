@@ -17,4 +17,4 @@ export const DEPARTMENT_SHIFTS = {
     'kitchen': ["X", "1", "2", "Д", "Д11", "Д22", "short"]
 }
 
-export const VITE_API_URL = 'http://194.110.87.9:8000'
+export const VITE_API_URL = 'https://api.burrataschedule.com'
