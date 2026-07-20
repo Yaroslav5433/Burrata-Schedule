@@ -16,3 +16,5 @@ export const DEPARTMENT_SHIFTS = {
     'hostess': ["X", "1", "2", "Д13", "short"],
     'kitchen': ["X", "1", "2", "Д", "Д11", "Д22", "short"]
 }
+
+export const VITE_API_URL = 'http://194.110.87.9:8000'

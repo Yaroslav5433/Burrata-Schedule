@@ -1,5 +1,7 @@
+import { VITE_API_URL } from "@/utils/constants"
+
 export async function login_admin_request(data) {
-      const res = await fetch('http://localhost:8000/login', {
+      const res = await fetch(`${VITE_API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -17,7 +19,7 @@ export async function login_admin_request(data) {
   } 
 
 export async function verify_user_request(unique_id_number) {
-    const res = await fetch('http://localhost:8000/verifyuser', {
+    const res = await fetch(`${VITE_API_URL}/verifyuser`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -35,7 +37,7 @@ export async function verify_user_request(unique_id_number) {
 }
 
 export async function save_user_claims_request(claims, userName, text) {
-  const res = await fetch('http://localhost:8000/saveuserclaims', {
+  const res = await fetch(`${VITE_API_URL}/saveuserclaims`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -56,7 +58,7 @@ export async function save_user_claims_request(claims, userName, text) {
 
 
 export async function get_all_users_request(department = 'all') {
-  const res = await fetch(`http://localhost:8000/getallusers?department=${department}`, {
+  const res = await fetch(`${VITE_API_URL}/getallusers?department=${department}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -76,7 +78,7 @@ export async function get_all_users_request(department = 'all') {
 
 
 export async function get_all_claims_request(department, dateStep) {
-  const res = await fetch(`http://localhost:8000/getallclaims?department=${department}&dateStep=${dateStep}`, {
+  const res = await fetch(`${VITE_API_URL}/getallclaims?department=${department}&dateStep=${dateStep}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -91,7 +93,7 @@ export async function get_all_claims_request(department, dateStep) {
 
 
 export async function get_schedule_request(department, dateStep) {
-  const res = await fetch(`http://localhost:8000/getschedule?department=${department}&dateStep=${dateStep}`, {
+  const res = await fetch(`${VITE_API_URL}/getschedule?department=${department}&dateStep=${dateStep}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -107,7 +109,7 @@ export async function get_schedule_request(department, dateStep) {
 
 
 export async function get_dates_request(dateStep) {
-  const res = await fetch('http://localhost:8000/getdates', {
+  const res = await fetch(`${VITE_API_URL}/getdates`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -124,7 +126,7 @@ export async function get_dates_request(dateStep) {
 
 
 export async function save_schedule_table_request(schedule, dateStep) {
-  const res = await fetch(`http://localhost:8000/saveallusersclaims?dateStep=${dateStep}`, {
+  const res = await fetch(`${VITE_API_URL}/saveallusersclaims?dateStep=${dateStep}`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -141,7 +143,7 @@ export async function save_schedule_table_request(schedule, dateStep) {
 
 
 export async function save_new_worker_request(userTextName, department, unique_id_number, is_trainee) {
-  const res = await fetch('http://localhost:8000/savenewworker', {
+  const res = await fetch(`${VITE_API_URL}/savenewworker`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -163,7 +165,7 @@ export async function save_new_worker_request(userTextName, department, unique_i
 
 
 export async function delete_user_request(username) {
-  const res = await fetch(`http://localhost:8000/deleteuser?username=${username}`, {
+  const res = await fetch(`${VITE_API_URL}/deleteuser?username=${username}`, {
   method: "DELETE",
   headers: {
     'Content-Type': 'application/json'
@@ -183,7 +185,7 @@ export async function delete_user_request(username) {
 
 
 export async function fill_up_schedule_request(claims, demands, dates, only_long, only_short) {
-  const res = await fetch(`http://localhost:8000/fillupschedule`, {
+  const res = await fetch(`${VITE_API_URL}/fillupschedule`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -208,7 +210,7 @@ export async function fill_up_schedule_request(claims, demands, dates, only_long
 
 
 export async function get_messages(department, all = true, page = 1, number_of_elements = 5) {
-  const res = await fetch(`http://localhost:8000/getmessages?department=${department}&all=${all}&page=${page}&number_of_elements=${number_of_elements}`, {
+  const res = await fetch(`${VITE_API_URL}/getmessages?department=${department}&all=${all}&page=${page}&number_of_elements=${number_of_elements}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -224,7 +226,7 @@ export async function get_messages(department, all = true, page = 1, number_of_e
 
 
 export async function check_message_as_read(id) {
-  const res = await fetch('http://localhost:8000/checkmessage', {
+  const res = await fetch(`${VITE_API_URL}/checkmessage`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -241,7 +243,7 @@ export async function check_message_as_read(id) {
 
 
 export async function save_vacation(username, start_date, end_date) {
-  const res = await fetch('http://localhost:8000/savevacation', {
+  const res = await fetch(`${VITE_API_URL}/savevacation`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -262,7 +264,7 @@ export async function save_vacation(username, start_date, end_date) {
 
 
 export async function get_vacations() {
-  const res = await fetch('http://localhost:8000/getvacations', {
+  const res = await fetch(`${VITE_API_URL}/getvacations`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -277,7 +279,7 @@ export async function get_vacations() {
 
 
 export async function delete_vacation(username) {
-  const res = await fetch(`http://localhost:8000/deletevacation?username=${username}`, {
+  const res = await fetch(`${VITE_API_URL}/deletevacation?username=${username}`, {
   method: "DELETE",
   headers: {
     'Content-Type': 'application/json'
@@ -297,7 +299,7 @@ export async function delete_vacation(username) {
 
 
 export async function get_shifts_values(username) {
-  const res = await fetch(`http://localhost:8000/getshiftsvalues?username=${username}`, {
+  const res = await fetch(`${VITE_API_URL}/getshiftsvalues?username=${username}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -313,7 +315,7 @@ export async function get_shifts_values(username) {
 
 
 export async function get_total_max(username) {
-  const res = await fetch(`http://localhost:8000/gettotalmax?username=${username}`, {
+  const res = await fetch(`${VITE_API_URL}/gettotalmax?username=${username}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -329,7 +331,7 @@ export async function get_total_max(username) {
 
 
 export async function save_new_user_settings(username, totalMaxShifts, availableShiftsValues) {
-  const res = await fetch('http://localhost:8000/saveusersettings', {
+  const res = await fetch(`${VITE_API_URL}/saveusersettings`, {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -351,7 +353,7 @@ export async function save_new_user_settings(username, totalMaxShifts, available
 
 
 export async function get_vacations_for_table(dateStep) {
-const res = await fetch(`http://localhost:8000/getvacationstable?dateStep=${dateStep}`, {
+const res = await fetch(`${VITE_API_URL}/getvacationstable?dateStep=${dateStep}`, {
   method: "GET",
   headers: {
     'Content-Type': 'application/json'
@@ -366,7 +368,7 @@ const res = await fetch(`http://localhost:8000/getvacationstable?dateStep=${date
 
 
 export async function get_default_shifts(department) {
-  const res = await fetch(`http://localhost:8000/getdefaultshifts?department=${department}`, {
+  const res = await fetch(`${VITE_API_URL}/getdefaultshifts?department=${department}`, {
     method: "GET",
     headers: {
       'Content-Type': 'application/json'
@@ -381,7 +383,7 @@ export async function get_default_shifts(department) {
   
 
 export async function save_default_shifts(shifts, department) {
-  const res = await fetch(`http://localhost:8000/savedefaultshifts?department=${department}`, {
+  const res = await fetch(`${VITE_API_URL}/savedefaultshifts?department=${department}`, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json'
@@ -399,7 +401,7 @@ export async function save_default_shifts(shifts, department) {
 
 
 export async function get_limits(username) {
-  const res = await fetch(`http://localhost:8000/getlimits?username=${username}`, {
+  const res = await fetch(`${VITE_API_URL}/getlimits?username=${username}`, {
     method: "GET",
     headers: {
       'Content-Type': 'application/json'
