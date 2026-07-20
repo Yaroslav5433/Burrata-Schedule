@@ -13,7 +13,8 @@ const TextField = forwardRef((props, ref) => {
         textFieldStyle,
         onBlur,
         textArea = false,
-        error = false
+        error = false,
+        type,
     } = props
 
     const commonProps = {
@@ -23,6 +24,7 @@ const TextField = forwardRef((props, ref) => {
         onKeyDown,
         onChange,
         onBlur,
+        type,
         className: `
         ${textFieldStyle} ${styles.fieldInput}
         ${error ? styles.fieldInputOnError: ''}
