@@ -3,4 +3,23 @@
     height: 100%;
     border: none;
     text-align: center;
+    appearance: none;
   }
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  
+  text-align-last: center;
+}
+
+.arrowWrapper {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  top: 50%;
+  left: 74%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

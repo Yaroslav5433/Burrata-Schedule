@@ -4,6 +4,7 @@ import { useTotalMaxShifts } from '@/hooks/useTotalMaxShifts'
 import { useAvailableShifts } from '@/hooks/useAvailableShifts'
 import { useUserStore } from '@/hooks/requestPageHooks/stores/useUserStore'
 import { useClaimStore } from '@/hooks/requestPageHooks/stores/useClaimStore'
+import { useMobile } from '@/hooks/useMobile'
 import styles from './ShiftSelect.module.css'
 
 function ShiftSelect(props) {
@@ -12,6 +13,8 @@ function ShiftSelect(props) {
         day,
         dayId
     } = props
+
+    const isMobile = useMobile();
 
     const userName = useUserStore(state => state.userName)
 
@@ -43,34 +46,41 @@ function ShiftSelect(props) {
     );
 
     return (
-        <select
-            value={claimValues[dayId]}
-            onChange={(e) => updateClaimValues(dayId, e.target.value)}
-            className={ styles.select }
-        >
-            <option value=""></option>
+        <div className={styles.selectWrapper}>
+            <select
+                value={claimValues[dayId]}
+                onChange={(e) => updateClaimValues(dayId, e.target.value)}
+                className={ styles.select }
+            >
+                <option value=""></option>
 
-            {Object.entries(availableShiftsValues[day])
-                .filter(([, value]) => value)
-                .map(([key]) => {
-                    const isShort = SHORT_GROUP.includes(key);
+                {Object.entries(availableShiftsValues[day])
+                    .filter(([, value]) => value)
+                    .map(([key]) => {
+                        const isShort = SHORT_GROUP.includes(key);
 
-                    const disabled =
-                        isShort
-                            ? shortUsed >= totalMaxShifts.short
-                            : used[key] >= totalMaxShifts[key];
+                        const disabled =
+                            isShort
+                                ? shortUsed >= totalMaxShifts.short
+                                : used[key] >= totalMaxShifts[key];
 
-                    return (
-                        <option
-                            key={key}
-                            value={key}
-                            disabled={disabled || (limits && !limits[day])}
-                        >
-                            {key}
-                        </option>
-                    );
-                })}
-        </select>
+                        return (
+                            <option
+                                key={key}
+                                value={key}
+                                disabled={disabled || (limits && !limits[day])}
+                            >
+                                {key}
+                            </option>
+                        );
+                    })}
+            </select>
+            <div className = {styles.arrowWrapper}>
+                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
     );
 }
 

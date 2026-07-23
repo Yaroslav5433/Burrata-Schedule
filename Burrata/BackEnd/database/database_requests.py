@@ -301,12 +301,10 @@ async def save_default_shifts(shifts: dict, department: str, db: AsyncSession):
     shifts_for_insert = []
 
     for day, shift in shifts.model_dump().items():
-        first_shift, second_shift = map(int, shift.split('/'))
 
         shifts_for_insert.append({
             'day': day,
-            'first_shift': first_shift,
-            'second_shift': second_shift,
+            'shifts': shift,
             'department': department
         })
 
@@ -315,8 +313,7 @@ async def save_default_shifts(shifts: dict, department: str, db: AsyncSession):
     stmt = stmt.on_conflict_do_update(
         index_elements=['day', 'department'],
         set_={  
-            'first_shift': stmt.excluded.first_shift,
-            'second_shift': stmt.excluded.second_shift
+            'shifts': stmt.excluded.shifts,
         }
     )
 
@@ -328,12 +325,12 @@ async def save_default_shifts(shifts: dict, department: str, db: AsyncSession):
 
 
 async def get_default_shifts(department: str, db: AsyncSession):
-    res = await db.execute(select(DefaultWeekShifts.day, DefaultWeekShifts.first_shift, DefaultWeekShifts.second_shift)
+    res = await db.execute(select(DefaultWeekShifts.day, DefaultWeekShifts.shifts)
                            .where(DefaultWeekShifts.department == department))
     
     default_shifts = {
-        day: f'{first_shift}/{second_shift}'
-    for day, first_shift, second_shift in res.all()
+        day: shifts
+    for day, shifts in res.all()
     }
     
     return default_shifts

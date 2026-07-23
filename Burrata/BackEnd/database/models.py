@@ -134,8 +134,7 @@ class DefaultWeekShifts(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     day = Column(String, nullable=False)
-    first_shift = Column(Integer, nullable=False)
-    second_shift = Column(Integer, nullable=False)
+    shifts = Column(String, nullable=False)
     department = Column(String, nullable=False)
 
     __table_args__ = (UniqueConstraint('day', 'department',),)

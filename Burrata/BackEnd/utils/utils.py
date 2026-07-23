@@ -106,31 +106,38 @@ def calculate_limits(
     limits = {}
 
     for index, (day, shifts) in enumerate(default_shifts.items()):
-        first, second = map(int, shifts.split("/"))
+        parts = list(map(int, shifts.split("/")))
+
+        if len(parts) == 2:
+            first, second = parts
+        elif len(parts) == 3:
+            first, long, second = parts
+            first += long
+            second += long
+        else:
+            raise ValueError(f"Invalid shifts format: {shifts}")
 
         max_days_off = all_users - max(first, second)
 
-        limits[day] = round(
-            max_days_off * coefficients[index]
-        )
+        limits[day] = round(max_days_off * coefficients[index])
 
     claims_count = {day: 0 for day in days}
 
-    logger.info(limits)
+    logger.info(f'limits, {limits}')
 
     for user_claims in all_claims.values():
-        for date in user_claims:
-            day = get_weekday_from_date(date)
-
-            if day in claims_count:
-                claims_count[day] += 1
+        for date, value in user_claims.items():
+            if value == "X":
+                day = get_weekday_from_date(date)
+                if day in claims_count:
+                    claims_count[day] += 1
 
     for user_vacations in all_vacations.values():
-        for date in user_vacations:
-            day = get_weekday_from_date(date, vacations = True)
-
-            if day in claims_count:
-                claims_count[day] += 1
+        for date, value in user_vacations.items():
+            if value == "X":
+                day = get_weekday_from_date(date, vacations = True)
+                if day in claims_count:
+                    claims_count[day] += 1
 
     for day in days:
         result[day] = claims_count[day] < limits[day]

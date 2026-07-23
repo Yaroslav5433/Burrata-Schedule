@@ -2,8 +2,24 @@ from ortools.sat.python import cp_model
 
 
 DAY_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-DAY_LONG = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-DAY_BG = ["понеделник", "вторник", "сряда", "четвъртък", "петък", "събота", "неделя"]
+DAY_LONG = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+]
+DAY_BG = [
+    "понеделник",
+    "вторник",
+    "сряда",
+    "четвъртък",
+    "петък",
+    "събота",
+    "неделя",
+]
 
 # Input row format:
 # [prev Sat, prev Sun, Mon, Tue, Wed, Thu, Fri, Sat, Sun]
@@ -33,7 +49,6 @@ DEFAULT_WEIGHTS = {
     "Д": 3,
     "Д12": 2,
     "consecutive_long": 2,
-
     "long_fair": 0,
     "long_range": 0,
     "second_shift_fair": 0,
@@ -58,9 +73,29 @@ def failed(reason: str):
 
 
 def parse_demands(daily_demands):
+    """
+    Supported formats:
+
+    x/y:
+        x = required morning coverage
+        y = required evening coverage
+
+        Long shifts Д and Д12 cover both parts.
+
+    x/z/y:
+        x = exact number of shift 1
+        z = exact total number of long shifts Д + Д12
+        y = exact number of shift 2
+
+    Returned item:
+        (morning_coverage, evening_coverage, explicit_long)
+
+    explicit_long is None for x/y.
+    """
     if not isinstance(daily_demands, dict):
         raise ValueError(
-            "Данните за необходимия брой служители трябва да бъдат подадени по дни."
+            "Данните за необходимия брой служители трябва да бъдат "
+            "подадени по дни."
         )
 
     result = []
@@ -82,16 +117,35 @@ def parse_demands(daily_demands):
         try:
             if isinstance(raw, str):
                 parts = raw.replace(" ", "").split("/")
+            elif isinstance(raw, (list, tuple)):
+                parts = list(raw)
+            else:
+                raise ValueError
 
-                if len(parts) != 2:
-                    raise ValueError
+            if len(parts) == 2:
+                morning = int(parts[0])
+                evening = int(parts[1])
+                explicit_long = None
 
-                a = int(parts[0])
-                b = int(parts[1])
+                values_to_check = [
+                    morning,
+                    evening,
+                ]
 
-            elif isinstance(raw, (list, tuple)) and len(raw) == 2:
-                a = int(raw[0])
-                b = int(raw[1])
+            elif len(parts) == 3:
+                first = int(parts[0])
+                explicit_long = int(parts[1])
+                second = int(parts[2])
+
+                # Д and Д12 cover both parts of the day.
+                morning = first + explicit_long
+                evening = second + explicit_long
+
+                values_to_check = [
+                    first,
+                    explicit_long,
+                    second,
+                ]
 
             else:
                 raise ValueError
@@ -99,15 +153,23 @@ def parse_demands(daily_demands):
         except (ValueError, TypeError):
             raise ValueError(
                 f"Невалидни данни за {day_name}: „{raw}“. "
-                f"Използвайте формат като „6/5“ или [6, 5]."
+                f"Използвайте формат „6/5“, „4/2/3“, "
+                f"[6, 5] или [4, 2, 3]."
             )
 
-        if a < 0 or b < 0:
+        if any(value < 0 for value in values_to_check):
             raise ValueError(
-                f"Броят на служителите за {day_name} не може да бъде отрицателен."
+                f"Броят на служителите за {day_name} "
+                f"не може да бъде отрицателен."
             )
 
-        result.append((a, b))
+        result.append(
+            (
+                morning,
+                evening,
+                explicit_long,
+            )
+        )
 
     return result
 
@@ -149,7 +211,8 @@ def normalize_matrix(input_matrix):
     """
     if not isinstance(input_matrix, dict):
         raise ValueError(
-            "Графикът трябва да съдържа списък със служители и техните смени."
+            "Графикът трябва да съдържа списък със служители "
+            "и техните смени."
         )
 
     if not input_matrix:
@@ -174,7 +237,8 @@ def normalize_matrix(input_matrix):
         elif len(row) != INPUT_DAYS:
             raise ValueError(
                 f"За служител „{worker}“ трябва да има точно 9 полета: "
-                f"предходна събота, предходна неделя и 7 дни от новата седмица."
+                f"предходна събота, предходна неделя и 7 дни "
+                f"от новата седмица."
             )
 
         norm[worker] = [
@@ -185,7 +249,11 @@ def normalize_matrix(input_matrix):
     return workers, norm
 
 
-def normalize_worker_restrictions(workers, only_short=None, only_long=None):
+def normalize_worker_restrictions(
+    workers,
+    only_short=None,
+    only_long=None,
+):
     """
     only_short:
         Workers who may receive only 1, 2 or X.
@@ -203,12 +271,14 @@ def normalize_worker_restrictions(workers, only_short=None, only_long=None):
 
     if isinstance(only_short, str):
         raise ValueError(
-            "Списъкът със служители само за кратки смени е в невалиден формат."
+            "Списъкът със служители само за кратки смени "
+            "е в невалиден формат."
         )
 
     if isinstance(only_long, str):
         raise ValueError(
-            "Списъкът със служители само за дълги смени е в невалиден формат."
+            "Списъкът със служители само за дълги смени "
+            "е в невалиден формат."
         )
 
     try:
@@ -216,7 +286,8 @@ def normalize_worker_restrictions(workers, only_short=None, only_long=None):
         only_long = set(only_long)
     except TypeError:
         raise ValueError(
-            "Списъците с ограничения за служителите са в невалиден формат."
+            "Списъците с ограничения за служителите "
+            "са в невалиден формат."
         )
 
     worker_set = set(workers)
@@ -300,7 +371,12 @@ def get_worker_work_slots(norm, worker):
     )
 
 
-def get_worker_long_capacity(norm, worker, only_short, only_long):
+def get_worker_long_capacity(
+    norm,
+    worker,
+    only_short,
+    only_long,
+):
     """
     Returns the maximum possible number of long shifts.
 
@@ -419,7 +495,8 @@ def validate_and_score(
         if not isinstance(row, list) or len(row) != TARGET_DAYS:
             return (
                 False,
-                f"Графикът на служител „{worker}“ трябва да съдържа точно 7 дни.",
+                f"Графикът на служител „{worker}“ "
+                f"трябва да съдържа точно 7 дни.",
                 None,
             )
 
@@ -497,15 +574,31 @@ def validate_and_score(
 
     # Validate coverage and Д12 eligibility.
     for d in range(TARGET_DAYS):
-        A, B = demand_ab[d]
+        (
+            morning_required,
+            evening_required,
+            explicit_long,
+        ) = demand_ab[d]
 
         morning = 0
         evening = 0
+
+        first_count = 0
+        second_count = 0
+        long_count_for_day = 0
+
         has_Д12 = False
         Д12_base = 0
 
         for worker in workers:
             cell = schedule[worker][d]
+
+            if cell == "1":
+                first_count += 1
+            elif cell == "2":
+                second_count += 1
+            elif cell in LONG_SHIFTS:
+                long_count_for_day += 1
 
             if cell in {"1", "Д", "Д12"}:
                 morning += 1
@@ -516,17 +609,42 @@ def validate_and_score(
             if cell == "Д12":
                 has_Д12 = True
 
+            # Д12 does not count toward its own eligibility base.
             if cell in {"1", "Д"}:
                 Д12_base += 1
 
-        if morning != A or evening != B:
+        if (
+            morning != morning_required
+            or evening != evening_required
+        ):
             return (
                 False,
                 f"За {DAY_BG[d]} са разпределени {morning} служители "
                 f"за първата част и {evening} за втората част, "
-                f"вместо необходимите {A}/{B}.",
+                f"вместо необходимите "
+                f"{morning_required}/{evening_required}.",
                 None,
             )
+
+        # For x/z/y, validate all three groups exactly.
+        if explicit_long is not None:
+            expected_first = morning_required - explicit_long
+            expected_second = evening_required - explicit_long
+
+            if (
+                first_count != expected_first
+                or long_count_for_day != explicit_long
+                or second_count != expected_second
+            ):
+                return (
+                    False,
+                    f"За {DAY_BG[d]} са разпределени "
+                    f"{first_count}/{long_count_for_day}/{second_count} "
+                    f"служители на първа/дълга/втора смяна, "
+                    f"вместо необходимите "
+                    f"{expected_first}/{explicit_long}/{expected_second}.",
+                    None,
+                )
 
         threshold = Д12_base_threshold(d)
 
@@ -679,18 +797,18 @@ def solve_schedule(
     }
 
     total_demand_units = sum(
-        A + B
-        for A, B in demand_ab
+        morning + evening
+        for morning, evening, _ in demand_ab
     )
 
     total_morning = sum(
-        A
-        for A, _ in demand_ab
+        morning
+        for morning, _, _ in demand_ab
     )
 
     total_evening = sum(
-        B
-        for _, B in demand_ab
+        evening
+        for _, evening, _ in demand_ab
     )
 
     total_work_slots = 0
@@ -712,7 +830,8 @@ def solve_schedule(
 
         if worker not in only_long and fixed_long > 3:
             return failed(
-                f"За служител „{worker}“ са зададени {fixed_long} дълги смени. "
+                f"За служител „{worker}“ са зададени "
+                f"{fixed_long} дълги смени. "
                 f"Разрешени са най-много 3 дълги смени за седмицата."
             )
 
@@ -748,20 +867,24 @@ def solve_schedule(
             f"Има повече задължителни работни дни ({total_work_slots}), "
             f"отколкото могат да бъдат покрити според зададените нужди "
             f"({total_demand_units} позиции). "
-            f"Проверете фиксираните почивни дни и необходимия брой служители."
+            f"Проверете фиксираните почивни дни и необходимия "
+            f"брой служители."
         )
 
     if total_required_long > min(total_morning, total_evening):
         return failed(
-            f"За покриване на графика са необходими {total_required_long} "
-            f"дълги смени, но зададените нужди позволяват най-много "
+            f"За покриване на графика са необходими "
+            f"{total_required_long} дълги смени, "
+            f"но зададените нужди позволяват най-много "
             f"{min(total_morning, total_evening)}. "
-            f"Проверете необходимия брой служители за първа и втора смяна."
+            f"Проверете необходимия брой служители "
+            f"за първа и втора смяна."
         )
 
     if total_minimum_long > total_required_long:
         return failed(
-            f"Зададени са поне {total_minimum_long} задължителни дълги смени, "
+            f"Зададени са поне {total_minimum_long} "
+            f"задължителни дълги смени, "
             f"но според нуждите на графика могат да бъдат използвани само "
             f"{total_required_long}. "
             f"Проверете фиксираните дълги смени и списъка "
@@ -770,10 +893,12 @@ def solve_schedule(
 
     if total_long_capacity < total_required_long:
         return failed(
-            f"Няма достатъчно възможности за разпределяне на дългите смени. "
+            f"Няма достатъчно възможности за разпределяне "
+            f"на дългите смени. "
             f"Необходими са {total_required_long}, но могат да бъдат "
             f"разпределени най-много {total_long_capacity}. "
-            f"Добавете служители за дълги смени или променете ограниченията."
+            f"Добавете служители за дълги смени "
+            f"или променете ограниченията."
         )
 
     model = cp_model.CpModel()
@@ -845,26 +970,52 @@ def solve_schedule(
         return x.get((wi, d, shift), 0)
 
     # Exact daily coverage.
+    #
+    # x/y:
+    #   x = morning coverage
+    #   y = evening coverage
+    #
+    # x/z/y:
+    #   x = exact shift 1 count
+    #   z = exact Д + Д12 count
+    #   y = exact shift 2 count
     for d in day_indices:
-        A, B = demand_ab[d]
+        (
+            morning_required,
+            evening_required,
+            explicit_long,
+        ) = demand_ab[d]
 
-        model.Add(
-            sum(
-                xv(wi, d, "1")
-                + xv(wi, d, "Д")
-                + xv(wi, d, "Д12")
-                for wi in worker_indices
-            ) == A
+        morning_expr = sum(
+            xv(wi, d, "1")
+            + xv(wi, d, "Д")
+            + xv(wi, d, "Д12")
+            for wi in worker_indices
+        )
+
+        evening_expr = sum(
+            xv(wi, d, "2")
+            + xv(wi, d, "Д")
+            + xv(wi, d, "Д12")
+            for wi in worker_indices
         )
 
         model.Add(
-            sum(
-                xv(wi, d, "2")
-                + xv(wi, d, "Д")
-                + xv(wi, d, "Д12")
-                for wi in worker_indices
-            ) == B
+            morning_expr == morning_required
         )
+
+        model.Add(
+            evening_expr == evening_required
+        )
+
+        if explicit_long is not None:
+            model.Add(
+                sum(
+                    xv(wi, d, "Д")
+                    + xv(wi, d, "Д12")
+                    for wi in worker_indices
+                ) == explicit_long
+            )
 
     # Worker-level count variables.
     n1_count = {}
@@ -1375,7 +1526,7 @@ def solve_schedule(
     if not valid:
         return failed(
             "Създаденият график не премина окончателната проверка. "
-            "Проверете въведените условия и опитайте отново."
+            + (reason or "Проверете въведените условия и опитайте отново.")
         )
 
     return {

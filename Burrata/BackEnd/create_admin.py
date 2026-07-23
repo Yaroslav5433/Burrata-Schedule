@@ -6,7 +6,7 @@ from database.models import Admin
 
 
 async def create_admin():
-    password = "halachev"
+    password = "123123"
 
     hashed_password = bcrypt.hashpw(
         password.encode("utf-8"),
