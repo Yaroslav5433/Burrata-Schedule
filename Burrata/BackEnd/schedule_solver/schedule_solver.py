@@ -126,18 +126,13 @@ def parse_demands(daily_demands):
                 morning = int(parts[0])
                 evening = int(parts[1])
                 explicit_long = None
-
-                values_to_check = [
-                    morning,
-                    evening,
-                ]
+                values_to_check = [morning, evening]
 
             elif len(parts) == 3:
                 first = int(parts[0])
                 explicit_long = int(parts[1])
                 second = int(parts[2])
 
-                # Д and Д12 cover both parts of the day.
                 morning = first + explicit_long
                 evening = second + explicit_long
 
@@ -336,33 +331,57 @@ def week_cell(norm, worker, d):
     return norm[worker][TARGET_OFFSET + d]
 
 
+def get_worker_claim_count(norm, worker):
+    """
+    Returns the number of preliminary claims in the target week.
+
+    Every non-empty target-week cell is considered a claim:
+    X, 1, 2, Д or Д12.
+
+    Previous Saturday and Sunday are ignored.
+    """
+    return sum(
+        1
+        for d in range(TARGET_DAYS)
+        if week_cell(norm, worker, d) != ""
+    )
+
+
+def needs_automatic_days_off(norm, worker):
+    """
+    Workers with 0 or 1 preliminary claims must receive
+    exactly 2 days off in the final schedule.
+
+    Workers with 2 or more claims keep all claims, but the solver
+    does not add additional days off to empty cells.
+    """
+    return get_worker_claim_count(norm, worker) <= 1
+
+
 def is_no_claim_worker(norm, worker):
     """
-    A worker has no preliminary claims if all 7 target-week
-    cells are empty strings.
+    Kept for backward compatibility.
 
-    Previous Sat/Sun are ignored.
+    Returns True only when the worker has no preliminary claims.
     """
-    return all(
-        week_cell(norm, worker, d) == ""
-        for d in range(TARGET_DAYS)
-    )
+    return get_worker_claim_count(norm, worker) == 0
 
 
 def get_worker_work_slots(norm, worker):
     """
-    Workers without preliminary claims receive exactly 2 X,
+    Workers with 0 or 1 claims receive exactly 2 X,
     so they work exactly 5 days.
 
-    Other workers work on every day that is not fixed X.
+    Workers with 2 or more claims work on every day that
+    is not fixed as X.
     """
+    if needs_automatic_days_off(norm, worker):
+        return 5
+
     target_cells = [
         week_cell(norm, worker, d)
         for d in range(TARGET_DAYS)
     ]
-
-    if is_no_claim_worker(norm, worker):
-        return 5
 
     return sum(
         1
@@ -476,8 +495,13 @@ def validate_and_score(
             None,
         )
 
-    no_claim_workers = {
-        worker: is_no_claim_worker(norm, worker)
+    claim_count_by_worker = {
+        worker: get_worker_claim_count(norm, worker)
+        for worker in workers
+    }
+
+    automatic_days_off_by_worker = {
+        worker: claim_count_by_worker[worker] <= 1
         for worker in workers
     }
 
@@ -524,12 +548,12 @@ def validate_and_score(
 
             else:
                 if final == "X":
-                    if not no_claim_workers[worker]:
+                    if not automatic_days_off_by_worker[worker]:
                         return (
                             False,
                             f"На служител „{worker}“ е добавен почивен ден "
                             f"за {DAY_BG[d]}, въпреки че служителят има "
-                            f"предварително зададени желания.",
+                            f"2 или повече предварително зададени желания.",
                             None,
                         )
 
@@ -557,7 +581,7 @@ def validate_and_score(
                     None,
                 )
 
-        if no_claim_workers[worker]:
+        if automatic_days_off_by_worker[worker]:
             x_count = sum(
                 1
                 for cell in row
@@ -567,8 +591,10 @@ def validate_and_score(
             if x_count != 2:
                 return (
                     False,
-                    f"Служител „{worker}“ няма предварително зададени желания "
-                    f"и трябва да има точно 2 почивни дни, но има {x_count}.",
+                    f"Служител „{worker}“ има "
+                    f"{claim_count_by_worker[worker]} предварително "
+                    f"зададени желания и трябва да има точно "
+                    f"2 почивни дни, но има {x_count}.",
                     None,
                 )
 
@@ -626,7 +652,6 @@ def validate_and_score(
                 None,
             )
 
-        # For x/z/y, validate all three groups exactly.
         if explicit_long is not None:
             expected_first = morning_required - explicit_long
             expected_second = evening_required - explicit_long
@@ -791,8 +816,13 @@ def solve_schedule(
             "Проверете графика и опитайте отново."
         )
 
-    no_claim_by_worker = {
-        worker: is_no_claim_worker(norm, worker)
+    claim_count_by_worker = {
+        worker: get_worker_claim_count(norm, worker)
+        for worker in workers
+    }
+
+    automatic_days_off_by_worker = {
+        worker: claim_count_by_worker[worker] <= 1
         for worker in workers
     }
 
@@ -911,7 +941,7 @@ def solve_schedule(
     # x[worker_index, target_day, assignment]
     for wi in worker_indices:
         worker = workers[wi]
-        no_claim = no_claim_by_worker[worker]
+        automatic_days_off = automatic_days_off_by_worker[worker]
 
         for d in day_indices:
             original = week_cell(norm, worker, d)
@@ -943,22 +973,24 @@ def solve_schedule(
                     )
 
             else:
-                if not no_claim:
+                # Empty cells may become X only for workers
+                # with 0 or 1 preliminary claims.
+                if not automatic_days_off:
                     model.Add(
                         x[(wi, d, "X")] == 0
                     )
 
-            # Workers from only_short may receive only 1, 2 or X.
             if worker in only_short:
                 model.Add(x[(wi, d, "Д")] == 0)
                 model.Add(x[(wi, d, "Д12")] == 0)
 
-            # Workers from only_long may receive only Д, Д12 or X.
             if worker in only_long:
                 model.Add(x[(wi, d, "1")] == 0)
                 model.Add(x[(wi, d, "2")] == 0)
 
-        if no_claim:
+        # New rule:
+        # Workers with 0 or 1 claims must have exactly 2 days off.
+        if automatic_days_off:
             model.Add(
                 sum(
                     x[(wi, d, "X")]
@@ -970,15 +1002,6 @@ def solve_schedule(
         return x.get((wi, d, shift), 0)
 
     # Exact daily coverage.
-    #
-    # x/y:
-    #   x = morning coverage
-    #   y = evening coverage
-    #
-    # x/z/y:
-    #   x = exact shift 1 count
-    #   z = exact Д + Д12 count
-    #   y = exact shift 2 count
     for d in day_indices:
         (
             morning_required,
@@ -1037,7 +1060,6 @@ def solve_schedule(
             f"n2_{wi}",
         )
 
-        # only_long workers are not limited to 3 long shifts.
         max_long = (
             TARGET_DAYS
             if worker in only_long
@@ -1121,8 +1143,7 @@ def solve_schedule(
             + xv(wi, d, "Д12")
         )
 
-    # Hard rule: no 3 consecutive long shifts,
-    # including previous Sat/Sun.
+    # Hard rule: no 3 consecutive long shifts.
     if FORBID_THREE_CONSECUTIVE_LONG:
         for wi in worker_indices:
             for end_pos in range(2, 9):
@@ -1141,7 +1162,6 @@ def solve_schedule(
         for wi in worker_indices:
             worker = workers[wi]
 
-            # Previous Sunday -> target Monday.
             if is_late_shift(norm[worker][1]):
                 monday_early = (
                     xv(wi, 0, "1")
@@ -1152,7 +1172,6 @@ def solve_schedule(
                     weights["rest_gap"] * monday_early
                 )
 
-            # Target-week transitions.
             for d in range(6):
                 today_late = (
                     xv(wi, d, "2")
@@ -1308,8 +1327,7 @@ def solve_schedule(
                     weights["long_fair"] * abs_dev
                 )
 
-    # Optional fairness: minimize long-shift range
-    # among normal comparable workers.
+    # Optional fairness: minimize long-shift range.
     if weights["long_range"]:
         comparable_workers = []
 
@@ -1526,7 +1544,10 @@ def solve_schedule(
     if not valid:
         return failed(
             "Създаденият график не премина окончателната проверка. "
-            + (reason or "Проверете въведените условия и опитайте отново.")
+            + (
+                reason
+                or "Проверете въведените условия и опитайте отново."
+            )
         )
 
     return {
