@@ -61,7 +61,7 @@ function PopUpTableInput(props) {
                   label = {showLabel && Object.keys(days)[i]}
                   name = {Object.keys(days)[i]}
                   value = {Object.values(days)[i]}
-                  placeholder={date === 'Saturday' || date === 'Sunday' ? "X/Z/Y": "X/Y"}
+                  placeholder={Object.keys(days)[i] === 'Saturday' || Object.keys(days)[i] === 'Sunday' ? "X/Z/Y": "X/Y"}
                   inputMode="numeric"/>
                 </td>
               ))}
