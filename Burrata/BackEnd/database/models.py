@@ -1,4 +1,4 @@
-from sqlalchemy import CheckConstraint, Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint
+from sqlalchemy import CheckConstraint, Column, DateTime, ForeignKey, Integer, String, Boolean, UniqueConstraint, Date
 from database.database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -102,8 +102,8 @@ class Vacations(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
-    start_date = Column(DateTime, nullable=False)
-    end_date = Column(DateTime, nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
 
     __table_args__ = (UniqueConstraint("username"),)
 
