@@ -1,5 +1,5 @@
 from pydantic import BaseModel, RootModel
-from datetime import datetime
+from datetime import datetime, date
 
 class Login_data(BaseModel):
     login: str
@@ -16,8 +16,8 @@ class Messages(BaseModel):
 
 class Vacations(BaseModel):
     username: str
-    start_date: datetime
-    end_date: datetime
+    start_date: date
+    end_date: date
 
 class Users_with_shifts_and_message(BaseModel):
     username: str

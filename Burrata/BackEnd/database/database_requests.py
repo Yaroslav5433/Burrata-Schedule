@@ -3,7 +3,7 @@ from sqlalchemy import select, insert, delete, and_, update
 from sqlalchemy.dialects.postgresql import insert as pginsert
 from database.models import Admin, Users, ClaimsSchedule, Schedule, Messages, Vacations, ShiftsValues, MaxShiftsWeekTotal, DefaultWeekShifts
 from utils.utils import transform_datetime_item_to_str
-from datetime import datetime
+from datetime import datetime, date
 
 
 
@@ -208,7 +208,7 @@ async def get_user_message(username: str, date, db: AsyncSession):
     return message.scalars().first()
 
 
-async def save_vacation_in_database(username: str, start_date: datetime, end_date: datetime, db: AsyncSession):
+async def save_vacation_in_database(username: str, start_date: date, end_date: date, db: AsyncSession):
     success_on_insert = await db.execute(insert(Vacations).values({
         'username': username,
         'start_date': start_date,
@@ -222,7 +222,7 @@ async def save_vacation_in_database(username: str, start_date: datetime, end_dat
 async def get_vacations(db: AsyncSession):
     vacations = await db.execute(select(Vacations.username, Vacations.start_date, Vacations.end_date)
                                  .order_by(Vacations.start_date))
-    
+
     return vacations.mappings().all()
 
 
