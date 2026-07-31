@@ -97,7 +97,7 @@ def calculate_limits(
     all_vacations: dict,
 ):
     
-    coefficients = [1, 1, 0.9, 0.8, 0.8, 0.75, 0.75]
+    coefficients = [1, 1, 0.9, 0.85, 0.85, 0.8, 0.8]
 
     result = {}
 
