@@ -40,6 +40,8 @@ function PopUpTableInput(props) {
         e,
         onlyShort,
         onlyLong,
+        oneDayOff,
+        threeDayOffs,
         days,
         dates
     )
