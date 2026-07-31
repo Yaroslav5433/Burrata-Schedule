@@ -102,8 +102,8 @@ class Vacations(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, ForeignKey("users.username", ondelete="CASCADE"), nullable=False)
-    start_date = Column(DateTime(timezone=True), nullable=False)
-    end_date = Column(DateTime(timezone=True), nullable=False)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
 
     __table_args__ = (UniqueConstraint("username"),)
 

@@ -25,7 +25,7 @@ export function usePopupInputSubmit() {
     const setLoading = useUIStore(state => state.setLoading)
     const saveDefaultShifts = useSaveDefaultShifts(department)
 
-    return async (e, onlyShort, onlyLong, days, dates) => {
+    return async (e, onlyShort, onlyLong, oneDayOff, threeDayOffs, days, dates) => {
 
         e.preventDefault()
         if (popup === 'fillup') {
@@ -35,16 +35,21 @@ export function usePopupInputSubmit() {
                     draftSchedule[name] ?? workers[name]
                 ])
             )
+            
             const inputIsValid = demandsInputValidation(
                 days,
                 getAllFreeWorkers(onlyWorkersDraftSchedule)
             )
+
             if (!inputIsValid.isValid) {
                 showNotification(inputIsValid.message, true)
                 return
             }
+
             const only_short = onlyShort.map(worker => worker.value)
             const only_long = onlyLong.map(worker => worker.value)
+            const one_day_off = oneDayOff.map(worker => worker.value)
+            const three_day_offs = threeDayOffs.map(worker => worker.value)
             closePopup()
 
             try {
@@ -54,7 +59,9 @@ export function usePopupInputSubmit() {
                     days,
                     dates,
                     only_long,
-                    only_short
+                    only_short,
+                    one_day_off,
+                    three_day_offs
                 )
                 setDraftSchedule(res.schedule)
             } catch (error) {

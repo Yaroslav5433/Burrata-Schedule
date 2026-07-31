@@ -64,6 +64,8 @@ class FillUpInfo(BaseModel):
     dates: list
     only_long: list
     only_short: list
+    three_day_offs: list
+    one_day_off: list
 
 class DefaultShifts(BaseModel):
     Monday: str

@@ -17,6 +17,8 @@ export function usePopupTableInput() {
 
   const [onlyShort, setOnlyShort] = useState([])
   const [onlyLong, setOnlyLong] = useState([])  
+  const [oneDayOff, setOneDayOff] = useState([])
+  const [threeDayOffs, setThreeDayOffs] = useState([])  
 
   useEffect(() => {
     if ((popup === 'fillup' || popup === 'editallusers') && defaultShifts) {
@@ -34,5 +36,15 @@ export function usePopupTableInput() {
       [e.target.name]: input
     })
   }
-  return {onlyLong, setOnlyLong, onlyShort, setOnlyShort, handleTableInputChange, days}
+  return {
+    onlyLong,
+    setOnlyLong,
+    onlyShort, 
+    oneDayOff,
+    setOneDayOff,
+    threeDayOffs,
+    setThreeDayOffs,
+    setOnlyShort, 
+    handleTableInputChange, 
+    days}
 }

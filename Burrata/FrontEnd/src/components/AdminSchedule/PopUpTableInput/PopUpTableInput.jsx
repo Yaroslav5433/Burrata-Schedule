@@ -25,8 +25,12 @@ function PopUpTableInput(props) {
     setOnlyLong,
     onlyShort, 
     setOnlyShort, 
+    oneDayOff,
+    setOneDayOff,
+    threeDayOffs,
+    setThreeDayOffs,
     handleTableInputChange,
-    days
+    days,
   } = usePopupTableInput() 
 
   const handlePopUpSubmit = usePopupInputSubmit()
@@ -68,7 +72,8 @@ function PopUpTableInput(props) {
               </tr>
         </TableWithDates>
         {popup === 'fillup' &&
-        <div className={styles.specifyContainer}>
+        <>
+          <div className={styles.specifyContainer}>
           <div className={styles.shiftContainer}>
               <p>Only Short</p>
               <Select
@@ -199,7 +204,141 @@ function PopUpTableInput(props) {
                 }}
             />
           </div>
-        </div>}
+        </div>
+        <div className={styles.specifyContainer}>
+          <div className={styles.shiftContainer}>
+              <p>1 Day Off</p>
+              <Select
+              isMulti
+              classNamePrefix="worker-select"
+              options={Object.keys(all_workers_to_show).map(worker => ({
+                value: worker,
+                label: worker,
+              }))}
+              onChange={setOneDayOff}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                  border: 0,
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  minWidth: '300px',
+                  paddingBlock: '5px'
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: '#FFFFFF'
+                }),
+                multiValueRemove: (base, state) => ({
+                  ...base,
+                  color: state.isFocused ? '#ff5555' : '#161414',
+                  backgroundColor: 'transparent',
+                
+                  '&:hover': {
+                    transitionDuration: '0.2s',
+                    backgroundColor: 'transparent',
+                    color: '#ff5555',
+                  },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                }),
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 999,
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                  caretColor: "#FFFFFF", 
+                }),
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                clearIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? "#555555"   
+                    : "#4b4a4a",
+                  color: "white",
+                }),
+                }}
+            />
+          </div>
+          <div className={styles.shiftContainer}>
+              <p>3 Day Offs</p>
+              <Select
+              isMulti
+              classNamePrefix="worker-select"
+              options={Object.keys(all_workers_to_show).map(worker => ({
+                value: worker,
+                label: worker,
+              }))}
+              onChange={setThreeDayOffs}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                  border: 0,
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  minWidth: '300px',
+                  paddingBlock: '5px'
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: '#FFFFFF'
+                }),
+                multiValueRemove: (base, state) => ({
+                  ...base,
+                  color: state.isFocused ? '#ff5555' : '#161414',
+                  backgroundColor: 'transparent',
+                
+                  '&:hover': {
+                    transitionDuration: '0.2s',
+                    backgroundColor: 'transparent',
+                    color: '#ff5555',
+                  },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: '#4b4a4a',
+                }),
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 999,
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                  caretColor: "#FFFFFF", 
+                }),
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                clearIndicator: (base) => ({
+                  ...base,
+                  color: "#FFFFFF",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? "#555555"   
+                    : "#4b4a4a",
+                  color: "white",
+                }),
+                }}
+            />
+          </div>
+        </div>
+        </>
+        }
     </PopUpForm>
   )
 }

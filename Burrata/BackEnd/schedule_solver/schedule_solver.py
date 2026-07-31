@@ -248,6 +248,8 @@ def normalize_worker_restrictions(
     workers,
     only_short=None,
     only_long=None,
+    one_day_off=None,
+    three_day_offs=None,
 ):
     """
     only_short:
@@ -257,6 +259,18 @@ def normalize_worker_restrictions(
         Workers who may receive only Д, Д12 or X.
         The weekly maximum of 3 long shifts is disabled
         for these workers.
+
+    one_day_off:
+        Workers who must receive exactly 1 day off.
+
+    three_day_offs:
+        Workers who must receive exactly 3 days off.
+
+    Workers not included in one_day_off or three_day_offs use
+    the default rule:
+        - 0 or 1 preliminary claims: exactly 2 days off.
+        - 2 or more preliminary claims: no additional days off
+          may be added to empty cells.
     """
     if only_short is None:
         only_short = []
@@ -264,21 +278,42 @@ def normalize_worker_restrictions(
     if only_long is None:
         only_long = []
 
-    if isinstance(only_short, str):
-        raise ValueError(
-            "Списъкът със служители само за кратки смени "
-            "е в невалиден формат."
-        )
+    if one_day_off is None:
+        one_day_off = []
 
-    if isinstance(only_long, str):
-        raise ValueError(
-            "Списъкът със служители само за дълги смени "
-            "е в невалиден формат."
-        )
+    if three_day_offs is None:
+        three_day_offs = []
+
+    restriction_lists = [
+        (
+            only_short,
+            "Списъкът със служители само за кратки смени",
+        ),
+        (
+            only_long,
+            "Списъкът със служители само за дълги смени",
+        ),
+        (
+            one_day_off,
+            "Списъкът със служители с един почивен ден",
+        ),
+        (
+            three_day_offs,
+            "Списъкът със служители с три почивни дни",
+        ),
+    ]
+
+    for values, description in restriction_lists:
+        if isinstance(values, str):
+            raise ValueError(
+                f"{description} е в невалиден формат."
+            )
 
     try:
         only_short = set(only_short)
         only_long = set(only_long)
+        one_day_off = set(one_day_off)
+        three_day_offs = set(three_day_offs)
     except TypeError:
         raise ValueError(
             "Списъците с ограничения за служителите "
@@ -287,32 +322,43 @@ def normalize_worker_restrictions(
 
     worker_set = set(workers)
 
-    unknown_short = only_short - worker_set
-    if unknown_short:
+    list_checks = [
+        (
+            only_short,
+            "„само кратки смени“",
+        ),
+        (
+            only_long,
+            "„само дълги смени“",
+        ),
+        (
+            one_day_off,
+            "„един почивен ден“",
+        ),
+        (
+            three_day_offs,
+            "„три почивни дни“",
+        ),
+    ]
+
+    for values, list_name in list_checks:
+        unknown = values - worker_set
+
+        if unknown:
+            names = ", ".join(
+                map(str, sorted(unknown, key=str))
+            )
+
+            raise ValueError(
+                f"Следните служители от списъка {list_name} "
+                f"не са намерени в графика: {names}."
+            )
+
+    shift_overlap = only_short & only_long
+
+    if shift_overlap:
         names = ", ".join(
-            map(str, sorted(unknown_short, key=str))
-        )
-
-        raise ValueError(
-            f"Следните служители от списъка „само кратки смени“ "
-            f"не са намерени в графика: {names}."
-        )
-
-    unknown_long = only_long - worker_set
-    if unknown_long:
-        names = ", ".join(
-            map(str, sorted(unknown_long, key=str))
-        )
-
-        raise ValueError(
-            f"Следните служители от списъка „само дълги смени“ "
-            f"не са намерени в графика: {names}."
-        )
-
-    overlap = only_short & only_long
-    if overlap:
-        names = ", ".join(
-            map(str, sorted(overlap, key=str))
+            map(str, sorted(shift_overlap, key=str))
         )
 
         raise ValueError(
@@ -321,7 +367,25 @@ def normalize_worker_restrictions(
             f"Премахнете ги от единия списък."
         )
 
-    return only_short, only_long
+    days_off_overlap = one_day_off & three_day_offs
+
+    if days_off_overlap:
+        names = ", ".join(
+            map(str, sorted(days_off_overlap, key=str))
+        )
+
+        raise ValueError(
+            f"Следните служители са добавени едновременно в списъците "
+            f"„един почивен ден“ и „три почивни дни“: {names}. "
+            f"Премахнете ги от единия списък."
+        )
+
+    return (
+        only_short,
+        only_long,
+        one_day_off,
+        three_day_offs,
+    )
 
 
 def week_cell(norm, worker, d):
@@ -347,13 +411,53 @@ def get_worker_claim_count(norm, worker):
     )
 
 
+def get_worker_required_days_off(
+    norm,
+    worker,
+    one_day_off=None,
+    three_day_offs=None,
+):
+    """
+    Returns the exact number of required days off for a worker.
+
+    Returns:
+        1:
+            Worker is in one_day_off.
+
+        3:
+            Worker is in three_day_offs.
+
+        2:
+            Worker is not in either special list and has
+            0 or 1 preliminary claims.
+
+        None:
+            Worker is not in either special list and has
+            2 or more preliminary claims. In this case, existing
+            X values are preserved, but no additional X values
+            may be added to empty cells.
+    """
+    one_day_off = set(one_day_off or [])
+    three_day_offs = set(three_day_offs or [])
+
+    if worker in one_day_off:
+        return 1
+
+    if worker in three_day_offs:
+        return 3
+
+    if get_worker_claim_count(norm, worker) <= 1:
+        return 2
+
+    return None
+
+
 def needs_automatic_days_off(norm, worker):
     """
-    Workers with 0 or 1 preliminary claims must receive
-    exactly 2 days off in the final schedule.
+    Kept for backward compatibility.
 
-    Workers with 2 or more claims keep all claims, but the solver
-    does not add additional days off to empty cells.
+    Returns True for workers who use the default automatic rule
+    of exactly 2 days off.
     """
     return get_worker_claim_count(norm, worker) <= 1
 
@@ -367,16 +471,32 @@ def is_no_claim_worker(norm, worker):
     return get_worker_claim_count(norm, worker) == 0
 
 
-def get_worker_work_slots(norm, worker):
+def get_worker_work_slots(
+    norm,
+    worker,
+    one_day_off=None,
+    three_day_offs=None,
+):
     """
-    Workers with 0 or 1 claims receive exactly 2 X,
-    so they work exactly 5 days.
+    Returns the exact number of working days for the worker.
 
-    Workers with 2 or more claims work on every day that
-    is not fixed as X.
+    Special and automatic rules:
+        - one_day_off: 6 working days.
+        - three_day_offs: 4 working days.
+        - default worker with 0 or 1 claims: 5 working days.
+
+    Workers with 2 or more claims and no special days-off rule
+    work on every day that is not fixed as X.
     """
-    if needs_automatic_days_off(norm, worker):
-        return 5
+    required_days_off = get_worker_required_days_off(
+        norm=norm,
+        worker=worker,
+        one_day_off=one_day_off,
+        three_day_offs=three_day_offs,
+    )
+
+    if required_days_off is not None:
+        return TARGET_DAYS - required_days_off
 
     target_cells = [
         week_cell(norm, worker, d)
@@ -395,20 +515,29 @@ def get_worker_long_capacity(
     worker,
     only_short,
     only_long,
+    one_day_off=None,
+    three_day_offs=None,
 ):
     """
     Returns the maximum possible number of long shifts.
 
     only_short workers cannot receive long shifts.
 
-    only_long workers may receive a long shift on every working day,
+    only_long workers receive a long shift on every working day,
     and the normal weekly maximum of 3 is disabled for them.
     """
     if worker in only_short:
         return 0
 
+    worker_work_slots = get_worker_work_slots(
+        norm=norm,
+        worker=worker,
+        one_day_off=one_day_off,
+        three_day_offs=three_day_offs,
+    )
+
     if worker in only_long:
-        return get_worker_work_slots(norm, worker)
+        return worker_work_slots
 
     target_cells = [
         week_cell(norm, worker, d)
@@ -421,13 +550,21 @@ def get_worker_long_capacity(
         if cell in LONG_SHIFTS
     )
 
-    blank_count = sum(
+    fixed_shift_count = sum(
         1
         for cell in target_cells
-        if cell == ""
+        if cell in SHIFT_SET
     )
 
-    return min(3, fixed_long + blank_count)
+    available_blank_work_slots = max(
+        0,
+        worker_work_slots - fixed_shift_count,
+    )
+
+    return min(
+        3,
+        fixed_long + available_blank_work_slots,
+    )
 
 
 def validate_fixed_shift_restrictions(
@@ -451,6 +588,64 @@ def validate_fixed_shift_restrictions(
                     f"Служител „{worker}“ е отбелязан само за дълги смени, "
                     f"но за {DAY_BG[d]} има зададена кратка смяна „{cell}“."
                 )
+
+
+def validate_days_off_restrictions(
+    workers,
+    norm,
+    one_day_off,
+    three_day_offs,
+):
+    """
+    Verifies that fixed X and fixed shifts allow the required
+    number of days off.
+    """
+    for worker in workers:
+        required_days_off = get_worker_required_days_off(
+            norm=norm,
+            worker=worker,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
+        )
+
+        if required_days_off is None:
+            continue
+
+        target_cells = [
+            week_cell(norm, worker, d)
+            for d in range(TARGET_DAYS)
+        ]
+
+        fixed_days_off = sum(
+            1
+            for cell in target_cells
+            if cell == "X"
+        )
+
+        fixed_working_days = sum(
+            1
+            for cell in target_cells
+            if cell in SHIFT_SET
+        )
+
+        maximum_possible_days_off = (
+            TARGET_DAYS - fixed_working_days
+        )
+
+        if fixed_days_off > required_days_off:
+            raise ValueError(
+                f"Служител „{worker}“ трябва да има точно "
+                f"{required_days_off} почивни дни, но вече има "
+                f"{fixed_days_off} предварително зададени почивни дни."
+            )
+
+        if maximum_possible_days_off < required_days_off:
+            raise ValueError(
+                f"Служител „{worker}“ трябва да има точно "
+                f"{required_days_off} почивни дни, но предварително "
+                f"зададените смени позволяват най-много "
+                f"{maximum_possible_days_off}."
+            )
 
 
 def Д12_base_threshold(d):
@@ -483,9 +678,13 @@ def validate_and_score(
     demand_ab,
     only_short=None,
     only_long=None,
+    one_day_off=None,
+    three_day_offs=None,
 ):
     only_short = set(only_short or [])
     only_long = set(only_long or [])
+    one_day_off = set(one_day_off or [])
+    three_day_offs = set(three_day_offs or [])
 
     if set(schedule.keys()) != set(workers):
         return (
@@ -495,13 +694,13 @@ def validate_and_score(
             None,
         )
 
-    claim_count_by_worker = {
-        worker: get_worker_claim_count(norm, worker)
-        for worker in workers
-    }
-
-    automatic_days_off_by_worker = {
-        worker: claim_count_by_worker[worker] <= 1
+    required_days_off_by_worker = {
+        worker: get_worker_required_days_off(
+            norm=norm,
+            worker=worker,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
+        )
         for worker in workers
     }
 
@@ -523,6 +722,8 @@ def validate_and_score(
                 f"трябва да съдържа точно 7 дни.",
                 None,
             )
+
+        required_days_off = required_days_off_by_worker[worker]
 
         for d in range(TARGET_DAYS):
             original = week_cell(norm, worker, d)
@@ -548,12 +749,12 @@ def validate_and_score(
 
             else:
                 if final == "X":
-                    if not automatic_days_off_by_worker[worker]:
+                    if required_days_off is None:
                         return (
                             False,
                             f"На служител „{worker}“ е добавен почивен ден "
-                            f"за {DAY_BG[d]}, въпреки че служителят има "
-                            f"2 или повече предварително зададени желания.",
+                            f"за {DAY_BG[d]}, въпреки че служителят няма "
+                            f"правило за автоматично добавяне на почивни дни.",
                             None,
                         )
 
@@ -581,20 +782,19 @@ def validate_and_score(
                     None,
                 )
 
-        if automatic_days_off_by_worker[worker]:
+        if required_days_off is not None:
             x_count = sum(
                 1
                 for cell in row
                 if cell == "X"
             )
 
-            if x_count != 2:
+            if x_count != required_days_off:
                 return (
                     False,
-                    f"Служител „{worker}“ има "
-                    f"{claim_count_by_worker[worker]} предварително "
-                    f"зададени желания и трябва да има точно "
-                    f"2 почивни дни, но има {x_count}.",
+                    f"Служител „{worker}“ трябва да има точно "
+                    f"{required_days_off} почивни дни, "
+                    f"но има {x_count}.",
                     None,
                 )
 
@@ -773,6 +973,8 @@ def solve_schedule(
     require_optimal=False,
     only_short=None,
     only_long=None,
+    one_day_off=None,
+    three_day_offs=None,
 ):
     try:
         weights = dict(DEFAULT_WEIGHTS)
@@ -794,10 +996,17 @@ def solve_schedule(
         demand_ab = parse_demands(daily_demands)
         workers, norm = normalize_matrix(input_matrix)
 
-        only_short, only_long = normalize_worker_restrictions(
+        (
+            only_short,
+            only_long,
+            one_day_off,
+            three_day_offs,
+        ) = normalize_worker_restrictions(
             workers=workers,
             only_short=only_short,
             only_long=only_long,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
         )
 
         validate_fixed_shift_restrictions(
@@ -805,6 +1014,13 @@ def solve_schedule(
             norm=norm,
             only_short=only_short,
             only_long=only_long,
+        )
+
+        validate_days_off_restrictions(
+            workers=workers,
+            norm=norm,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
         )
 
     except ValueError as exc:
@@ -816,13 +1032,13 @@ def solve_schedule(
             "Проверете графика и опитайте отново."
         )
 
-    claim_count_by_worker = {
-        worker: get_worker_claim_count(norm, worker)
-        for worker in workers
-    }
-
-    automatic_days_off_by_worker = {
-        worker: claim_count_by_worker[worker] <= 1
+    required_days_off_by_worker = {
+        worker: get_worker_required_days_off(
+            norm=norm,
+            worker=worker,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
+        )
         for worker in workers
     }
 
@@ -866,8 +1082,10 @@ def solve_schedule(
             )
 
         worker_work_slots = get_worker_work_slots(
-            norm,
-            worker,
+            norm=norm,
+            worker=worker,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
         )
 
         worker_long_capacity = get_worker_long_capacity(
@@ -875,6 +1093,8 @@ def solve_schedule(
             worker=worker,
             only_short=only_short,
             only_long=only_long,
+            one_day_off=one_day_off,
+            three_day_offs=three_day_offs,
         )
 
         if worker in only_long:
@@ -897,8 +1117,8 @@ def solve_schedule(
             f"Има повече задължителни работни дни ({total_work_slots}), "
             f"отколкото могат да бъдат покрити според зададените нужди "
             f"({total_demand_units} позиции). "
-            f"Проверете фиксираните почивни дни и необходимия "
-            f"брой служители."
+            f"Проверете фиксираните почивни дни, списъците за "
+            f"1 или 3 почивни дни и необходимия брой служители."
         )
 
     if total_required_long > min(total_morning, total_evening):
@@ -941,7 +1161,7 @@ def solve_schedule(
     # x[worker_index, target_day, assignment]
     for wi in worker_indices:
         worker = workers[wi]
-        automatic_days_off = automatic_days_off_by_worker[worker]
+        required_days_off = required_days_off_by_worker[worker]
 
         for d in day_indices:
             original = week_cell(norm, worker, d)
@@ -973,9 +1193,9 @@ def solve_schedule(
                     )
 
             else:
-                # Empty cells may become X only for workers
-                # with 0 or 1 preliminary claims.
-                if not automatic_days_off:
+                # Empty cells may become X only if the worker has
+                # an exact days-off rule: 1, 2 or 3 days off.
+                if required_days_off is None:
                     model.Add(
                         x[(wi, d, "X")] == 0
                     )
@@ -988,14 +1208,16 @@ def solve_schedule(
                 model.Add(x[(wi, d, "1")] == 0)
                 model.Add(x[(wi, d, "2")] == 0)
 
-        # New rule:
-        # Workers with 0 or 1 claims must have exactly 2 days off.
-        if automatic_days_off:
+        # Exact days-off rule:
+        # - one_day_off workers: exactly 1 X
+        # - default automatic workers: exactly 2 X
+        # - three_day_offs workers: exactly 3 X
+        if required_days_off is not None:
             model.Add(
                 sum(
                     x[(wi, d, "X")]
                     for d in day_indices
-                ) == 2
+                ) == required_days_off
             )
 
     def xv(wi, d, shift):
@@ -1472,7 +1694,8 @@ def solve_schedule(
         return failed(
             "Не може да бъде съставен график с въведените условия. "
             "Проверете необходимия брой служители за всеки ден, "
-            "фиксираните смени, почивните дни и ограниченията "
+            "фиксираните смени, почивните дни, списъците за "
+            "1 или 3 почивни дни и ограниченията "
             "„само кратки“ или „само дълги смени“."
         )
 
@@ -1539,6 +1762,8 @@ def solve_schedule(
         demand_ab=demand_ab,
         only_short=only_short,
         only_long=only_long,
+        one_day_off=one_day_off,
+        three_day_offs=three_day_offs,
     )
 
     if not valid:
@@ -1562,6 +1787,8 @@ def calculate_schedule(
     demands,
     only_short=None,
     only_long=None,
+    one_day_off=None,
+    three_day_offs=None,
 ):
     return solve_schedule(
         input_matrix=claims,
@@ -1572,4 +1799,6 @@ def calculate_schedule(
         require_optimal=False,
         only_short=only_short,
         only_long=only_long,
+        one_day_off=one_day_off,
+        three_day_offs=three_day_offs,
     )

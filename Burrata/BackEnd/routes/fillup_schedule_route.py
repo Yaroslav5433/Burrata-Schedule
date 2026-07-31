@@ -34,7 +34,9 @@ async def get_users(fill_up_info: FillUpInfo, db: AsyncSession = Depends(get_db)
             claims=nine_days_claims,
             demands=fill_up_info.demands,
             only_long=fill_up_info.only_long,
-            only_short=fill_up_info.only_short
+            only_short=fill_up_info.only_short,
+            one_day_off=fill_up_info.one_day_off,
+            three_day_offs=fill_up_info.three_day_offs
         )
 
     if res['status'] == "failed":

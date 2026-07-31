@@ -184,7 +184,7 @@ export async function delete_user_request(username) {
 }
 
 
-export async function fill_up_schedule_request(claims, demands, dates, only_long, only_short) {
+export async function fill_up_schedule_request(claims, demands, dates, only_long, only_short, one_day_off, three_day_offs) {
   const res = await fetch(`${VITE_API_URL}/fillupschedule`, {
   method: "POST",
   headers: {
@@ -195,7 +195,9 @@ export async function fill_up_schedule_request(claims, demands, dates, only_long
     'demands': demands,
     'dates': dates,
     'only_long': only_long,
-    'only_short': only_short
+    'only_short': only_short,
+    'one_day_off': one_day_off,
+    'three_day_offs': three_day_offs,
   })
 })
 
