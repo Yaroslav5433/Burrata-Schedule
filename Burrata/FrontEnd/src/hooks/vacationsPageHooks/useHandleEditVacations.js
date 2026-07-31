@@ -19,8 +19,8 @@ export function useHandleSaveVacations() {
         saveVacations.mutate(
             {
                 username,
-                start_date: dates[0],
-                end_date: dates[1]
+                start_date: dates[0].toLocaleDateString('en-Ca'),
+                end_date: dates[1].toLocaleDateString('en-Ca')
             },
             {
                 onSuccess: () => {
