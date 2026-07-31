@@ -150,8 +150,8 @@ def vacation_to_dict(vacations: list[dict]):
 
     for vacation in vacations:
         username = vacation["username"]
-        start_date = vacation["start_date"].date()
-        end_date = vacation["end_date"].date()
+        start_date = vacation["start_date"]
+        end_date = vacation["end_date"]
 
         if username not in dict_vacations:
             dict_vacations[username] = {}
